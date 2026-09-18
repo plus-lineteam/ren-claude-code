@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>初期セットアップガイド — LINEチーム</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  background: #fafafa; color: #222; line-height: 2; max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
+}
+h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.3rem; color: #111; }
+.subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+h2 { font-size: 1.2rem; font-weight: 700; margin: 2.5rem 0 0.8rem; color: #111; padding-bottom: 0.3rem; border-bottom: 2px solid #e0e0e0; }
+h3 { font-size: 1rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #333; }
+p { margin-bottom: 1rem; color: #444; font-size: 0.95rem; }
+strong { color: #111; }
+code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-family: 'SF Mono', monospace; }
+a { color: #1976d2; }
+ol, ul { margin: 0.5rem 0 1rem 1.5rem; }
+li { margin-bottom: 0.5rem; font-size: 0.95rem; color: #444; }
+
+.callout { background: #fff8e1; border-left: 4px solid #f9a825; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+.callout.blue { background: #e3f2fd; border-color: #1976d2; }
+.callout.green { background: #e8f5e9; border-color: #388e3c; }
+.callout.red { background: #fce4ec; border-color: #c62828; }
+.callout.gray { background: #f5f5f5; border-color: #9e9e9e; }
+.callout p { margin-bottom: 0.3rem; }
+
+.step-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+.step-num { display: inline-block; background: #1976d2; color: white; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.8rem; font-weight: 700; margin-right: 0.5rem; vertical-align: middle; }
+.step-title { font-weight: 700; font-size: 1rem; color: #111; }
+.step-time { color: #888; font-size: 0.8rem; margin-left: 0.5rem; }
+.step-detail { margin-top: 0.8rem; }
+.step-detail ol { margin: 0.5rem 0 0 1.5rem; }
+.step-detail li { margin-bottom: 0.4rem; font-size: 0.9rem; }
+
+pre { background: #1e1e1e; color: #d4d4d4; border-radius: 6px; padding: 0.8rem 1rem; margin: 0.5rem 0 1rem; font-size: 0.82rem; overflow-x: auto; line-height: 1.6; font-family: 'SF Mono', monospace; }
+pre .comment { color: #6a9955; }
+pre .highlight { color: #dcdcaa; }
+
+.tag-required { display: inline-block; background: #c62828; color: white; font-size: 0.7rem; padding: 1px 8px; border-radius: 4px; font-weight: 700; vertical-align: middle; margin-left: 0.5rem; }
+.tag-optional { display: inline-block; background: #888; color: white; font-size: 0.7rem; padding: 1px 8px; border-radius: 4px; font-weight: 700; vertical-align: middle; margin-left: 0.5rem; }
+.tag-recommended { display: inline-block; background: #1976d2; color: white; font-size: 0.7rem; padding: 1px 8px; border-radius: 4px; font-weight: 700; vertical-align: middle; margin-left: 0.5rem; }
+
+.tab-container { display: flex; gap: 0; margin-bottom: 0; }
+.tab { padding: 0.6rem 1.2rem; border: 1px solid #ddd; border-bottom: none; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 0.85rem; font-weight: 600; background: #f5f5f5; color: #888; user-select: none; }
+.tab.active { background: #fff; color: #111; border-bottom: 1px solid #fff; margin-bottom: -1px; z-index: 1; }
+.tab-content { border: 1px solid #ddd; border-radius: 0 8px 8px 8px; padding: 1.5rem; background: #fff; display: none; }
+.tab-content.active { display: block; }
+
+.check-list { list-style: none; margin-left: 0; }
+.check-list li { padding: 0.3rem 0; font-size: 0.9rem; }
+.check-list li::before { content: "\2610  "; font-size: 1rem; }
+
+.prompt-box { background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0; font-size: 0.9rem; line-height: 1.8; color: #333; }
+.copy-hint { color: #888; font-size: 0.8rem; font-style: italic; margin-top: 0.3rem; }
+
+.footer { text-align: center; color: #999; font-size: 0.78rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e0e0e0; }
+.sub-note { font-size: 0.85rem; color: #777; margin-left: 1.5rem; margin-top: -0.3rem; margin-bottom: 0.5rem; }
+
+/* ステップフロー */
+.step-flow { display: flex; align-items: center; gap: 0; margin: 1.5rem 0 2rem; flex-wrap: wrap; justify-content: center; }
+.sf-item { display: flex; align-items: center; gap: 0; }
+.sf-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+.sf-circle.required { background: #1976d2; }
+.sf-circle.optional { background: #90a4ae; }
+.sf-arrow { color: #ccc; font-size: 0.8rem; margin: 0 2px; }
+.sf-label { font-size: 0.62rem; color: #999; text-align: center; max-width: 50px; margin-top: 2px; line-height: 1.2; }
+.sf-col { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+/* 画面モック */
+.mock-vscode { background: #1e1e1e; border-radius: 8px; overflow: hidden; margin: 1rem 0; border: 1px solid #333; max-width: 400px; }
+.mock-titlebar { background: #323233; padding: 6px 12px; display: flex; align-items: center; gap: 6px; }
+.mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mock-dot.r { background: #ff5f57; }
+.mock-dot.y { background: #febc2e; }
+.mock-dot.g { background: #28c840; }
+.mock-titlebar-text { color: #999; font-size: 0.7rem; margin-left: auto; }
+.mock-body { display: flex; min-height: 80px; }
+.mock-sidebar { background: #252526; width: 40px; display: flex; flex-direction: column; align-items: center; padding-top: 8px; gap: 8px; }
+.mock-sidebar-icon { color: #888; font-size: 0.85rem; }
+.mock-content { flex: 1; padding: 10px; color: #888; font-size: 0.72rem; font-family: 'SF Mono', monospace; }
+.mock-topbar { background: #252526; padding: 4px 8px; display: flex; justify-content: flex-end; align-items: center; gap: 6px; border-bottom: 1px solid #333; }
+.mock-star { color: #f9a825; font-size: 1rem; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.mock-star-label { background: #f9a825; color: #1e1e1e; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+
+/* フロー図 */
+.visual-flow { display: flex; align-items: center; justify-content: center; gap: 0; margin: 1rem 0; flex-wrap: wrap; }
+.vf-step { background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; padding: 0.6rem 0.8rem; text-align: center; min-width: 80px; }
+.vf-step .icon { font-size: 1.2rem; margin-bottom: 0.2rem; }
+.vf-step .label { font-size: 0.7rem; color: #555; font-weight: 600; }
+.vf-arrow { color: #ccc; font-size: 1rem; margin: 0 4px; }
+
+/* 成長図 */
+.growth-flow { display: flex; align-items: stretch; gap: 12px; margin: 1rem 0; justify-content: center; }
+.growth-stage { background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; padding: 0.8rem; text-align: center; flex: 1; max-width: 160px; transition: all 0.2s; }
+.growth-stage:hover { border-color: #1976d2; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.growth-stage .stage-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+.growth-stage .stage-title { font-size: 0.78rem; font-weight: 700; color: #333; }
+.growth-stage .stage-desc { font-size: 0.68rem; color: #999; margin-top: 0.2rem; line-height: 1.4; }
+.growth-arrow { display: flex; align-items: center; color: #1976d2; font-size: 1.2rem; font-weight: 700; }
+
+/* OS切替 */
+.os-switcher { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+.os-btn { padding: 0.5rem 1.2rem; border-radius: 8px; border: 2px solid #e0e0e0; background: #fff; font-size: 0.88rem; font-weight: 600; cursor: pointer; color: #888; transition: all 0.2s; }
+.os-btn.active { border-color: #1976d2; color: #1976d2; background: #e3f2fd; }
+.os-btn:hover { border-color: #1976d2; }
+.win-only { display: block; }
+.mac-only { display: none; }
+body.os-mac .win-only { display: none; }
+body.os-mac .mac-only { display: block; }
+</style>
+</head>
+<body>
+
+<!-- OS切替 -->
+<div class="os-switcher">
+  <button class="os-btn active" onclick="switchOS('win')">Windows</button>
+  <button class="os-btn" onclick="switchOS('mac')">Mac</button>
+</div>
+
+<h1>初期セットアップガイド</h1>
+<p class="subtitle">LINEチーム — 業務開始前にやっておくこと（20分で終わります）</p>
+
+<p>LINEチームでは <strong>Claude Code（AIアシスタント）</strong>を中心に業務を行います。<br>
+この手順に沿って環境を整えてください。</p>
+
+<div class="callout gray">
+  <p><strong>わからないことがあったら Ren に聞いてください。</strong> 全部フォローします。</p>
+</div>
+
+<!-- ステップフロー図 -->
+<div class="step-flow">
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle required">1</div><div class="sf-label">Code<br>導入</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle required">2</div><div class="sf-label">ログ<br>イン</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle optional">3</div><div class="sf-label">Chrome<br>拡張</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle required">4</div><div class="sf-label">Git<br>Hub</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle required">5</div><div class="sf-label">Git<br>設定</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle required">6</div><div class="sf-label">リポ<br>DL</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle required">7</div><div class="sf-label">動作<br>確認</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle optional">8</div><div class="sf-label">AI<br>分析</div></div></div>
+  <div class="sf-arrow">→</div>
+  <div class="sf-item"><div class="sf-col"><div class="sf-circle required">9</div><div class="sf-label">業務<br>設定</div></div></div>
+</div>
+<p style="text-align:center; font-size:0.75rem; color:#aaa; margin-top:-0.5rem;">🔵 必須 &nbsp; ⚪ おすすめ</p>
+
+<!-- ======================================== -->
+<!-- Step 1: Claude Code インストール -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">1</span>
+  <span class="step-title">Claude Code をインストール</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">5分</span>
+
+  <div class="step-detail">
+    <p><strong>デスクトップ版とVS Code版、両方インストールしてください。</strong><br>
+    普段はVS Code版をメインで使いますが、デスクトップ版も入れておくと便利です。</p>
+
+    <div class="win-only">
+      <div class="callout red">
+        <p><strong>⚠ 最初にこれをやってください</strong></p>
+        <p>Claude Code は <strong>Git Bash</strong> が必須です。</p>
+        <ol>
+          <li><a href="https://git-scm.com/downloads/win" target="_blank">git-scm.com/downloads/win</a> から Git for Windows をダウンロード</li>
+          <li>インストール時に<strong>「Add to PATH」にチェック</strong>を入れる</li>
+          <li>インストール完了後、VS Code を再起動</li>
+        </ol>
+        <p><strong>インストール済みなのにエラーが出る場合：</strong></p>
+        <p>PATHに通ってない可能性あり。Windowsの「システム環境変数の編集」→「環境変数」→「新規」で以下を追加：</p>
+        <pre>CLAUDE_CODE_GIT_BASH_PATH = C:\Program Files\Git\bin\bash.exe</pre>
+        <p>設定後、VS Code を再起動。</p>
+      </div>
+    </div>
+
+    <div class="tab-container">
+      <div class="tab active" onclick="switchTab('vscode')">VS Code版（おすすめ）</div>
+      <div class="tab" onclick="switchTab('desktop')">デスクトップ版</div>
+    </div>
+
+    <div class="tab-content active" id="tab-vscode">
+      <h3>① VS Code をインストール</h3>
+      <p>まだの場合 → <a href="https://code.visualstudio.com/download" target="_blank">VS Code ダウンロード</a></p>
+      <ol>
+        <li>ダウンロードしたインストーラーを実行</li>
+        <li>インストール完了後、VS Code を起動</li>
+      </ol>
+
+      <h3>② 日本語化する（初めての場合）</h3>
+      <ol>
+        <li>キーボードで <code>Ctrl + Shift + X</code>（Macは <code>Cmd + Shift + X</code>）を押す
+          <p class="sub-note">→ 左に「拡張機能」パネルが開く</p></li>
+        <li>検索バーに <strong>Japanese Language Pack</strong> と入力</li>
+        <li>「Japanese Language Pack for Visual Studio Code」（Microsoft公式）を<strong>インストール</strong></li>
+        <li>右下に「Restart」ボタンが出たらクリック → 日本語になる</li>
+      </ol>
+
+      <h3>③ Claude Code 拡張を入れる</h3>
+      <ol>
+        <li>同じく拡張機能パネル（<code>Ctrl + Shift + X</code>）で <strong>Claude Code</strong> と検索</li>
+        <li>「Claude Code」（発行元: <strong>Anthropic</strong>、認証済みマーク付き）を見つける
+          <p class="sub-note">→ 似た名前の拡張がありますが、Anthropic公式のものを選んでください</p></li>
+        <li><strong>「インストール」</strong>をクリック</li>
+        <li>インストール完了後、VS Code を再起動
+          <p class="sub-note">→ 再起動後、右上に ✱ アイコンが表示されればOK</p></li>
+        <li>✱ アイコンをクリック → ログイン画面が出る</li>
+      </ol>
+
+      <!-- VS Code 画面モック -->
+      <div class="mock-vscode">
+        <div class="mock-titlebar">
+          <div class="mock-dot r"></div><div class="mock-dot y"></div><div class="mock-dot g"></div>
+          <span class="mock-titlebar-text">Visual Studio Code</span>
+        </div>
+        <div class="mock-topbar">
+          <span style="color:#888;font-size:0.7rem;">インストール後 →</span>
+          <span class="mock-star">✱</span>
+          <span class="mock-star-label">ここをクリック！</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-sidebar">
+            <span class="mock-sidebar-icon">📄</span>
+            <span class="mock-sidebar-icon">🔍</span>
+            <span class="mock-sidebar-icon">🧩</span>
+          </div>
+          <div class="mock-content">
+            <span style="color:#569cd6;">// Claude Code を起動すると</span><br>
+            <span style="color:#569cd6;">// ここにAIチャットが開きます</span><br>
+            <span style="color:#dcdcaa;">// 日本語で話しかけるだけ！</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <p><strong>✱ アイコンが見つからない場合：</strong><br>
+        <code>Ctrl + Shift + P</code>（Macは <code>Cmd + Shift + P</code>） → 「Claude Code」と入力 → 候補から選択</p>
+      </div>
+
+      <h3>④ VS Code の基本操作（初めての人向け）</h3>
+      <div class="callout gray">
+        <p>VS Codeを使ったことがある人はスキップOK。</p>
+      </div>
+      <table style="font-size:0.82rem; margin-top:0.5rem;">
+        <tr><th>やりたいこと</th><th>操作</th></tr>
+        <tr><td>フォルダを開く</td><td>「ファイル」→「フォルダーを開く」</td></tr>
+        <tr><td>ターミナルを開く</td><td><code>Ctrl + `</code> または「ターミナル」→「新しいターミナル」</td></tr>
+        <tr><td>ファイルを保存</td><td><code>Ctrl + S</code>（Macは <code>Cmd + S</code>）</td></tr>
+        <tr><td>コマンドパレット</td><td><code>Ctrl + Shift + P</code>（Macは <code>Cmd + Shift + P</code>）</td></tr>
+        <tr><td>左サイドバーの切替</td><td><code>Ctrl + B</code>（Macは <code>Cmd + B</code>）</td></tr>
+      </table>
+      <p style="margin-top:0.8rem;"><strong>基本的にClaude Codeが全部やってくれるので、VS Codeの操作を覚える必要はほとんどありません。</strong> 困ったらClaude Codeに聞けばOK。</p>
+    </div>
+
+    <div class="tab-content" id="tab-desktop">
+      <ol>
+        <li><a href="https://claude.ai/download" target="_blank">claude.ai/download</a> にアクセス</li>
+        <li>お使いのOS用のインストーラーをダウンロード</li>
+        <li>ダウンロードされたファイルを実行</li>
+        <li>インストーラーの指示に従ってインストール</li>
+        <li>インストール完了後、アプリを起動</li>
+        <li>ログイン画面が表示される → 次のステップ2へ</li>
+      </ol>
+      <div class="win-only">
+        <div class="callout">
+          <p><strong>「WindowsによってPCが保護されました」と出た場合：</strong><br>
+          「詳細情報」→「実行」をクリックすれば進めます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 2: ログイン -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">2</span>
+  <span class="step-title">アカウントでログイン</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">1分</span>
+
+  <div class="step-detail">
+    <p><strong>あなたの社用Gメールアドレス</strong>でログインできます。</p>
+    <ol>
+      <li>ログイン画面で「Continue with Google」をクリック</li>
+      <li>社用Gメールアドレスを選択</li>
+      <li>ログイン完了 → Claude Codeが使える状態になる</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 3: Chrome拡張 -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">3</span>
+  <span class="step-title">Chrome拡張「Claude in Chrome」を入れる</span>
+  <span class="tag-recommended">おすすめ</span>
+  <span class="step-time">2分</span>
+
+  <div class="step-detail">
+    <p>Claude CodeがChromeブラウザを操作できるようになる拡張機能です。</p>
+    <ol>
+      <li>Chromeで <a href="https://chromewebstore.google.com/detail/claude-in-chrome/iebeoafjjkpogldliajminepjcomgnhk" target="_blank">Claude in Chrome</a> を開く</li>
+      <li>「Chromeに追加」をクリック</li>
+      <li>追加後、拡張機能アイコンをクリックして接続を確認</li>
+    </ol>
+
+    <div class="callout gray">
+      <p><strong>なぜ入れるの？</strong></p>
+      <p>これがあると、Claude CodeがWebページを直接見に行ける。</p>
+      <ul style="margin-top:0.3rem;">
+        <li>「このURLの記事チェックして」→ 実際にページを開いて読む</li>
+        <li>「競合サイトの構成を調べて」→ ブラウザで開いて抽出</li>
+      </ul>
+      <p>ないとURLの中身が読めない。あると世界が変わります。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 4: GitHubアカウント -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">4</span>
+  <span class="step-title">GitHubアカウントを作成</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">5分</span>
+
+  <div class="step-detail">
+    <p>チームのデータ共有に <strong>GitHub</strong>（エンジニア向けのクラウドストレージのようなもの）を使います。<br>
+    無料アカウントでOKです。</p>
+
+    <!-- GitHubサインアップフロー図 -->
+    <div class="visual-flow">
+      <div class="vf-step"><div class="icon">📧</div><div class="label">メール</div></div>
+      <div class="vf-arrow">→</div>
+      <div class="vf-step"><div class="icon">🔑</div><div class="label">パスワード</div></div>
+      <div class="vf-arrow">→</div>
+      <div class="vf-step"><div class="icon">👤</div><div class="label">ユーザー名</div></div>
+      <div class="vf-arrow">→</div>
+      <div class="vf-step"><div class="icon">✉️</div><div class="label">メール認証</div></div>
+      <div class="vf-arrow">→</div>
+      <div class="vf-step" style="border-color:#388e3c;"><div class="icon">✅</div><div class="label">完了！</div></div>
+    </div>
+
+    <ol>
+      <li><a href="https://github.com/signup" target="_blank">github.com/signup</a> にアクセス</li>
+      <li>メールアドレス → パスワード → ユーザー名を入力</li>
+      <li>メール認証（届いたメールのリンクをクリック）</li>
+      <li>プランは <strong>Free</strong> を選択</li>
+    </ol>
+
+    <div class="callout blue">
+      <p><strong>ユーザー名のコツ：</strong> 本名でもニックネームでもOK。短くて覚えやすいものがベスト。後から変更もできる。</p>
+    </div>
+
+    <div class="callout green">
+      <p><strong>作成したら、ユーザー名を Ren に伝えてください。</strong><br>
+      チームのリポジトリへの招待に必要です。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 5: Git初期設定 -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">5</span>
+  <span class="step-title">Git の初期設定</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">2分</span>
+
+  <div class="step-detail">
+    <div class="win-only">
+      <div class="callout blue">
+        <p><strong>ターミナルの開き方：</strong><br>
+        VS Codeのメニュー「ターミナル」→「新しいターミナル」、または <code>Ctrl + `</code><br>
+        ターミナルの種類が「Git Bash」になっていることを確認してください。</p>
+      </div>
+    </div>
+
+    <div class="mac-only">
+      <div class="callout blue">
+        <p><strong>ターミナルの開き方：</strong><br>
+        VS Codeのメニュー「ターミナル」→「新しいターミナル」、または <code>Cmd + `</code><br>
+        または Spotlight検索（<code>Cmd + Space</code>）で「ターミナル」と入力</p>
+      </div>
+    </div>
+
+    <p><strong>① Gitが入っているか確認</strong></p>
+<pre>git --version</pre>
+    <p>バージョン番号が表示されればOK。</p>
+
+    <div class="win-only">
+      <div class="callout">
+        <p><strong>エラーが出る場合：</strong> ステップ1の Git for Windows がインストールされていない可能性あり。先にインストールしてください。</p>
+      </div>
+    </div>
+
+    <div class="mac-only">
+      <div class="callout">
+        <p><strong>エラーが出る場合：</strong> 「Xcodeコマンドラインツールをインストールしますか？」と聞かれたら「インストール」を押してください。それでもダメならRenに連絡。</p>
+      </div>
+    </div>
+
+    <p><strong>② 名前とメールアドレスを設定</strong></p>
+<pre>git config --global user.name "<span class="highlight">自分の名前</span>"
+git config --global user.email "<span class="highlight">GitHubに登録したメールアドレス</span>"</pre>
+
+    <div class="callout gray">
+      <p>この設定は初回だけ。一度やれば次からは不要です。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 6: リポジトリをダウンロード -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">6</span>
+  <span class="step-title">作業リポジトリをダウンロード</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">2分</span>
+
+  <div class="step-detail">
+    <p>Renから<strong>招待メール</strong>が届いたら、メール内の「View invitation」→「Accept invitation」で承認してください。</p>
+
+    <div class="callout">
+      <p><strong>メールが届かない場合：</strong> Renに連絡してください。直接リンクで招待します。</p>
+    </div>
+
+    <p>承認後、ターミナルで以下を実行：</p>
+
+    <div class="win-only">
+<pre><span class="comment"># デスクトップに移動</span>
+cd ~/Desktop
+
+<span class="comment"># リポジトリをダウンロード</span>
+git clone https://github.com/Ren-japan/star-team.git
+
+<span class="comment"># フォルダに入る</span>
+cd star-team</pre>
+    </div>
+
+    <div class="mac-only">
+<pre><span class="comment"># デスクトップに移動</span>
+cd ~/Desktop
+
+<span class="comment"># リポジトリをダウンロード</span>
+git clone https://github.com/Ren-japan/star-team.git
+
+<span class="comment"># フォルダに入る</span>
+cd star-team</pre>
+    </div>
+
+    <p>デスクトップに <code>star-team</code> フォルダができます。</p>
+
+    <h3>自分の名前を登録する</h3>
+    <p>以下のコマンドの <code>Noah</code> を<strong>自分の名前に書き換えて</strong>実行：</p>
+
+    <div class="win-only">
+<pre><span class="comment"># Git Bash の場合</span>
+echo 'export STAR_TEAM_USER="<span class="highlight">Noah</span>"' >> ~/.bashrc
+source ~/.bashrc</pre>
+    </div>
+
+    <div class="mac-only">
+<pre>echo 'export STAR_TEAM_USER="<span class="highlight">Noah</span>"' >> ~/.zshrc
+source ~/.zshrc</pre>
+    </div>
+
+    <div class="callout blue">
+      <p><strong>Noah</strong> の部分を自分の名前に変えてください（Kate / Rinon）</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 7: 動作確認 -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">7</span>
+  <span class="step-title">動作確認</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">1分</span>
+
+  <div class="step-detail">
+    <p>全部うまくいったか確認します。ターミナルで以下を実行：</p>
+
+<pre>cd ~/Desktop/star-team
+python3 manage.py list</pre>
+
+    <div class="win-only">
+      <div class="callout">
+        <p><strong><code>python3</code> が使えない場合：</strong> <code>python manage.py list</code> で試してください。<br>
+        それでもダメな場合は <a href="https://www.python.org/downloads/" target="_blank">python.org</a> からPythonをインストールしてください。インストール時に<strong>「Add to PATH」にチェック</strong>を忘れずに。</p>
+      </div>
+    </div>
+
+    <p><strong>タスク一覧が表示されたらセットアップ完了です！</strong></p>
+
+    <div class="callout green">
+      <p><strong>おつかれさまでした。</strong> これで業務を始める準備が整いました。<br>
+      具体的な業務の進め方は、初日にRenから説明します。</p>
+    </div>
+
+    <p><strong>エラーが出た場合：</strong></p>
+    <ul>
+      <li><code>python3: command not found</code> → <code>python</code> で試す。それでもダメならRenに連絡</li>
+      <li><code>No such file or directory</code> → <code>cd ~/Desktop/star-team</code> を先に実行してから再度試す</li>
+      <li>その他のエラー → スクリーンショットを撮ってRenに送ってください</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 8: AIの使用傾向分析 -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">8</span>
+  <span class="step-title">今使ってるAIから「自分の考え方」を抽出する</span>
+  <span class="tag-recommended">やっておくとスムーズ</span>
+  <span class="step-time">5分</span>
+
+  <div class="step-detail">
+    <p>ChatGPT / Gemini / Claudeチャット版 — <strong>どれか一番使い込んでるAI</strong>に、<br>
+    以下のプロンプトをコピーして貼り付けてください。</p>
+
+    <div class="prompt-box">
+今までの会話から、私の以下の傾向をまとめてください。<br><br>
+1. 仕事の内容と目的（何をしている人か）<br>
+2. AIへの修正依頼・不満で多かったこと（「長い」「違う」「それじゃない」等）<br>
+3. 好きな回答スタイル（長い/短い、丁寧/フランク、結論先/説明先）<br>
+4. 「これやるな」「こうしろ」と言ったルール・制約<br>
+5. よく頼む作業トップ3<br>
+6. 私が大事にしていそうな仕事の価値観・哲学（推測でOK）<br><br>
+箇条書きで簡潔にお願いします。
+    </div>
+    <p class="copy-hint">↑ これをそのままコピーして、今使ってるAIに貼り付け</p>
+
+    <p><strong>出力をコピーしてメモ帳やメモアプリに保存</strong>しておいてください。<br>
+    初日のセットアップで使います。</p>
+
+    <div class="callout blue">
+      <p><strong>なぜこれをやるの？</strong></p>
+      <p>あなたの考え方・哲学・好みを新しいAIに引き継ぐため。<br>
+      これがあると、初日からあなた好みのAIに近づきます。<br>
+      ゼロから教え直す手間が省ける。</p>
+    </div>
+
+    <div class="callout gray">
+      <p><strong>AIを使い込んでない人は？</strong> スキップしてOK。<br>
+      初日のセットアップで質問に答えるだけでも十分です。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Step 9: 業務フォルダのセットアップ -->
+<!-- ======================================== -->
+<div class="step-box">
+  <span class="step-num">9</span>
+  <span class="step-title">業務フォルダをセットアップ</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">5分</span>
+
+  <div class="step-detail">
+    <p>Renから共有される <strong>ZIPファイル</strong> をダウンロードして、あなた専用のAI作業環境を作ります。</p>
+
+    <h3>① ZIPをダウンロード・解凍</h3>
+    <p>Renから共有されるリンクからZIPをダウンロードして解凍してください。<br>
+    <code>line-starter-kit</code> というフォルダができます。</p>
+
+    <h3>② フォルダ名を変更</h3>
+    <p><code>line-starter-kit</code> を <strong>自分の名前に変更</strong> してデスクトップに置いてください。</p>
+    <p>例:</p>
+    <ul>
+      <li>Noah → <code>project-noah</code></li>
+      <li>Kate → <code>project-kate</code></li>
+      <li>Rinon → <code>project-rinon</code></li>
+    </ul>
+
+    <h3>③ フォルダの中身</h3>
+    <p>このフォルダが、あなたとAIの作業場所になります。</p>
+
+    <div style="background:#1e1e1e; color:#d4d4d4; border-radius:8px; padding:1rem 1.2rem; margin:0.8rem 0; font-family:'SF Mono',monospace; font-size:0.78rem; line-height:1.9;">
+      <span style="color:#dcdcaa;">project-noah/</span><br>
+      ├── <span style="color:#6a9955;">CLAUDE.md</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← AIへの業務マニュアル<br>
+      ├── <span style="color:#569cd6;">roles/</span><br>
+      │&nbsp;&nbsp; ├── <span style="color:#569cd6;">assistant/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← <strong style="color:#e0ddd8;">あなた専用のAI人格</strong>（使うほど育つ）<br>
+      │&nbsp;&nbsp; │&nbsp;&nbsp; ├── mind.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← 行動原則・好み<br>
+      │&nbsp;&nbsp; │&nbsp;&nbsp; └── memory.md &nbsp;&nbsp;&nbsp;&nbsp;← 学び・進捗・申し送り<br>
+      │&nbsp;&nbsp; ├── <span style="color:#569cd6;">cio/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← データ分析の専門知識<br>
+      │&nbsp;&nbsp; └── <span style="color:#569cd6;">cmo/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← マーケ設計の専門知識<br>
+      ├── <span style="color:#569cd6;">knowledge/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← チーム共通のノウハウ集<br>
+      │&nbsp;&nbsp; ├── playbooks.md &nbsp;&nbsp;&nbsp;&nbsp;← 効いた施策パターン<br>
+      │&nbsp;&nbsp; ├── anti-patterns.md ← やっちゃダメ集<br>
+      │&nbsp;&nbsp; └── ... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← その他の知識ファイル<br>
+      └── <span style="color:#569cd6;">files/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← 参考資料・画像の置き場
+    </div>
+
+    <!-- AI成長フロー -->
+    <div class="growth-flow">
+      <div class="growth-stage">
+        <div class="stage-icon">🌱</div>
+        <div class="stage-title">初日</div>
+        <div class="stage-desc">まっさらな状態<br>/setup で基本設定</div>
+      </div>
+      <div class="growth-arrow">→</div>
+      <div class="growth-stage" style="border-color:#1976d2;">
+        <div class="stage-icon">🌿</div>
+        <div class="stage-title">1週間</div>
+        <div class="stage-desc">好み・やり方を<br>学習して蓄積</div>
+      </div>
+      <div class="growth-arrow">→</div>
+      <div class="growth-stage" style="border-color:#388e3c;">
+        <div class="stage-icon">🌳</div>
+        <div class="stage-title">1ヶ月</div>
+        <div class="stage-desc">あなた専用の<br>AIアシスタント</div>
+      </div>
+    </div>
+
+    <div class="callout blue">
+      <p><strong>ポイント:</strong> <code>roles/assistant/</code> の中身は、あなたが使うほど自動で育ちます。<br>
+      AIがあなたの好み・やり方を学習してファイルに書き込んでいくので、使えば使うほど賢くなります。</p>
+    </div>
+
+    <h3>④ Claude Codeで初回セットアップ</h3>
+    <p>VS Codeでフォルダを開いて、Claude Codeを起動します。</p>
+    <ol>
+      <li>VS Codeで「ファイル」→「フォルダーを開く」→ デスクトップの <code>project-〇〇</code> を選択</li>
+      <li>Claude Codeを起動（右上の ✱ アイコン、または <code>Ctrl + Shift + P</code> → Claude Code）</li>
+      <li><strong>自動でセットアップが始まります</strong> — 4つの質問に答えるだけ:
+        <ul>
+          <li>名前</li>
+          <li>担当業務</li>
+          <li>AIの話し方の好み</li>
+          <li>AI傾向分析の結果（ステップ8でやった人だけ）</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="callout green">
+      <p><strong>「セットアップ完了！」と表示されたら準備完了。</strong><br>
+      あとは普通に話しかけるだけで業務を始められます。</p>
+    </div>
+
+    <div class="callout gray">
+      <p><strong>自動セットアップが始まらない場合:</strong><br>
+      チャット欄に <code>/setup</code> と入力してEnterを押してください。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- チェックリスト -->
+<!-- ======================================== -->
+<h2>セットアップチェックリスト</h2>
+
+<div class="step-box">
+  <ul class="check-list">
+    <li>VS Code をインストールした</li>
+    <li>VS Code を日本語化した</li>
+    <li>Claude Code 拡張をインストールした</li>
+    <li>デスクトップ版もインストールした</li>
+    <li>Claude Code にログインできた</li>
+    <li>（おすすめ）Chrome拡張を入れた</li>
+    <li>GitHubアカウントを作成した</li>
+    <li>ユーザー名をRenに伝えた</li>
+    <li>招待メールを承認した</li>
+    <li>Git の初期設定をした（名前 + メール）</li>
+    <li>リポジトリを clone した</li>
+    <li>自分の名前を登録した（STAR_TEAM_USER）</li>
+    <li><code>python3 manage.py list</code> でタスクが表示された</li>
+    <li>（やっておくとスムーズ）AIの使用傾向を抽出した</li>
+    <li>業務フォルダをセットアップした（ZIP解凍 → リネーム → /setup完了）</li>
+  </ul>
+</div>
+
+<div class="callout green" style="margin-top: 2rem;">
+  <p><strong>ステップ1〜2、4〜7が終わっていればOKです。</strong><br>
+  ステップ3・8は余裕があればやっておくとスムーズです。<br>
+  業務の進め方は初日にRenから説明します。</p>
+</div>
+
+<div class="footer">LINEチーム — 初期セットアップガイド</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  if (tab === 'vscode') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('tab-vscode').classList.add('active');
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    document.getElementById('tab-desktop').classList.add('active');
+  }
+}
+
+function switchOS(os) {
+  document.querySelectorAll('.os-btn').forEach(b => b.classList.remove('active'));
+  if (os === 'mac') {
+    document.body.classList.add('os-mac');
+    document.querySelectorAll('.os-btn')[1].classList.add('active');
+  } else {
+    document.body.classList.remove('os-mac');
+    document.querySelectorAll('.os-btn')[0].classList.add('active');
+  }
+}
+</script>
+
+</body>
+</html>

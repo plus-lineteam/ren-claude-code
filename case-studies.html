@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ケーススタディ — 雑な一言からツールが生まれるまで</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: #fafafa; color: #222; line-height: 2; max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.6rem; font-weight: 800; margin: 0 0 0.3rem; color: #111; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.3rem; font-weight: 700; margin: 3rem 0 0.8rem; color: #111; padding-bottom: 0.3rem; border-bottom: 2px solid #e0e0e0; }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #333; }
+  p { margin-bottom: 1rem; color: #444; font-size: 0.95rem; }
+  strong { color: #111; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+
+  .day-label {
+    background: #1976d2; color: white; display: inline-block; padding: 0.2rem 0.8rem;
+    border-radius: 4px; font-size: 0.8rem; font-weight: 700; margin: 1.5rem 0 0.5rem;
+  }
+
+  .chat {
+    background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;
+    padding: 1rem 1.2rem; margin: 0.5rem 0;
+  }
+  .chat-msg { margin-bottom: 0.8rem; }
+  .chat-msg:last-child { margin-bottom: 0; }
+  .chat-user { font-weight: 700; font-size: 0.8rem; color: #1976d2; margin-bottom: 0.1rem; }
+  .chat-user.ai { color: #7b1fa2; }
+  .chat-body { font-size: 0.88rem; color: #333; margin-left: 0.8rem; line-height: 1.8; }
+  .chat-body small { color: #888; }
+  .chat-memo {
+    background: #e8f5e9; border-left: 3px solid #388e3c; padding: 0.4rem 0.8rem;
+    margin: 0.3rem 0 0.5rem 0.8rem; font-size: 0.82rem; color: #2e7d32; border-radius: 0 4px 4px 0;
+  }
+
+  .result-box {
+    background: #fff; border: 2px solid #1976d2; border-radius: 10px;
+    padding: 1.2rem 1.5rem; margin: 1.5rem 0; text-align: center;
+  }
+  .result-box h3 { color: #1565c0; margin: 0 0 0.5rem; }
+  .result-box p { margin: 0; }
+
+  .callout {
+    background: #fff8e1; border-left: 4px solid #f9a825; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;
+  }
+  .callout p { margin-bottom: 0.3rem; }
+</style>
+</head>
+<body>
+
+<h1>ケーススタディ</h1>
+<p class="subtitle">雑な一言から、ツールが生まれるまで。</p>
+
+<p>「AIを上手く使おう」と力む必要はない。<br>
+実際に育った事例を、<strong>リアルなチャットのやりとり</strong>で見てみよう。</p>
+
+<!-- ===== CASE 1 ===== -->
+<h2>Case 1: 「データ見せて」→ 自律レポートに化けた</h2>
+<p>LINEマーケティングの現場での実話。</p>
+
+<div class="day-label">Day 1</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">スプシのデータ見て今月どんな感じか教えて</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">今月の実績をまとめました。<br><br>
+    ■ 友だち追加数<br>
+    ・SEO経由: 847人（先月比 +12%）<br>
+    ・アド経由: 403人（先月比 -3%）<br>
+    ・合計: 1,250人<br><br>
+    ■ 診断完了数<br>
+    ・全体: 892人<br>
+    ・診断率: 71.4%<br><br>
+    ■ MCV（マイクロコンバージョン）<br>
+    ・LP遷移数: 187回<br>
+    ・MCV率: 21.0%<br><br>
+    ■ CV（最終コンバージョン）<br>
+    ・CV数: 42件<br>
+    ・CVR: 3.4%<br><br>
+    ■ ジャンル別内訳<br>
+    ・医療脱毛: CV 15件（CVR 4.2%）<br>
+    ・包茎: CV 12件（CVR 3.1%）<br>
+    ・AGA: CV 8件（CVR 2.8%）<br>
+    ・医療ダイエット: CV 7件（CVR 2.9%）<br><br>
+    全体的に堅調な推移です。SEO経由の友だち追加が好調で…</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">長い<br>悪いとこだけでいい 全部出されても見る時間ないし</div>
+  </div>
+  <div class="chat-memo">→ mind.md に自動追記: 「全指標を並べるな。悪化してるものだけ出せ」</div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">承知しました。悪化している指標のみ：<br><br>
+    ・アド経由の友だち追加: -3%（403人）<br>
+    ・MCV率が先月比で1.2pt低下</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">なんで下がってんの</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">申し訳ありません、原因まで分析していませんでした。<br>スプレッドシートのデータを掘り下げて…</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">いや、最初からそこまで出してよ<br>数字だけ並べられても意味ないじゃん</div>
+  </div>
+  <div class="chat-memo">→ mind.md に自動追記: 「数字だけ出すな。原因と対策をセットで」</div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">おっしゃる通りです。<br><br>
+    MCV率低下の原因：<br>
+    ・医療ダイエットジャンルのMCV率が5.2%→2.8%に急落<br>
+    ・該当ジャンルの診断→LP遷移ボタンのCTRが低下<br>
+    ・3/5にボタンのデザイン変更があった時期と一致<br><br>
+    推奨アクション：<br>
+    ・ボタンを3/5以前のデザインに戻す<br>
+    ・ABテストで検証してから本適用</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">おけ</div>
+  </div>
+</div>
+
+<div class="day-label">Day 3</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">またデータ見せて</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">悪化指標のみ、原因と対策セットで出します。<br><br>
+    ⚠ 医療ダイエット MCV率: 2.8%→2.4%（さらに悪化）<br>
+    &nbsp;&nbsp;原因: ボタン戻しがまだ反映されてない<br>
+    &nbsp;&nbsp;対策: winut側の反映を確認<br><br>
+    ⚠ 包茎ジャンル 診断率: 78%→71%（-7pt）<br>
+    &nbsp;&nbsp;原因: 新記事経由のPUが増加 → 検索意図と診断テーマのミスマッチの可能性<br>
+    &nbsp;&nbsp;対策: 新記事のPU設定を確認<br><br>
+    好調指標もありますが出しますか？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">好調は1行でいい</div>
+  </div>
+  <div class="chat-memo">→ mind.md に自動追記: 「好調指標は1行サマリーで十分」</div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">✅ 好調: SEO友だち追加が引き続き+15%推移、医療脱毛CVRが4.2%→4.8%に改善</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">このフォーマットいいね<br>これ毎朝やるからスキルにして</div>
+  </div>
+  <div class="chat-memo">→ skills/morning-report/ が自動生成された</div>
+</div>
+
+<div class="day-label">Day 7</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">おはよう</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">おはようございます。<br><br>
+    ━━ /morning-report ━━<br><br>
+    ⚠ 異常検知<br>
+    ・包茎ジャンル MCV率が3日連続低下<br>
+    &nbsp;&nbsp;2.1% → 1.9% → 1.7%<br>
+    &nbsp;&nbsp;原因: 診断結果ページのLP導線が先週の更新で崩れてる可能性<br>
+    &nbsp;&nbsp;対策: 結果ページのボタン表示を確認<br><br>
+    ⚠ 要注意<br>
+    ・AGA新記事のPU→友だち転換率が他ジャンルの半分（1.2% vs 平均2.4%）<br>
+    &nbsp;&nbsp;原因: PUのクリエイティブがジャンルと合ってない可能性<br>
+    &nbsp;&nbsp;対策: AGA用のPUバナーに差し替え<br><br>
+    ✅ 好調: 医療脱毛CVR 5.1%で過去最高更新<br><br>
+    今日のアクション提案：<br>
+    1. 包茎の結果ページ確認（緊急度：高）<br>
+    2. AGA PUバナー差し替え依頼（緊急度：中）</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">2は来週でいい。1だけ今日やる</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">了解。2は来週タスクに入れておきます。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">あとさ、毎回「おはようございます」いらない<br>データだけ出して</div>
+  </div>
+  <div class="chat-memo">→ mind.md に自動追記: 「挨拶不要。データから始めろ」</div>
+</div>
+
+<div class="day-label">Day 14</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">おはよう</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">━━ /morning-report ━━<br><br>
+    ⚠ 異常検知: なし<br><br>
+    ⚠ 要注意<br>
+    ・医療ダイエット 今月CV3件（目標10件に対して達成率30%、残り16日）<br>
+    &nbsp;&nbsp;原因: 診断→MCV導線は改善済み。流入自体が少ない（SEO記事の順位低下）<br>
+    &nbsp;&nbsp;対策: 「医療ダイエット おすすめ」の記事をリライト<br><br>
+    ✅ 好調: 包茎CVR回復、AGA PU差し替え効果あり（転換率 1.2%→2.6%）<br><br>
+    先週入れた来週タスク:<br>
+    ・AGA PUバナー差し替え → ✅完了済み</div>
+  </div>
+</div>
+
+<div class="result-box">
+  <h3>14日間の変化</h3>
+  <p>Day 1: 全指標ベタ出し、原因なし、20行<br>
+  Day 3: 悪化のみ+原因+対策、好調1行<br>
+  Day 7: 異常検知が自動、アクション提案つき<br>
+  Day 14: 挨拶すら消えた。未完了タスクの追跡もしてる</p>
+  <p style="margin-top: 0.8rem;"><strong>renがやったことは「ダメ出し」だけ。</strong></p>
+</div>
+
+<!-- ===== CASE 2 ===== -->
+<h2>Case 2: 「ファイルまとめたいんだけど」→ 会社ができた</h2>
+<p>renの実例。たった一言の相談から、AIの組織構造が生まれた話。</p>
+
+<div class="day-label">Day 1 — 相談</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">相談なんだけどさ、今いろんなチャットでクロードコードでファイル作ってるけど、これ1つのファイルにまとめるのかのう？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">今のファイル構成を見てみますね。<br><br>
+    pm-memory.md（105行）、marketer-memory.md（217行）、MEMORY.md（181行）...<br><br>
+    バラバラですね。役割ごとにフォルダ分けた方がいいと思います。<br><br>
+    例えば：<br>
+    ・roles/ceo/ — 判断・振り分け担当<br>
+    ・roles/cio/ — データ分析担当<br>
+    ・roles/cmo/ — マーケティング担当<br>
+    それぞれにmind.md（性格）とmemory.md（記憶）を持たせる。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">お、いいね。やって</div>
+  </div>
+  <div class="chat-memo">→ この一言で、flat構造からroles/構造への大転換が始まった</div>
+</div>
+
+<div class="day-label">Day 3 — ダメ出しの嵐</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（CEO）</div>
+    <div class="chat-body">CMOの施策案ですが、PU文言を変更してみてはどうでしょうか？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">お前がマーケの中身語るな。CEOは判断だけ。CMOに聞いたか？</div>
+  </div>
+  <div class="chat-memo">→ mind.md に追記: 「CEO禁止事項: PU文言・診断設計への口出し。事業判断だけ」</div>
+</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（CEO）</div>
+    <div class="chat-body">データを修正しておきました。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">お前がいじると壊す。CTOに振れ</div>
+  </div>
+  <div class="chat-memo">→ mind.md に追記: 「CEOは絶対に直接作業するな。コード改修・データ集計は全て禁止」</div>
+</div>
+
+<div class="day-label">Day 7 — 自律的に動き始める</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（CEO）</div>
+    <div class="chat-body">renさん、タスクの件ですが、これ進めていいですか？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">「振るか？」って聞くな。データで判断できるならお前が決めて「GOでいい？」で持ってこい</div>
+  </div>
+  <div class="chat-memo">→ mind.md に追記: 「判断を投げるな。CEOが判断→実行→結果を持っていけ」</div>
+</div>
+
+<div class="day-label">Day 14 — 会社が動いてる</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">おはよう</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（CEO）</div>
+    <div class="chat-body">
+    ━━ 本日の状況 ━━<br><br>
+    ⚠ 医療ダイエット: 今月CV3件（目標10件、達成率30%）<br>
+    → CIOに分析振り済み。原因: SEO記事の順位低下<br>
+    → CMOにリライト案を依頼中<br><br>
+    ✅ 包茎: PU差し替え効果あり。CVR回復<br>
+    ✅ AGA: 先週のタスク全完了<br><br>
+    GOALまで残り16日。医療ダイエットが最優先。<br>
+    CIOの分析結果が出次第、renにアクション提案します。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">👍</div>
+  </div>
+</div>
+
+<div class="result-box">
+  <h3>14日間の変化</h3>
+  <p>Day 1: 「ファイルまとめたいんだけど」（雑な相談）<br>
+  Day 3: ダメ出しの嵐 → 行動原則が10個に<br>
+  Day 7: 「聞くな、自分で判断しろ」が浸透<br>
+  Day 14: CEOがCIO・CMOを自律的に動かして、renは👍だけ</p>
+  <p style="margin-top: 0.8rem;"><strong>たった一言の相談から、AIの「会社」ができた。</strong></p>
+</div>
+
+<!-- ===== CASE 3 ===== -->
+<h2>Case 3: 「記事チェックして」→ 「これ」だけで全部出る</h2>
+<p>SEO担当者の例。</p>
+
+<div class="day-label">Day 1</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">この記事レビューして（URL貼り付け）</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">記事をレビューしました。<br>
+    ・文字数: 3,200字<br>
+    ・見出し構成は適切です<br>
+    ・誤字脱字は見つかりませんでした<br>
+    全体的に良い記事だと思います。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">いやいやSEO的にどうなのよ。タイトルにKW入ってるか、H2の構成、内部リンク。そっちが見たいの</div>
+  </div>
+  <div class="chat-memo">→ mind.md に自動追記: 「記事レビュー = SEO観点。文章の良し悪しじゃない」</div>
+</div>
+
+<div class="day-label">Day 4</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">これもレビューして</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">SEOチェック結果：<br><br>
+    ⚠ タイトル: メインKW「医療脱毛 おすすめ」が後ろすぎる（32文字目）→ 先頭に寄せるべき<br>
+    ⚠ H2: サジェストKW「医療脱毛 安い」が見出しに入ってない<br>
+    ✅ 内部リンク: 関連記事3本に設置済み<br>
+    ✅ メタディスクリプション: KW含有OK</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">競合の記事と比較して足りないトピックもチェックして</div>
+  </div>
+  <div class="chat-memo">→ mind.md に自動追記: 「競合比較も標準でやれ」</div>
+</div>
+
+<div class="day-label">Day 15</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">これ</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">SEO + 競合分析結果：<br><br>
+    ⚠ 競合上位3記事にある「副作用」のセクションがない → 追加推奨<br>
+    ⚠ 前回のタイトル変更（記事B）はまだ2週間経ってません。順位安定前の再変更はNGでしたよね？<br>
+    ✅ タイトルKW位置: OK<br>
+    ✅ H2にサジェスト反映済み</div>
+  </div>
+  <div class="chat-memo">→ knowledge/mistakes.md: 「タイトル変更後2週間は触るな」が適用された</div>
+</div>
+
+<div class="result-box">
+  <h3>15日間の変化</h3>
+  <p>Day 1: 「良い記事ですね」（使えない）<br>
+  Day 4: SEOチェック + 競合分析<br>
+  Day 15: 「これ」の一言で全部出る。過去の失敗を踏まえた警告まで</p>
+  <p style="margin-top: 0.8rem;"><strong>「これ」の一言で全部わかるAIになった。</strong></p>
+</div>
+
+<!-- ===== CASE 4 ===== -->
+<h2>Case 4: 「勉強会やるんだけど」→ このキット全部できた</h2>
+<p>renの実例。今あなたが見ているこのスターターキットが、どう生まれたか。</p>
+
+<div class="day-label">Day 1 — 雑な相談</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">社内で勉強会やるんだけどさ、俺のClaude Codeのフォルダ構造見せたいんだよね</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">showcaseページ作りましょうか？HTMLで、カード形式で各ファイルの役割と中身が見えるやつ</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">いいね。GitHub Pagesで公開したい</div>
+  </div>
+  <div class="chat-memo">→ showcase HTML + GitHubリポ作成が始まった</div>
+</div>
+
+<div class="day-label">Day 2 — 「見せる」から「渡す」へ</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">これって中身を他の人に渡すにはどうすればいいのかって話だね。別のアカウント、別のPCになるからそれが前提で</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">スターターキットとして配布する形ですね。ren固有の内容を抜いて、「記憶が育つ仕組み」だけ渡す</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">そうそう。あとsetup試したけど抽象的で成果物ないし全然ダメ。メモリの仕組み自体を渡す方がいい</div>
+  </div>
+  <div class="chat-memo">→ /setup リニューアル + スターターキット構想が始まった</div>
+</div>
+
+<div class="day-label">Day 3 — こだわりの嵐</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">ガイドカッコつけないで。GOALの旗のもとにこだわって作って</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">「ここまで」って何？ユーザーに覚えさせてる時点で自動じゃないじゃん</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">哲学を入れたいんだよね。AIへの不満から逆算すれば哲学出てくるよね</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">俺がmdを手書きしたことってないんだよね。だからそうなる仕様にしたい</div>
+  </div>
+  <div class="chat-memo">→ すべてダメ出しから設計が磨かれていった</div>
+</div>
+
+<div class="result-box">
+  <h3>3日間の変化</h3>
+  <p>Day 1: 「フォルダ構造見せたい」（ただの共有の話）<br>
+  Day 2: 「仕組みを渡したい」（スターターキットに進化）<br>
+  Day 3: 自動記録、哲学の抽出、ケーススタディ — 全部renのダメ出しから生まれた</p>
+  <p style="margin-top: 0.8rem;"><strong>今あなたが見ているこのキット、全部「雑な一言」の積み重ねでできた。</strong></p>
+</div>
+
+<!-- ===== CASE 5 ===== -->
+<h2>Case 5: 「この記事どうにかしたい」→ 設計ブリーフが自動生成</h2>
+<p>renの実例。漠然とした相談から、デザイナーに渡せる設計書が自動で生まれた。</p>
+
+<div class="day-label">Day 1 — 漠然とした相談</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">この記事のCVRが低いんだけど、診断どうにかならない？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（CEO）</div>
+    <div class="chat-body">CIOにデータ分析振ります。<br><br>
+    → CIO分析結果:<br>
+    ・記事からの診断開始率は高い（82%）<br>
+    ・診断完了率も問題なし（76%）<br>
+    ・MCV（LP遷移）が1.8%で他ジャンルの半分<br>
+    → ボトルネックは「診断後にLPに飛ばない」</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">じゃあ診断の設計見直したいんだけど、CMOに投げて</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（CMO）</div>
+    <div class="chat-body">診断設計を見直します。現状の設問構成は…<br>（長い分析が続く）</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">これさ、毎回ゼロから分析してるけど、設計書みたいな形でまとめてくれない？デザイナーに渡せる形で</div>
+  </div>
+  <div class="chat-memo">→ 「ブリーフ（設計書）」という概念が生まれた瞬間</div>
+</div>
+
+<div class="day-label">Day 5 — ブリーフが定着</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">包茎の診断も見直して</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（CEO）</div>
+    <div class="chat-body">CIOにデータ分析 → CMOに設計見直し → ブリーフ生成します。<br><br>
+    ━━ 設計ブリーフ ━━<br>
+    ジャンル: 包茎<br>
+    ボトルネック: MCV率 2.1%（目標4%）<br>
+    原因仮説: 結果ページの訴求が弱い<br>
+    改善案: 結果タイプ別のLP導線を追加<br>
+    デザイナーへの依頼: 結果ページのCTAボタンを目立たせる<br>
+    ━━━━━━━━━━━━<br><br>
+    data/briefs/ に保存しました。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">いいね、これデザイナーにそのまま渡せるわ</div>
+  </div>
+</div>
+
+<div class="result-box">
+  <h3>5日間の変化</h3>
+  <p>Day 1: 「どうにかしたい」（漠然とした相談）<br>
+  Day 5: データ分析 → 設計見直し → デザイナー向けブリーフ、が一気通貫で自動生成</p>
+  <p style="margin-top: 0.8rem;"><strong>「どうにかしたい」が、渡せる成果物に変わった。</strong></p>
+</div>
+
+<!-- ===== CASE 6 ===== -->
+<h2>Case 6: 日常の細かいやつ — 全部積み重なる</h2>
+<p>大きなツール化だけじゃない。日々の小さい仕事も全部記憶に残る。</p>
+
+<div class="day-label">月曜 — CSV整理</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">このCSVの列、A列とC列だけ抜き出して</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">（処理完了）output/に保存しました。</div>
+  </div>
+  <div class="chat-memo">→ memory.md: 「CSVの出力先はoutput/。確認なしで保存OK」</div>
+</div>
+
+<div class="day-label">火曜 — メール下書き</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">クライアントにメール書いて。先月のレポート送付</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">件名: 3月度レポートのご送付<br><br>
+    いつもお世話になっております。<br>
+    3月度のレポートをお送りいたします…</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">もうちょい短く。あと「いつもお世話になっております」いらない</div>
+  </div>
+  <div class="chat-memo">→ mind.md: 「メールは短め。定型挨拶省略」</div>
+</div>
+
+<div class="day-label">水曜 — また別のメール</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">またメール。別のクライアント。レポート送付</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">件名: 3月度レポート送付<br><br>
+    3月度のレポートをお送りします。<br>
+    ご不明点がございましたらお気軽にご連絡ください。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">👍</div>
+  </div>
+  <div class="chat-memo">→ 火曜のダメ出しが効いてる。定型挨拶もう入ってない</div>
+</div>
+
+<div class="day-label">木曜 — 議事録まとめ</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">さっきの会議の内容まとめて</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">■ 決定事項<br>
+    ・新ジャンル（美容整形）を来月から追加<br>
+    ・予算は月50万スタート<br><br>
+    ■ 次アクション<br>
+    ・ren: 美容整形のKW調査（来週月曜まで）<br>
+    ・デザイナー: LP素材準備</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">決定事項と次アクション分けてくれるの助かる</div>
+  </div>
+  <div class="chat-memo">→ mind.md: 「会議メモは決定事項+次アクションで分ける」</div>
+</div>
+
+<div class="result-box">
+  <h3>1週間の積み重ね</h3>
+  <p>どれも5分で終わる小さい仕事。でも全部記憶に残ってる。<br><br>
+  CSV → 出力先を覚えた<br>
+  メール → 好みの文体を覚えた<br>
+  議事録 → 好みのフォーマットを覚えた</p>
+  <p style="margin-top: 0.8rem;"><strong>小さい仕事を振るほどAIの精度が上がる。<br>
+  だから「何でもかんでも振ってみる」が正解。</strong></p>
+</div>
+
+<hr>
+
+<div class="callout">
+  <p><strong>6つのケースに共通すること：</strong></p>
+  <p>最初はみんな雑。「見て」「作って」「これ」「どうにかしたい」。<strong>それでいい。</strong><br>
+  ダメ出しするたびに精度が上がる。それが「育つ」ということ。<br><br>
+  大きいツール化も、日常の細かい仕事も、全部同じ。<br>
+  <strong>まずやらせてみて、違ったら「違う」と言う。それだけで育つ。</strong></p>
+</div>
+
+<hr>
+
+<p style="text-align: center;"><a href="guide.html" style="color: #1976d2; text-decoration: none; font-weight: 600;">← ガイドに戻る</a></p>
+
+<p style="text-align: center; color: #888; font-size: 0.85rem; margin-top: 2rem;">
+  Claude Code Starter Kit — by ren
+</p>
+
+</body>
+</html>

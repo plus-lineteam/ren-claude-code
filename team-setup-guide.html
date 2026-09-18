@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code × チーム運用セットアップガイド</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  background: #fafafa;
+  color: #222;
+  line-height: 2;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+h1 { font-size: 1.6rem; font-weight: 800; margin: 1.5rem 0 0.5rem; }
+h2 { font-size: 1.3rem; font-weight: 700; margin: 2rem 0 0.8rem; padding-bottom: 0.3rem; border-bottom: 2px solid #222; }
+h3 { font-size: 1.05rem; font-weight: 700; margin: 1.2rem 0 0.5rem; }
+h4 { font-size: 0.95rem; font-weight: 700; margin: 1rem 0 0.3rem; }
+p { font-size: 0.95rem; color: #444; margin: 0.5rem 0; }
+ul, ol { margin: 0.5rem 0 0.5rem 1.5rem; }
+li { font-size: 0.95rem; color: #444; }
+a { color: #1976d2; }
+code { background: #f0f0f0; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.85rem; }
+
+/* カラーパレット */
+/* オーナー：ブルー系 */
+/* メンバー：グリーン系 */
+/* 共通：イエロー系 */
+/* 注意：レッド系 */
+
+.callout { background: #fff8e1; border-left: 4px solid #f9a825; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+.callout.blue { background: #e3f2fd; border-color: #1976d2; }
+.callout.green { background: #e8f5e9; border-color: #388e3c; }
+.callout.red { background: #fce4ec; border-color: #c62828; }
+.callout p { margin: 0.2rem 0; }
+
+.diagram { background: #f5f5f5; border: 1px solid #ddd; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; text-align: center; }
+.diagram-title { font-size: 0.8rem; color: #888; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 1rem; text-transform: uppercase; }
+.diagram-row { display: flex; justify-content: center; gap: 1.5rem; margin: 0.5rem 0; flex-wrap: wrap; }
+.diagram-box { background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.85rem; font-weight: 600; color: #333; min-width: 140px; text-align: center; }
+.diagram-box.owner { border-color: #1976d2; background: #e3f2fd; color: #1565c0; }
+.diagram-box.member { border-color: #388e3c; background: #e8f5e9; color: #2e7d32; }
+.diagram-box.github { border-color: #333; background: #333; color: #fff; }
+.diagram-box small { display: block; font-weight: 400; font-size: 0.75rem; color: #666; margin-top: 0.2rem; }
+.diagram-box.github small { color: #ccc; }
+.diagram-arrow { color: #999; font-size: 1.2rem; text-align: center; padding: 0.2rem 0; }
+
+.flow-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0; }
+.flow-box h4 { margin-top: 0; }
+.flow-step { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.5rem 0; margin-left: 1.5rem; border-left: 2px solid #ddd; padding-left: 1rem; }
+.flow-step:last-child { border-left-color: transparent; }
+.flow-label { flex-shrink: 0; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; min-width: 60px; text-align: center; }
+.flow-label.owner { background: #e3f2fd; color: #1976d2; }
+.flow-label.member { background: #e8f5e9; color: #2e7d32; }
+.flow-label.github { background: #333; color: #fff; }
+.flow-content { font-size: 0.88rem; color: #444; line-height: 1.6; }
+.flow-note { font-size: 0.8rem; color: #888; margin: 0.2rem 0 0.2rem 1.5rem; }
+
+.step-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+.step-card .step-num { display: inline-block; background: #1976d2; color: #fff; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 50%; font-size: 0.8rem; font-weight: 700; margin-right: 0.5rem; }
+.step-card.member-step .step-num { background: #388e3c; }
+.step-card pre { background: #f5f5f5; border: 1px solid #ddd; border-radius: 6px; padding: 0.8rem 1rem; margin: 0.5rem 0; font-size: 0.82rem; overflow-x: auto; line-height: 1.6; }
+
+.role-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+.tag { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-right: 0.3rem; }
+.tag.blue { background: #e3f2fd; color: #1976d2; }
+.tag.green { background: #e8f5e9; color: #2e7d32; }
+.tag.red { background: #fce4ec; color: #c62828; }
+.tag.yellow { background: #fff8e1; color: #e65100; }
+
+.result-box { background: #fff; border: 2px solid #1976d2; border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; text-align: center; }
+.result-box h3 { color: #1565c0; margin: 0 0 0.5rem; }
+
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+th { text-align: left; padding: 0.6rem; font-size: 0.85rem; background: #f5f5f5; border-bottom: 2px solid #ddd; }
+td { padding: 0.6rem; font-size: 0.88rem; border-bottom: 1px solid #eee; color: #444; }
+
+.check-list { list-style: none; margin-left: 0; }
+.check-list li { padding: 0.3rem 0; font-size: 0.9rem; }
+.check-list li::before { content: "☐ "; font-size: 1rem; }
+
+.trouble-item { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.trouble-item .q { font-weight: 700; font-size: 0.9rem; color: #c62828; }
+.trouble-item .a { font-size: 0.88rem; color: #444; margin-top: 0.3rem; }
+</style>
+</head>
+<body>
+
+<h1>🔗 Claude Code × チーム運用<br>セットアップガイド</h1>
+<p style="color:#888; font-size:0.9rem;">1人で使ってるClaude Code環境を、チームメンバーと安全に共有する方法</p>
+
+<!-- もくじ -->
+<div class="callout blue">
+  <p><strong>もくじ</strong></p>
+  <p>1. <a href="#overview">全体像 — なぜリポジトリを2つに分けるのか</a></p>
+  <p>2. <a href="#compare">オーナーとメンバーの違い</a></p>
+  <p>3. <a href="#setup-owner">オーナー側のセットアップ</a></p>
+  <p>4. <a href="#setup-member">メンバー側のセットアップ</a></p>
+  <p>5. <a href="#daily">日常の運用フロー</a></p>
+  <p>6. <a href="#security">セキュリティルール</a></p>
+  <p>7. <a href="#trouble">トラブルシューティング</a></p>
+</div>
+
+<!-- ===== SECTION 1: 全体像 ===== -->
+<h2 id="overview">1. 全体像</h2>
+
+<p>今あなたが使っている<strong>既存のプロジェクトフォルダ</strong>を、チームメンバーと安全に共有する仕組み。<br>ポイントは<strong>リポジトリを2つに分ける</strong>こと。あなたのコードを守りつつ、メンバーが自走できる環境を作る。</p>
+
+<div class="callout">
+  <p><strong>💡 「既存のプロジェクトフォルダ」とは？</strong></p>
+  <p>あなたが普段使っているコード・ダッシュボード・Claude Code設定が入ったフォルダのこと。<br>
+  例：<code>claude-projects/</code> のように、複数のプロジェクトをまとめたフォルダ全体。<br>
+  これをそのままGitHubに上げて共有する。新しく作り直す必要はない。</p>
+</div>
+
+<div class="diagram">
+  <div class="diagram-title">リポジトリ構成</div>
+  <div class="diagram-row">
+    <div class="diagram-box github">GitHub<small>クラウド上の共有場所</small></div>
+  </div>
+  <div class="diagram-arrow">↕</div>
+  <div class="diagram-row">
+    <div class="diagram-box owner">既存のプロジェクトフォルダ<small>オーナーの本体 / メンバーは見るだけ</small></div>
+    <div class="diagram-box member">メンバー用ワークスペース<small>メンバー専用 / 自由に使える</small></div>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>💡 なぜ分けるのか？</strong></p>
+  <p>・メンバーの作業がオーナーのコードに影響しない</p>
+  <p>・メモリーやCLAUDE.mdが混ざらない</p>
+  <p>・承認フローなしでメンバーが自走できる</p>
+  <p>・GitHub無料プランでも運用できる</p>
+</div>
+
+<!-- 各PCの構成 -->
+<div class="diagram">
+  <div class="diagram-title">各PCのフォルダ構成</div>
+  <div class="diagram-row">
+    <div class="diagram-box owner" style="min-width:280px;">
+      <strong>オーナーのPC</strong>
+      <small style="text-align:left; display:block; margin-top:0.5rem;">
+        📁 既存のプロジェクト/ → 本体（編集・push/pull）<br>
+        📁 メンバーのワークスペース/ → 確認用（pullで見る）
+      </small>
+    </div>
+    <div class="diagram-box member" style="min-width:280px;">
+      <strong>メンバーのPC</strong>
+      <small style="text-align:left; display:block; margin-top:0.5rem;">
+        📁 既存のプロジェクト/ → 参照用（pullだけ）<br>
+        📁 自分のワークスペース/ → 作業場（push/pull）<br>
+        📄 ~/.claude/CLAUDE.md → 専用設定
+      </small>
+    </div>
+  </div>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag blue">既存のプロジェクト</span> = 教科書</h4>
+  <p style="font-size:0.88rem;">オーナーのコード、ダッシュボード、Claude Code設定が入ってる。メンバーは<strong>読むだけ</strong>。編集できない。</p>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag green">メンバー用ワークスペース</span> = ノート</h4>
+  <p style="font-size:0.88rem;">メンバーの分析メモ、レポート、メモリーが入る。<strong>好き放題使える</strong>。</p>
+</div>
+
+<!-- ===== SECTION 2: オーナーとメンバーの違い ===== -->
+<h2 id="compare">2. オーナーとメンバーの違い</h2>
+
+<p>一目でわかる対比表。</p>
+
+<table>
+  <tr>
+    <th></th>
+    <th style="background:#e3f2fd;"><span class="tag blue">オーナー</span></th>
+    <th style="background:#e8f5e9;"><span class="tag green">メンバー</span></th>
+  </tr>
+  <tr>
+    <td><strong>役割</strong></td>
+    <td>コード開発・管理</td>
+    <td>分析・レポート・作業</td>
+  </tr>
+  <tr>
+    <td><strong>既存プロジェクト</strong></td>
+    <td>✏️ 編集できる</td>
+    <td>👀 見るだけ</td>
+  </tr>
+  <tr>
+    <td><strong>ワークスペース</strong></td>
+    <td>👀 確認用（pullで見る）</td>
+    <td>✏️ 自由に使える</td>
+  </tr>
+  <tr>
+    <td><strong>CLAUDE.md</strong></td>
+    <td>自分の設定がそのまま</td>
+    <td>メンバー専用ルールを設置</td>
+  </tr>
+  <tr>
+    <td><strong>データソース</strong></td>
+    <td>自分の.env / credentials</td>
+    <td>オーナーから共有してもらう</td>
+  </tr>
+  <tr>
+    <td><strong>push先</strong></td>
+    <td>既存プロジェクト</td>
+    <td>ワークスペースのみ</td>
+  </tr>
+</table>
+
+<div class="callout">
+  <p><strong>💡 ポイント</strong></p>
+  <p>オーナーのフォルダに対して、メンバーは<strong>読み取り専用</strong>。メンバーが何をやっても、オーナーのコードには一切影響しない。</p>
+</div>
+
+<!-- ===== SECTION 2: オーナー側セットアップ ===== -->
+<h2 id="setup-owner">3. オーナー側のセットアップ</h2>
+
+<h3>STEP 1：既存のプロジェクトフォルダをGitHubに上げる</h3>
+
+<div class="step-card">
+  <p><span class="step-num">1</span><strong>.gitignore を作る</strong></p>
+  <p>機密ファイルをGitHubに上げないための設定。プロジェクトフォルダ直下に作成。</p>
+  <pre>.env
+credentials.json
+__pycache__/
+node_modules/
+.DS_Store</pre>
+  <div class="callout red" style="margin-top:0.8rem;">
+    <p>⚠️ <strong>.env と credentials.json は絶対にGitHubに上げない</strong>。パスワードと同じ扱い。</p>
+  </div>
+</div>
+
+<div class="step-card">
+  <p><span class="step-num">2</span><strong>GitHubにリポジトリ作成</strong></p>
+  <ol>
+    <li>GitHub → 右上「+」→「New repository」</li>
+    <li>Repository name を入力</li>
+    <li><strong>Private</strong> を選択</li>
+    <li>「Create repository」をクリック</li>
+  </ol>
+</div>
+
+<div class="step-card">
+  <p><span class="step-num">3</span><strong>ローカルからpush</strong></p>
+  <p>VSCodeのターミナルで：</p>
+  <pre>cd ~/Desktop/your-project-folder
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/your-project-folder.git
+git push -u origin main</pre>
+</div>
+
+<h3>STEP 2：メンバー用ワークスペースを作る</h3>
+
+<div class="step-card">
+  <p><span class="step-num">4</span><strong>フォルダ構成を作る</strong></p>
+  <pre>member-workspace/
+├── MEMBER_CLAUDE.md   ← メンバー用のClaude Code設定
+├── SETUP.md           ← セットアップ手順書
+├── memory/            ← 学んだこと・ナレッジ
+├── notes/             ← 分析メモ・気づき
+└── reports/           ← 提出用レポート</pre>
+</div>
+
+<div class="step-card">
+  <p><span class="step-num">5</span><strong>GitHubに上げて、メンバーを招待</strong></p>
+  <ol>
+    <li>同じ手順でリポジトリ作成 & push</li>
+    <li>Settings → Collaborators → <strong>Add people</strong></li>
+    <li>メンバーのGitHubユーザー名を入力して招待</li>
+    <li><strong>両方のリポジトリ</strong>で招待する</li>
+  </ol>
+</div>
+
+<h3>STEP 3：データソースを共有する</h3>
+
+<div class="step-card">
+  <p><span class="step-num">6</span><strong>credentials.json / .env を渡す</strong></p>
+  <table>
+    <tr><th>渡すもの</th><th>方法</th><th>注意</th></tr>
+    <tr><td><strong>credentials.json</strong></td><td>Slack DM / AirDrop</td><td>GitHubには絶対上げない</td></tr>
+    <tr><td><strong>.env の値</strong></td><td>Slack DMで直接伝える</td><td>メンバーが.envを自分で作る</td></tr>
+    <tr><td><strong>APIキー</strong></td><td>メンバー用を別途発行が理想</td><td>共有する場合はDMで</td></tr>
+  </table>
+</div>
+
+<!-- ===== SECTION 3: メンバー側セットアップ ===== -->
+<h2 id="setup-member">4. メンバー側のセットアップ</h2>
+
+<div class="step-card member-step">
+  <p><span class="step-num">1</span><strong>Gitをインストール（Mac）</strong></p>
+  <p>VSCodeのターミナルで：</p>
+  <pre>xcode-select --install</pre>
+  <p>ポップアップが出たら「インストール」→ 数分待つ → VSCode再起動</p>
+</div>
+
+<div class="step-card member-step">
+  <p><span class="step-num">2</span><strong>Git初期設定</strong></p>
+  <pre>git config --global user.name "GitHubユーザー名"
+git config --global user.email "GitHubメールアドレス"</pre>
+</div>
+
+<div class="step-card member-step">
+  <p><span class="step-num">3</span><strong>リポジトリをクローン（2つ）</strong></p>
+  <p>VSCode → 左の分岐マーク → 「リポジトリのクローン」</p>
+  <p>① 既存のプロジェクト（見る用）：</p>
+  <pre>https://github.com/OWNER_USERNAME/your-project-folder.git</pre>
+  <p>② 自分のワークスペース（作業用）：</p>
+  <pre>https://github.com/OWNER_USERNAME/member-workspace.git</pre>
+  <p>保存先はデスクトップでOK。</p>
+  <div class="callout green" style="margin-top:0.5rem;">
+    <p>💡 2つ目のクローンは「ファイル → 新しいウィンドウ」から開く</p>
+  </div>
+</div>
+
+<div class="step-card member-step">
+  <p><span class="step-num">4</span><strong>Claude Code設定を設置</strong></p>
+  <pre>mkdir -p ~/.claude
+cp ~/Desktop/member-workspace/MEMBER_CLAUDE.md ~/.claude/CLAUDE.md</pre>
+  <p>これでClaude Codeにメンバー専用のルールが適用される。</p>
+</div>
+
+<div class="step-card member-step">
+  <p><span class="step-num">5</span><strong>データソース接続</strong></p>
+  <ol>
+    <li>オーナーからもらった <code>credentials.json</code> をプロジェクトフォルダに配置</li>
+    <li><code>.env.example</code> をコピーして <code>.env</code> を作成、値を入力</li>
+    <li>必要なライブラリをインストール：</li>
+  </ol>
+  <pre>cd ~/Desktop/your-project-folder/対象プロジェクト
+pip install -r requirements.txt</pre>
+</div>
+
+<div class="step-card member-step">
+  <p><span class="step-num">6</span><strong>動作確認</strong></p>
+  <pre>streamlit run app_main.py</pre>
+  <p>ブラウザでダッシュボードが表示されれば完了！</p>
+</div>
+
+<!-- ===== SECTION 4: 日常の運用 ===== -->
+<h2 id="daily">5. 日常の運用フロー</h2>
+
+<div class="flow-box">
+  <h4>オーナーがコードを更新した場合</h4>
+  <div class="flow-step">
+    <span class="flow-label owner">オーナー</span>
+    <div class="flow-content">コードを修正して <strong>push</strong></div>
+  </div>
+  <div class="flow-note">↓ GitHub上で更新される</div>
+  <div class="flow-step">
+    <span class="flow-label member">メンバー</span>
+    <div class="flow-content">VSCodeで <strong>pull</strong> → 最新のコードが反映される</div>
+  </div>
+</div>
+
+<div class="flow-box">
+  <h4>メンバーが分析・作業をした場合</h4>
+  <div class="flow-step">
+    <span class="flow-label member">メンバー</span>
+    <div class="flow-content">Claude Codeで分析 → 結果を <strong>member-workspace</strong> に保存</div>
+  </div>
+  <div class="flow-note">↓ commit → push</div>
+  <div class="flow-step">
+    <span class="flow-label github">GitHub</span>
+    <div class="flow-content">member-workspaceが更新される</div>
+  </div>
+  <div class="flow-note">↓ オーナーが確認したいタイミングで</div>
+  <div class="flow-step">
+    <span class="flow-label owner">オーナー</span>
+    <div class="flow-content">member-workspaceを <strong>pull</strong> → メンバーの成果物が見れる</div>
+  </div>
+</div>
+
+<h3>VSCodeでのpull / push 手順</h3>
+
+<div class="role-card">
+  <h4>pull（最新を取得）</h4>
+  <p style="font-size:0.88rem;">左の分岐マーク → 上部「...」→「プル」<br>
+  またはステータスバーの🔄マークをクリック</p>
+</div>
+
+<div class="role-card">
+  <h4>push（変更をアップ）</h4>
+  <p style="font-size:0.88rem;">① メッセージ欄に一言書く（例：「離脱防止タグ分析」）<br>
+  ② 「コミット」ボタンを押す<br>
+  ③ 「...」→「プッシュ」</p>
+</div>
+
+<h3>日常タスクまとめ</h3>
+
+<table>
+  <tr><th></th><th>やること</th><th>頻度</th></tr>
+  <tr><td><span class="tag blue">オーナー</span></td><td>コード更新 → 既存プロジェクトにpush</td><td>随時</td></tr>
+  <tr><td><span class="tag blue">オーナー</span></td><td>member-workspaceをpull → 成果確認</td><td>毎日</td></tr>
+  <tr><td><span class="tag green">メンバー</span></td><td>既存プロジェクトをpull → 最新コード取得</td><td>毎朝</td></tr>
+  <tr><td><span class="tag green">メンバー</span></td><td>Claude Codeで分析・作業</td><td>随時</td></tr>
+  <tr><td><span class="tag green">メンバー</span></td><td>成果物をmember-workspaceにcommit → push</td><td>作業後</td></tr>
+</table>
+
+<!-- ===== SECTION 5: セキュリティ ===== -->
+<h2 id="security">6. セキュリティルール</h2>
+
+<div class="callout red">
+  <p><strong>⚠️ 絶対にやってはいけないこと</strong></p>
+  <p>・<code>.env</code> や <code>credentials.json</code> をGitHubにpushする</p>
+  <p>・APIキーをメールやチャットで送る（DM限定）</p>
+  <p>・リポジトリをPublicにする</p>
+  <p>・メンバーが既存プロジェクトのファイルを直接編集する</p>
+</div>
+
+<h3>セキュリティチェックリスト</h3>
+<ul class="check-list">
+  <li>リポジトリはPrivateになっているか</li>
+  <li>.gitignoreで.env、credentials.jsonが除外されているか</li>
+  <li>credentials.jsonはSlack DM等で安全に共有したか</li>
+  <li>メンバーのCLAUDE.mdに「既存プロジェクト編集禁止」ルールがあるか</li>
+  <li>GitHubに機密情報がpushされていないか</li>
+</ul>
+
+<!-- ===== SECTION 6: トラブルシューティング ===== -->
+<h2 id="trouble">7. トラブルシューティング</h2>
+
+<div class="trouble-item">
+  <div class="q">❓ ソース管理で「クローン」が出てこない</div>
+  <div class="a">→ 「ファイル → 新しいウィンドウ」で新しいVSCodeを開いてからやる</div>
+</div>
+
+<div class="trouble-item">
+  <div class="q">❓ 「user.name と user.email を設定しろ」と出る</div>
+  <div class="a">→ ターミナルで以下を実行：<br>
+  <code>git config --global user.name "ユーザー名"</code><br>
+  <code>git config --global user.email "メールアドレス"</code></div>
+</div>
+
+<div class="trouble-item">
+  <div class="q">❓ 「ステージされてない変更がある」と出る</div>
+  <div class="a">→ 「はい」を押せばOK。全ファイルをまとめてコミットしてくれる。</div>
+</div>
+
+<div class="trouble-item">
+  <div class="q">❓ credentials.jsonを置いたのにスプシに繋がらない</div>
+  <div class="a">→ ファイルの場所を確認。プロジェクトフォルダの直下にあるか？</div>
+</div>
+
+<div class="trouble-item">
+  <div class="q">❓ メンバーの変更がオーナー側に影響する？</div>
+  <div class="a">→ しない。リポジトリが別なので完全に独立。member-workspaceの変更は既存プロジェクトに一切影響なし。</div>
+</div>
+
+<div class="trouble-item">
+  <div class="q">❓ Xcode Command Line Toolsのダウンロードが遅い</div>
+  <div class="a">→ 1〜2GBあるので数分〜十数分かかる。初回だけなので待つ。</div>
+</div>
+
+<!-- まとめ -->
+<div class="result-box">
+  <h3>この座組で得られるもの</h3>
+  <p style="font-size:0.95rem;">
+    ✅ オーナーのコードは完全に守られる<br>
+    ✅ メンバーは自走できる環境が手に入る<br>
+    ✅ メンバーの成果物はpull一発で確認できる<br>
+    ✅ Claude Codeのメモリー・設定が混ざらない<br>
+    ✅ 無料プランで運用できる
+  </p>
+</div>
+
+<p style="text-align:center; color:#aaa; font-size:0.8rem; margin-top:3rem;">
+  Claude Code × Team Setup Guide — Created with Claude Code
+</p>
+
+</body>
+</html>

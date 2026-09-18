@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q&A — よくある質問</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: #fafafa; color: #222; line-height: 2; max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.6rem; font-weight: 800; margin: 0 0 0.3rem; color: #111; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.2rem; font-weight: 700; margin: 3rem 0 0.8rem; color: #1976d2; }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #333; }
+  p { margin-bottom: 1rem; color: #444; font-size: 0.95rem; }
+  strong { color: #111; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.3rem; font-size: 0.95rem; color: #444; }
+
+  .q-box {
+    background: #e3f2fd; border-left: 4px solid #1976d2; padding: 1rem 1.2rem;
+    margin: 2rem 0 1rem; border-radius: 0 8px 8px 0; font-weight: 700; color: #1565c0;
+  }
+
+  .callout {
+    background: #fff8e1; border-left: 4px solid #f9a825; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;
+  }
+  .callout.blue { background: #e3f2fd; border-color: #1976d2; }
+  .callout.green { background: #e8f5e9; border-color: #388e3c; }
+  .callout p { margin-bottom: 0.3rem; }
+
+  .diagram {
+    background: #f5f5f5; border: 1px solid #ddd; border-radius: 12px;
+    padding: 1.5rem; margin: 1.5rem 0; text-align: center;
+  }
+  .diagram-title { font-size: 0.8rem; color: #888; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 1rem; }
+  .diagram-col { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+  .diagram-row { display: flex; align-items: flex-start; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
+  .diagram-box {
+    background: #fff; border: 2px solid #ddd; border-radius: 10px;
+    padding: 0.7rem 1rem; font-size: 0.85rem; font-weight: 600; color: #333;
+    min-width: 140px; text-align: center;
+  }
+  .diagram-box.ceo { border-color: #c62828; background: #fce4ec; color: #b71c1c; }
+  .diagram-box.cio { border-color: #1976d2; background: #e3f2fd; color: #1565c0; }
+  .diagram-box.cmo { border-color: #f57f17; background: #fff8e1; color: #e65100; }
+  .diagram-box.cto { border-color: #388e3c; background: #e8f5e9; color: #2e7d32; }
+  .diagram-box small { display: block; font-weight: 400; font-size: 0.75rem; color: #888; margin-top: 2px; }
+  .diagram-arrow-down { color: #999; font-size: 1.2rem; text-align: center; padding: 0.2rem 0; }
+
+  .role-card {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 1.2rem 1.5rem; margin: 1rem 0;
+  }
+  .role-card h4 { font-size: 0.95rem; margin: 0 0 0.5rem; }
+  .role-card .tag {
+    display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px;
+    font-size: 0.75rem; font-weight: 600; margin-right: 0.3rem;
+  }
+  .role-card .tag.red { background: #fce4ec; color: #c62828; }
+  .role-card .tag.blue { background: #e3f2fd; color: #1976d2; }
+  .role-card .tag.orange { background: #fff8e1; color: #e65100; }
+  .role-card .tag.green { background: #e8f5e9; color: #388e3c; }
+  .role-card ul { margin: 0.5rem 0 0 1.2rem; }
+  .role-card li { font-size: 0.88rem; margin-bottom: 0.2rem; }
+
+  .chat {
+    background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;
+    padding: 1rem 1.2rem; margin: 0.5rem 0;
+  }
+  .chat-msg { margin-bottom: 0.8rem; }
+  .chat-msg:last-child { margin-bottom: 0; }
+  .chat-user { font-weight: 700; font-size: 0.8rem; color: #1976d2; margin-bottom: 0.1rem; }
+  .chat-user.ai { color: #7b1fa2; }
+  .chat-user.ceo { color: #c62828; }
+  .chat-user.cio { color: #1565c0; }
+  .chat-user.cmo { color: #e65100; }
+  .chat-user.cto { color: #2e7d32; }
+  .chat-body { font-size: 0.88rem; color: #333; margin-left: 0.8rem; line-height: 1.8; }
+  .chat-memo {
+    background: #e8f5e9; border-left: 3px solid #388e3c; padding: 0.4rem 0.8rem;
+    margin: 0.3rem 0 0.5rem 0.8rem; font-size: 0.82rem; color: #2e7d32; border-radius: 0 4px 4px 0;
+  }
+</style>
+</head>
+<body>
+
+<h1>Q&A</h1>
+<p class="subtitle">勉強会で出た質問に、実例つきで答えます。</p>
+
+<!-- ===== Q1 ===== -->
+<div class="q-box">Q. ロールごとの役割分担は？どんな業務を任せてる？</div>
+
+<p>renの実例で説明します。4つのロールがあって、それぞれ<strong>専門分野が違う</strong>。</p>
+
+<div class="diagram">
+  <div class="diagram-title">renの組織構成</div>
+  <div class="diagram-col">
+    <div class="diagram-box ceo">👔 CEO<small>判断・振り分け・品質チェック</small></div>
+    <div class="diagram-arrow-down">↓ 指示を出す</div>
+    <div class="diagram-row">
+      <div class="diagram-box cio">📊 CIO<small>データ分析</small></div>
+      <div class="diagram-box cmo">📣 CMO<small>マーケティング</small></div>
+      <div class="diagram-box cto">🔧 CTO<small>システム・開発</small></div>
+    </div>
+  </div>
+</div>
+
+<h3>各ロールの詳細</h3>
+
+<div class="role-card">
+  <h4><span class="tag red">CEO</span> 判断・振り分け・品質チェック</h4>
+  <p style="font-size:0.88rem; color:#666;">「何を・誰に・なぜやらせるか」を決める人。<strong>自分では手を動かさない。</strong></p>
+  <ul>
+    <li>毎朝の状況把握 → 今日やるべきことの優先順位づけ</li>
+    <li>CIO/CMO/CTOへの指示出し</li>
+    <li>各ロールのアウトプットの品質チェック</li>
+    <li>GOALから逆算して「今これやらないと間に合わない」を判断</li>
+  </ul>
+  <p style="font-size:0.82rem; color:#c62828; margin:0.5rem 0 0;"><strong>禁止事項：</strong>コード書くな、データ集計するな、マーケの中身語るな。判断だけ。</p>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag blue">CIO</span> データサイエンティスト</h4>
+  <p style="font-size:0.88rem; color:#666;">データを見て「何が起きてるか」「なぜか」を分析する人。</p>
+  <ul>
+    <li>毎朝のKPIレポート（morning-report）</li>
+    <li>異常検知（「この数字おかしくない？」）</li>
+    <li>ボトルネック特定（「CVRが落ちてるのはここが原因」）</li>
+    <li>施策の効果検証（「先週の変更、効いた？」）</li>
+  </ul>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag orange">CMO</span> マーケティング専門家</h4>
+  <p style="font-size:0.88rem; color:#666;">「ユーザーの頭の中」から施策を設計する人。</p>
+  <ul>
+    <li>LINE診断の設計（設問・結果・導線）</li>
+    <li>記事トリアージ（どの記事を優先的に改善するか）</li>
+    <li>PU（ポップアップ）の訴求設計</li>
+    <li>デザイナー向けブリーフ（設計書）の生成</li>
+  </ul>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag green">CTO</span> テクニカルアーキテクト</h4>
+  <p style="font-size:0.88rem; color:#666;">システムとインフラを管理する人。コードを書く唯一のロール。</p>
+  <ul>
+    <li>アプリ開発・コード修正</li>
+    <li>システム障害対応</li>
+    <li>データパイプライン管理</li>
+    <li>環境構築・デプロイ</li>
+  </ul>
+</div>
+
+<h3>実際の連携イメージ</h3>
+
+<p>例えば「医療ダイエットのCVRが低い」という課題が出た時：</p>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">医療ダイエットのCVR低いんだけど</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ceo">AI（CEO）</div>
+    <div class="chat-body">CIOにデータ分析を振ります。</div>
+  </div>
+  <div class="chat-memo">→ CEO自身はデータを触らない。CIOに振る</div>
+  <div class="chat-msg">
+    <div class="chat-user cio">AI（CIO）</div>
+    <div class="chat-body">分析結果：<br>
+    ・診断開始率 82%（問題なし）<br>
+    ・診断完了率 76%（問題なし）<br>
+    ・MCV率 1.8%（他ジャンルの半分）<br>
+    → ボトルネック：診断後にLPに飛ばない</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ceo">AI（CEO）</div>
+    <div class="chat-body">MCV率がボトルネック。CMOに診断設計の見直しを振ります。</div>
+  </div>
+  <div class="chat-memo">→ CEOはCIOの分析結果を見て、CMOに次の指示を出す</div>
+  <div class="chat-msg">
+    <div class="chat-user cmo">AI（CMO）</div>
+    <div class="chat-body">診断結果ページの訴求を見直します。<br>
+    改善案：結果タイプ別のLP導線を追加<br><br>
+    ━━ 設計ブリーフ ━━<br>
+    ジャンル: 医療ダイエット<br>
+    ボトルネック: MCV率 1.8%<br>
+    改善案: 結果ページCTAの訴求変更<br>
+    ━━━━━━━━━━━</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">👍 これデザイナーに渡す</div>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>ポイント：renがやったのは最初の一言と最後の👍だけ。</strong></p>
+  <p>CEO → CIO → CEO → CMO → ブリーフ生成。<br>
+  この連携が自動で回る。renは「判断」と「GO」だけ。</p>
+</div>
+
+<h3>SEOの現場だとこうなる</h3>
+
+<p>SEOマーケターが1ロール（assistant）で使う場合の具体例：</p>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">「医療脱毛 おすすめ」の記事、順位落ちてるんだけど見て</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">SEOチェック結果：<br><br>
+    ⚠ タイトル: メインKWが32文字目 → 先頭に寄せるべき<br>
+    ⚠ 競合上位3記事にある「副作用」セクションがない<br>
+    ⚠ 内部リンク: 関連記事が1本しかない（競合平均4本）<br>
+    ✅ H2にサジェストKW反映済み<br><br>
+    改善優先度：<br>
+    1. 「副作用」セクション追加（競合との差分で最大）<br>
+    2. 内部リンク3本追加<br>
+    3. タイトルKW位置調整</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">副作用セクションの構成案出して</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">競合3記事を分析して構成案：<br><br>
+    H2: 医療脱毛の副作用・リスク<br>
+    &nbsp;&nbsp;H3: よくある副作用（赤み・腫れ）<br>
+    &nbsp;&nbsp;H3: まれに起こる副作用<br>
+    &nbsp;&nbsp;H3: 副作用が出た時の対処法<br>
+    &nbsp;&nbsp;H3: クリニック選びで副作用リスクを減らすには<br><br>
+    最後のH3でクリニック比較への自然な導線になります。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">いいね。あと前回タイトル変更したやつ、まだ2週間経ってないから触るなよ</div>
+  </div>
+  <div class="chat-memo">→ knowledge/mistakes.md: 「タイトル変更後2週間は触るな」が記録される</div>
+</div>
+
+<p>次に別の記事で「これチェックして」と言うだけで：</p>
+<ul>
+  <li>SEO観点でチェックする（文章の良し悪しじゃない）</li>
+  <li>競合比較もやる（言わなくても標準で）</li>
+  <li>タイトル変更2週間ルールも自動で警告してくれる</li>
+</ul>
+
+<p><strong>1ロールでも、使い込めばSEO専門家に育つ。</strong></p>
+
+<h3>1ロール vs 3ロール — 同じ「順位改善」でどう変わる？</h3>
+
+<p>テーマ：<strong>「医療脱毛 おすすめ」の記事が5位→12位に落ちた。改善したい。</strong></p>
+
+<h4 style="margin-top:1.5rem;">🔹 1ロール（assistant）の場合</h4>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">この記事の順位が5位から12位に落ちた。改善して</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI（assistant）</div>
+    <div class="chat-body">順位低下の原因を分析して改善案を出します。<br><br>
+    ■ 原因分析<br>
+    ・競合が「副作用」セクションを追加して情報量で上回ってる<br>
+    ・内部リンクが1本（競合平均4本）<br>
+    ・タイトルのKW位置が後ろすぎる<br><br>
+    ■ 改善案<br>
+    1. 副作用セクション追加<br>
+    2. 内部リンク3本追加<br>
+    3. タイトルKW位置調整<br><br>
+    ■ リライト案<br>
+    H2: 医療脱毛の副作用・リスク<br>
+    （本文をそのまま書き始める…）</div>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>1ロールの特徴：</strong>分析→提案→実行を1人で全部やる。<br>
+  悪くはないけど、分析が浅くなりがち。リライトも「とりあえず書く」になる。</p>
+</div>
+
+<h4 style="margin-top:1.5rem;">🔸 3ロール（analyst / writer / manager）の場合</h4>
+
+<div class="diagram">
+  <div class="diagram-title">SEO 3ロール構成</div>
+  <div class="diagram-col">
+    <div class="diagram-box ceo">📋 manager<small>判断・優先度・品質チェック</small></div>
+    <div class="diagram-arrow-down">↓</div>
+    <div class="diagram-row">
+      <div class="diagram-box cio">📊 analyst<small>データ分析・競合調査</small></div>
+      <div class="diagram-box cmo">✍️ writer<small>構成案・リライト</small></div>
+    </div>
+  </div>
+</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">この記事の順位が5位から12位に落ちた。改善して</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ceo">AI（manager）</div>
+    <div class="chat-body">analystにデータ分析を振ります。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user cio">AI（analyst）</div>
+    <div class="chat-body">■ サーチコンソールデータ<br>
+    ・3/1時点: 5位 → 3/15: 12位（-7）<br>
+    ・CTR: 8.2% → 3.1%（-5.1pt）<br>
+    ・表示回数は横ばい → 順位低下がCTR低下の原因<br><br>
+    ■ 競合変動分析<br>
+    ・3/8に競合A（〇〇クリニック）が記事を大幅リライト<br>
+    ・追加されたセクション: 副作用、料金比較表、口コミまとめ<br>
+    ・競合Aの文字数: 4,200字 → 8,500字（倍増）<br><br>
+    ■ 自記事の弱点<br>
+    ・文字数: 3,200字（競合の半分以下）<br>
+    ・「副作用」「料金比較」セクションなし<br>
+    ・内部リンク1本（競合平均4.2本）<br>
+    ・共起語カバー率: 62%（競合A: 89%）<br><br>
+    ■ ボトルネック<br>
+    <strong>情報量で完全に負けてる。特に「副作用」と「料金比較」の欠落が致命的。</strong></div>
+  </div>
+  <div class="chat-memo">→ analystは数字を徹底的に掘る。「なんとなく」じゃなくデータで語る</div>
+  <div class="chat-msg">
+    <div class="chat-user ceo">AI（manager）</div>
+    <div class="chat-body">analystの分析を踏まえて優先度をつけます。<br><br>
+    <strong>優先度:</strong><br>
+    1. 副作用セクション追加（競合との差分で最大）<br>
+    2. 料金比較表追加（ユーザーの検索意図に直結）<br>
+    3. 内部リンク追加（3本）<br>
+    4. 共起語の補完<br><br>
+    writerに構成案を依頼します。<br>
+    <strong>注意: タイトル変更は前回から2週間経ってないのでNG。</strong></div>
+  </div>
+  <div class="chat-memo">→ managerはknowledge/のルールを踏まえて判断する</div>
+  <div class="chat-msg">
+    <div class="chat-user cmo">AI（writer）</div>
+    <div class="chat-body">analystのデータを元に構成案を作ります。<br><br>
+    ■ 追加セクション構成<br><br>
+    H2: 医療脱毛の副作用・リスク<br>
+    &nbsp;&nbsp;H3: よくある副作用（赤み・腫れ・毛嚢炎）<br>
+    &nbsp;&nbsp;H3: まれに起こる副作用（色素沈着・やけど）<br>
+    &nbsp;&nbsp;H3: 副作用を最小限にするクリニックの選び方<br><br>
+    H2: 医療脱毛の料金比較【2026年最新】<br>
+    &nbsp;&nbsp;H3: 部位別の相場（全身・VIO・顔）<br>
+    &nbsp;&nbsp;H3: 主要クリニック5院の料金表<br>
+    &nbsp;&nbsp;H3: 料金以外にチェックすべきポイント<br><br>
+    ■ 内部リンク候補<br>
+    ・「医療脱毛 痛み」記事 → 副作用セクションに設置<br>
+    ・「医療脱毛 VIO」記事 → 料金比較に設置<br>
+    ・「医療脱毛 口コミ」記事 → まとめに設置<br><br>
+    ■ 共起語で不足してるもの<br>
+    「施術回数」「照射範囲」「アフターケア」→ 本文中に自然に織り込みます</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ceo">AI（manager）</div>
+    <div class="chat-body">writerの構成案、問題なし。<br><br>
+    analystに確認: この構成で共起語カバー率は何%になる？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user cio">AI（analyst）</div>
+    <div class="chat-body">この構成で追加すると共起語カバー率は62% → 推定86%。<br>
+    競合A（89%）にほぼ並びます。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ceo">AI（manager）</div>
+    <div class="chat-body">OK。writerにリライト実行をGO出します。<br><br>
+    完成したらanalystに再チェック依頼します。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">👍</div>
+  </div>
+</div>
+
+<div class="result-box">
+  <h3>1ロール vs 3ロールの違い</h3>
+  <table>
+    <tr><th></th><th>1ロール</th><th>3ロール</th></tr>
+    <tr><td><strong>分析の深さ</strong></td><td>「競合に副作用セクションがある」</td><td>共起語カバー率62% vs 89%まで数値化</td></tr>
+    <tr><td><strong>判断</strong></td><td>改善案を並列で出す</td><td>managerが優先度をつける + NGルール適用</td></tr>
+    <tr><td><strong>構成案</strong></td><td>ざっくり</td><td>内部リンク候補 + 共起語補完まで設計</td></tr>
+    <tr><td><strong>品質チェック</strong></td><td>なし（書いて終わり）</td><td>analystが数値で再検証</td></tr>
+    <tr><td><strong>あなたの作業</strong></td><td>指示出し + 確認</td><td>最初の一言 + 👍</td></tr>
+  </table>
+  <p style="margin-top: 0.8rem;"><strong>同じ「順位改善して」でも、出てくるものの精度と深さが違う。</strong></p>
+</div>
+
+<div class="callout green">
+  <p><strong>でも、最初から3ロール作る必要はない。</strong></p>
+  <p>1ロールで使ってるうちに「分析と執筆は分けた方がいいな」と気づく瞬間がくる。<br>
+  その時に増やせばいい。<strong>「もう1人雇おう」の感覚で。</strong></p>
+</div>
+
+<!-- ===== リアル業務フロー（別ページに分離） ===== -->
+<div class="q-box">Q. 実際の業務でどう使い分けてるの？具体的なフローを教えて</div>
+
+<p>→ <strong><a href="role-workflow.html" style="color:#1976d2;">ロール活用ガイド（別ページ）</a></strong>で詳しく解説してます。<br>
+renのリアル業務フロー + SEOマーケター向けの置き換え例つき。</p>
+
+<hr>
+
+<!-- ===== コミュニケーションリスト ===== -->
+<div class="q-box">Q. AIとどう話せばいい？使えるフレーズ集</div>
+
+<p>特別な言い方は不要。でも<strong>「こう言うと育ちが早い」パターン</strong>がある。<br>
+クリックで具体的な会話例が見れます。</p>
+
+<style>
+  details { margin: 0.8rem 0; }
+  summary {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 0.8rem 1.2rem; cursor: pointer; font-weight: 600; font-size: 0.92rem;
+    color: #333; list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▶ "; color: #1976d2; }
+  details[open] summary::before { content: "▼ "; }
+  details[open] summary { border-radius: 8px 8px 0 0; border-bottom: none; }
+  .detail-body {
+    background: #fff; border: 1px solid #e0e0e0; border-top: none;
+    border-radius: 0 0 8px 8px; padding: 1rem 1.2rem;
+  }
+  .phrase { color: #1976d2; font-weight: 700; font-size: 0.95rem; }
+  .detail-body .chat { margin: 0.8rem 0; }
+</style>
+
+<details>
+  <summary>うまくいった → 「次からこれデフォルトにして」</summary>
+  <div class="detail-body">
+    <p>良いアウトプットが出たら、それを<strong>次回以降の標準にさせる</strong>。黙ってると次回もゼロからやり直す。</p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user ai">AI</div>
+        <div class="chat-body">（いい感じのレポートが出てくる）</div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body"><span class="phrase">このフォーマットいいね。次からレポートはこの形式でデフォルトにして</span></div>
+      </div>
+      <div class="chat-memo">→ mind.md に「レポートは〇〇形式で出す」が追記される。次回から自動</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>毎回同じ指示してる → 「次からどうするの？」</summary>
+  <div class="detail-body">
+    <p>同じことを2回言ったら、<strong>AIに自分で気づかせる</strong>。</p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body">また内部リンク忘れてるじゃん。<span class="phrase">これ毎回言ってるけど、次からどうするの？</span></div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-user ai">AI</div>
+        <div class="chat-body">すみません。mind.mdに「記事チェック時は内部リンクを必ず確認する」を追記しました。</div>
+      </div>
+      <div class="chat-memo">→ 自分で学習ルールを書かせる。二度と忘れない</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>的外れ → 「そうじゃなくて」+ 正解を教える</summary>
+  <div class="detail-body">
+    <p>「違う」だけだとAIは何が悪かったかわからない。<strong>正解をセットで教える</strong>と精度が上がる。</p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user ai">AI</div>
+        <div class="chat-body">記事の文章力を改善するには、接続詞を減らして…</div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body"><span class="phrase">そうじゃなくて、SEO的に見てほしいの。タイトル、H2、内部リンク。文章の良し悪しはどうでもいい</span></div>
+      </div>
+      <div class="chat-memo">→ mind.md: 「記事チェック = SEO観点。文章の良し悪しではない」</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>長すぎる → 「3行で」「結論だけ」</summary>
+  <div class="detail-body">
+    <p>一番多いダメ出し。<strong>一度言えば次から短くなる。</strong></p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user ai">AI</div>
+        <div class="chat-body">（長い分析が20行続く…）</div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body"><span class="phrase">長い。結論だけ先に。詳細は聞かれたら出して</span></div>
+      </div>
+      <div class="chat-memo">→ mind.md: 「結論ファースト。詳細は要求されたら出す」</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>自分で判断してほしい → 「聞くな、自分で判断して」</summary>
+  <div class="detail-body">
+    <p>AIが「どうしますか？」と聞いてばかりの時。<strong>判断基準を教えれば自分で動くようになる。</strong></p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user ai">AI</div>
+        <div class="chat-body">タイトルを変更しますか？それとも現状のままでいいですか？</div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body"><span class="phrase">そのくらい自分で判断して。順位下がってるなら変えるでしょ。迷ったら変えろ。明らかにダメな時だけ聞いて</span></div>
+      </div>
+      <div class="chat-memo">→ mind.md: 「判断できることは自分で判断。迷ったら変える。確認は致命的な時だけ」</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>作業をコマンド化したい → 「これ毎回やるからスキルにして」</summary>
+  <div class="detail-body">
+    <p>繰り返しやる作業は、<strong>一言でスキル化できる。</strong></p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body"><span class="phrase">このチェック、毎回やるからスキルにして。「/seo-check」で呼べるようにして</span></div>
+      </div>
+      <div class="chat-msg">
+        <div class="chat-user ai">AI</div>
+        <div class="chat-body">/seo-check スキルを作成しました。<br>タイトルKW・H2サジェスト・内部リンク・競合比較を自動でチェックします。</div>
+      </div>
+      <div class="chat-memo">→ 次から「/seo-check」の一言で全部動く</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>事実を覚えさせたい → そのまま教えるだけ</summary>
+  <div class="detail-body">
+    <p>「覚えて」と言わなくてもいい。<strong>事実を教えればAIが自動で記録する。</strong></p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body"><span class="phrase">A社の担当は田中さんね。あとうちの記事は3000字以上が基準</span></div>
+      </div>
+      <div class="chat-memo">→ memory.md に自動記録。次にA社や記事の話が出たら反映される</div>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>禁止事項を追加 → 理由もセットで</summary>
+  <div class="detail-body">
+    <p>「やるな」だけより、<strong>理由をセットで教えると二度と繰り返さない。</strong></p>
+    <div class="chat">
+      <div class="chat-msg">
+        <div class="chat-user">あなた</div>
+        <div class="chat-body"><span class="phrase">タイトル変更した後は2週間触るな。順位が安定する前に再変更すると逆効果だから</span></div>
+      </div>
+      <div class="chat-memo">→ knowledge/mistakes.md: 「タイトル変更後2週間は再変更NG（順位安定前の変更は逆効果）」</div>
+    </div>
+  </div>
+</details>
+
+<div class="callout green">
+  <p><strong>共通ルール：思ったことをそのまま言うだけ。</strong></p>
+  <p>特別な言い方も、特別なコマンドもいらない。<br>
+  違和感があったら遠慮なく言う。<strong>ダメ出しは最高の教育。</strong></p>
+</div>
+
+<hr>
+
+<p style="text-align: center;">
+  <a href="guide.html" style="color: #1976d2; text-decoration: none; font-weight: 600;">← ガイドに戻る</a>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="case-studies.html" style="color: #1976d2; text-decoration: none; font-weight: 600;">ケーススタディを見る →</a>
+</p>
+
+<p style="text-align: center; color: #888; font-size: 0.85rem; margin-top: 2rem;">
+  Claude Code Starter Kit — by ren
+</p>
+
+</body>
+</html>

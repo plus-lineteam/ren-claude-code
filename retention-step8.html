@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リテンション配信 8通設計 — 方法診断（GLP-1）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: #fafafa; color: #222; line-height: 1.8; max-width: 820px; margin: 0 auto; padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.3rem; color: #111; }
+  .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 1.5rem; }
+  h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 0.8rem; color: #111; padding-bottom: 0.3rem; border-bottom: 2px solid #e0e0e0; }
+  h3 { font-size: 1rem; font-weight: 700; margin: 1.5rem 0 0.4rem; color: #333; }
+  p { margin-bottom: 0.8rem; color: #444; font-size: 0.92rem; }
+  strong { color: #111; }
+
+  .tag {
+    display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 4px; margin-right: 4px; vertical-align: middle;
+  }
+  .tag-trust { background: #dcfce7; color: #166534; }
+  .tag-proof { background: #dbeafe; color: #1e40af; }
+  .tag-resolve { background: #fef3c7; color: #92400e; }
+  .tag-empathy { background: #fce7f3; color: #9d174d; }
+  .tag-imagine { background: #ede9fe; color: #5b21b6; }
+  .tag-cta { background: #fee2e2; color: #991b1b; }
+
+  /* 心理階段 */
+  .ladder {
+    display: flex; gap: 0; margin: 1.5rem 0; border-radius: 10px; overflow: hidden;
+    border: 1px solid #e0e0e0; font-size: 0.72rem; font-weight: 600; text-align: center;
+  }
+  .ladder-step { flex: 1; padding: 10px 4px; }
+  .ladder-step .num { font-size: 1.1rem; font-weight: 800; }
+  .ladder-step .lbl { margin-top: 2px; }
+  .ladder-step .day { font-weight: 400; color: rgba(0,0,0,0.5); font-size: 0.62rem; }
+  .l1 { background: #dcfce7; color: #166534; }
+  .l2 { background: #dbeafe; color: #1e40af; }
+  .l3 { background: #fef3c7; color: #92400e; }
+  .l4 { background: #fce7f3; color: #9d174d; }
+  .l5 { background: #ede9fe; color: #5b21b6; }
+  .l6 { background: #fee2e2; color: #991b1b; }
+  .l7 { background: #fecaca; color: #991b1b; }
+  .l8 { background: #f3f4f6; color: #374151; }
+
+  /* LINE風のメッセージ表示 */
+  .line-sim {
+    background: #8eacbb; padding: 16px; border-radius: 12px; margin: 16px 0;
+  }
+  .line-text {
+    background: #fff; border-radius: 14px; padding: 12px 16px;
+    font-size: 0.82rem; max-width: 75%; margin: 6px 0;
+    color: #222; line-height: 1.6; white-space: pre-line;
+  }
+
+  /* 表紙画像プレースホルダー */
+  .cover {
+    background: linear-gradient(135deg, #fce7f3 0%, #e0e7ff 100%);
+    border-radius: 12px; padding: 24px 18px 14px;
+    max-width: 260px; margin: 8px 0;
+    text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    position: relative;
+  }
+  .cover .cover-badge {
+    display: inline-block; background: #fff; color: #d1185b; font-size: 0.65rem;
+    font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 6px;
+    border: 2px solid #d1185b;
+  }
+  .cover .cover-title {
+    font-size: 1.15rem; font-weight: 800; color: #333; margin: 8px 0 6px; line-height: 1.35;
+  }
+  .cover .cover-sub {
+    font-size: 0.72rem; color: #666; margin-bottom: 12px;
+  }
+  .cover .cover-illust {
+    font-size: 2.2rem; margin: 8px 0;
+  }
+  .cover .cover-cta {
+    background: #00c300; color: #fff; font-size: 0.78rem; font-weight: 700;
+    padding: 10px 20px; border-radius: 8px; display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,195,0,0.3);
+  }
+  .cover.theme-pink { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
+  .cover.theme-blue { background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); }
+  .cover.theme-yellow { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+  .cover.theme-green { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); }
+  .cover.theme-purple { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); }
+  .cover.theme-red { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); }
+  .cover.theme-gray { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); }
+
+  /* カードカルーセル */
+  .carousel-wrap {
+    background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px;
+    padding: 12px; margin: 8px 0; max-width: 560px;
+  }
+  .carousel-wrap .carousel-label {
+    font-size: 0.7rem; color: #64748b; font-weight: 700; margin-bottom: 8px;
+  }
+  .carousel {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+  }
+  .card {
+    min-width: 150px; max-width: 150px;
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+    padding: 12px 10px; font-size: 0.7rem; color: #333;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .card .card-num {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 10px;
+    align-self: flex-start;
+  }
+  .card .card-title {
+    font-weight: 700; font-size: 0.78rem; color: #111; line-height: 1.3;
+  }
+  .card .card-body {
+    font-size: 0.68rem; color: #555; line-height: 1.45;
+  }
+  .card.q { background: #eff6ff; border-color: #bfdbfe; }
+  .card.a { background: #f0fdf4; border-color: #bbf7d0; }
+
+  /* メッセージブロック */
+  .msg {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 12px;
+    margin: 1.5rem 0; overflow: hidden;
+  }
+  .msg.cta-msg { border-color: #fca5a5; }
+  .msg-head {
+    padding: 12px 16px; font-weight: 700; font-size: 0.9rem;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+  }
+  .msg.cta-msg .msg-head { background: #fef2f2; }
+  .msg-head .day-badge {
+    background: #111; color: #fff; font-size: 0.65rem; font-weight: 700;
+    padding: 2px 8px; border-radius: 10px;
+  }
+  .msg.cta-msg .msg-head .day-badge { background: #ef4444; }
+  .msg-concept {
+    padding: 10px 16px; background: #f9fafb; font-size: 0.8rem; color: #666;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .msg-body { padding: 12px 16px; }
+  .msg-why {
+    padding: 10px 16px; background: #fffbeb; border-top: 1px solid #fef3c7;
+    font-size: 0.76rem; color: #92400e;
+  }
+  .msg-structure {
+    padding: 8px 16px; background: #f1f5f9; border-top: 1px solid #e2e8f0;
+    font-size: 0.72rem; color: #475569;
+  }
+  .msg-structure strong { color: #1e293b; }
+
+  /* テーブル */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.8rem; }
+  th { background: #f3f4f6; padding: 8px 10px; text-align: left; font-weight: 700; border-bottom: 2px solid #e0e0e0; }
+  td { padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+  tr:last-child td { border-bottom: none; }
+
+  /* KPI */
+  .kpi-row { display: flex; gap: 10px; margin: 1rem 0; flex-wrap: wrap; }
+  .kpi {
+    flex: 1; min-width: 140px;
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 12px; text-align: center;
+  }
+  .kpi .kpi-label { font-size: 0.7rem; color: #888; }
+  .kpi .kpi-value { font-size: 1.3rem; font-weight: 800; color: #111; margin: 4px 0; }
+  .kpi .kpi-note { font-size: 0.65rem; color: #999; }
+
+  /* 注意箱 */
+  .note-box {
+    background: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 16px;
+    margin: 1rem 0; border-radius: 0 8px 8px 0; font-size: 0.85rem;
+  }
+  .note-box.blue { background: #eff6ff; border-color: #3b82f6; }
+  .note-box.green { background: #f0fdf4; border-color: #22c55e; }
+  .note-box.red { background: #fef2f2; border-color: #ef4444; }
+  .note-box strong { display: block; margin-bottom: 4px; }
+
+  .divider { border: none; border-top: 1px dashed #e0e0e0; margin: 2rem 0; }
+
+  /* Existing format note */
+  .format-note {
+    background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+    padding: 14px 18px; margin: 1.2rem 0;
+  }
+  .format-note strong { color: #1e40af; font-size: 0.9rem; display: block; margin-bottom: 6px; }
+  .format-note ul { margin: 6px 0 0 1.2rem; font-size: 0.82rem; color: #333; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<h1>🟢 リテンション配信 8通設計</h1>
+<p class="subtitle">方法診断（GLP-1）｜14日間ステップ配信｜v3（既存フォーマット準拠）</p>
+
+<div class="note-box blue">
+  <strong>元ネタ</strong>
+  齋藤（FUBAR）退職代行事例 — ステップ配信3通→8通で申込率12%→47%。<br>
+  「同じ情報でも、出す順番が違うだけでCVRは4倍変わる」を汎用化して適用。
+</div>
+
+<div class="format-note">
+  <strong>📐 配信フォーマット（既存のリテンション準拠）</strong>
+  各通は以下の3要素で構成。テキストベタ打ちはしない。
+  <ul>
+    <li><strong>テキスト吹き出し</strong>（1〜2行の短い導入）</li>
+    <li><strong>表紙画像</strong>（キャッチコピー + イラスト + 「タップして見てみる ＞」ボタン）</li>
+    <li><strong>コンテンツカード</strong>（スワイプ式カルーセル / 比較表・Q&A・体験談・ビジュアル）</li>
+  </ul>
+</div>
+
+<!-- ===== 前提 ===== -->
+<h2>前提</h2>
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label">対象</div>
+    <div class="kpi-value">96人/月</div>
+    <div class="kpi-note">方法診断経由の友だち</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">現状FCVR</div>
+    <div class="kpi-value" style="color:#ef4444;">0%</div>
+    <div class="kpi-note">何も送ってない</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">目標CVR</div>
+    <div class="kpi-value" style="color:#22c55e;">5%</div>
+    <div class="kpi-note">Lステップ基準</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">配信期間</div>
+    <div class="kpi-value">14日</div>
+    <div class="kpi-note">8通送りきり</div>
+  </div>
+</div>
+
+<!-- ===== 既存フローとの関係 ===== -->
+<h2>既存フローとの関係</h2>
+<p>友だち追加直後は既存の診断シナリオ（Q1-4 → 結果カルーセル4枚 → PRカルーセル4枚 → CTA）が走る。<br>
+  <strong>ステップ配信8通は、既存フローの翌日（DAY 1）からスタート。</strong>既存を触らず追加だけで検証。</p>
+
+<!-- ===== 心理階段 ===== -->
+<h2>心理階段（この順番で踏ませる）</h2>
+
+<div class="ladder">
+  <div class="ladder-step l1"><div class="num">1</div><div class="lbl">共感</div><div class="day">DAY 1</div></div>
+  <div class="ladder-step l2"><div class="num">2</div><div class="lbl">証明</div><div class="day">DAY 2</div></div>
+  <div class="ladder-step l3"><div class="num">3</div><div class="lbl">解消</div><div class="day">DAY 4</div></div>
+  <div class="ladder-step l4"><div class="num">4</div><div class="lbl">共感</div><div class="day">DAY 6</div></div>
+  <div class="ladder-step l5"><div class="num">5</div><div class="lbl">想像</div><div class="day">DAY 8</div></div>
+  <div class="ladder-step l6"><div class="num">6</div><div class="lbl">CTA</div><div class="day">DAY 10</div></div>
+  <div class="ladder-step l7"><div class="num">7</div><div class="lbl">特典</div><div class="day">DAY 12</div></div>
+  <div class="ladder-step l8"><div class="num">8</div><div class="lbl">背中押し</div><div class="day">DAY 14</div></div>
+</div>
+
+<p><strong>前半5通（DAY 1〜8）＝ 信頼を積む（CV導線なし）</strong>／<strong>後半3通（DAY 10〜14）＝ 行動に移す</strong></p>
+
+<hr class="divider">
+
+<!-- ===== 1通目 ===== -->
+<div class="msg">
+  <div class="msg-head">
+    <span class="day-badge">DAY 1</span>
+    <span>1通目</span>
+    <span class="tag tag-trust">①共感</span>
+  </div>
+  <div class="msg-concept">体験談ストーリーで「同じ人がいる」を伝える。まだGLP-1の名前は出さない。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">昨日の診断結果、見てもらえましたか？
+
+今日から、同じように悩んでた人の話をお届けしますね 🌱</div>
+
+      <div class="cover theme-pink">
+        <span class="cover-badge">実話</span>
+        <div class="cover-illust">😔➡️😊</div>
+        <div class="cover-title">40年間、食欲に<br>勝てなかった</div>
+        <div class="cover-sub">その人の物語</div>
+        <div class="cover-cta">タップして見てみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで4枚（表紙タップで展開）</div>
+        <div class="carousel">
+          <div class="card">
+            <span class="card-num">01</span>
+            <div class="card-title">10代から続く挫折の歴史</div>
+            <div class="card-body">食事制限・置き換え・ジム・サプリ。何をやっても続かなかった。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">02</span>
+            <div class="card-title">「意志が弱いんだ」</div>
+            <div class="card-body">続かない自分を責めて、また別の方法を試して、また続かない。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">03</span>
+            <div class="card-title">転機が訪れた</div>
+            <div class="card-body">あるキッカケで、食欲との戦いがなくなった。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">04</span>
+            <div class="card-title">「頑張ってる感がない」</div>
+            <div class="card-body">本人が一番驚いた変化。次回、その正体をお話しします。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 4枚カルーセル
+  </div>
+  <div class="msg-why">💡 まだGLP-1の名前も出さない。共感を積むだけ。「転機の正体」を引っ張って翌日へ。</div>
+</div>
+
+<!-- ===== 2通目 ===== -->
+<div class="msg">
+  <div class="msg-head">
+    <span class="day-badge">DAY 2</span>
+    <span>2通目</span>
+    <span class="tag tag-proof">②証明</span>
+  </div>
+  <div class="msg-concept">体験者の声を集めたカルーセル。Googleマップの口コミ風。リアルさ重視。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">実際に始めた人の声、集めました 📣</div>
+
+      <div class="cover theme-blue">
+        <span class="cover-badge">体験者の声</span>
+        <div class="cover-illust">💬</div>
+        <div class="cover-title">GLP-1 体験者の<br>リアルな感想</div>
+        <div class="cover-sub">盛ってない、生の声だけ</div>
+        <div class="cover-cta">タップして見てみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで4枚（体験談カード）</div>
+        <div class="carousel">
+          <div class="card">
+            <span class="card-num">voice 01</span>
+            <div class="card-title">40代 女性</div>
+            <div class="card-body">「食事のコントロールが信じられないほど楽になりました」</div>
+          </div>
+          <div class="card">
+            <span class="card-num">voice 02</span>
+            <div class="card-title">30代 女性</div>
+            <div class="card-body">「間食の欲求がほぼなくなった。3食食べてるのに余計なものに手が出ない」</div>
+          </div>
+          <div class="card">
+            <span class="card-num">voice 03</span>
+            <div class="card-title">40代 男性</div>
+            <div class="card-body">「お腹が空くまでの時間がとても長い。食べられる量がかなり減った」</div>
+          </div>
+          <div class="card">
+            <span class="card-num">voice 04</span>
+            <div class="card-title">30代 女性</div>
+            <div class="card-body">「ダイエットでイライラしない。これが初めてだった」</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 4枚カルーセル（体験談カード）
+  </div>
+  <div class="msg-why">💡 数値ゼロ（薬機法配慮）。感情の変化だけで構成。「自分と同じ」を作って信頼残高を積む。</div>
+</div>
+
+<!-- ===== 3通目 ===== -->
+<div class="msg">
+  <div class="msg-head">
+    <span class="day-badge">DAY 4</span>
+    <span>3通目</span>
+    <span class="tag tag-resolve">③解消</span>
+  </div>
+  <div class="msg-concept">不安TOP3（費用・副作用・リバウンド）をQ&A形式で潰す。既存のQ&Aカルーセル踏襲。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">気になることTOP3、正直に答えます 💡</div>
+
+      <div class="cover theme-yellow">
+        <span class="cover-badge" style="color:#92400e; border-color:#92400e;">Q&A</span>
+        <div class="cover-illust">❓</div>
+        <div class="cover-title">GLP-1<br>よくある質問</div>
+        <div class="cover-sub">費用・副作用・リバウンドの真実</div>
+        <div class="cover-cta">タップして見てみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで6枚（Q&Aカード）</div>
+        <div class="carousel">
+          <div class="card q">
+            <span class="card-num">Q1</span>
+            <div class="card-title">費用って高い？</div>
+          </div>
+          <div class="card a">
+            <span class="card-num">A1</span>
+            <div class="card-title">月7,920円〜</div>
+            <div class="card-body">リベルサス定期便。ジム会費と同じくらい。エステやサプリより安くなる人も。</div>
+          </div>
+          <div class="card q">
+            <span class="card-num">Q2</span>
+            <div class="card-title">副作用が怖い</div>
+          </div>
+          <div class="card a">
+            <span class="card-num">A2</span>
+            <div class="card-title">最初の数日だけ</div>
+            <div class="card-body">軽い吐き気が出る人も。1週間で慣れる人がほとんど。少量スタートで軽減可。</div>
+          </div>
+          <div class="card q">
+            <span class="card-num">Q3</span>
+            <div class="card-title">やめたらリバウンド？</div>
+          </div>
+          <div class="card a">
+            <span class="card-num">A3</span>
+            <div class="card-title">食習慣の並行がカギ</div>
+            <div class="card-body">食欲が落ち着いてる間に正しい食習慣を体に覚えさせる。これが成功の共通項。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 6枚カルーセル（Q→A交互）
+  </div>
+  <div class="msg-why">💡 ②で信頼が積まれた状態だから「教えてくれてる」感で入る。Q/Aを分けて読みやすく。</div>
+</div>
+
+<!-- ===== 4通目 ===== -->
+<div class="msg">
+  <div class="msg-head">
+    <span class="day-badge">DAY 6</span>
+    <span>4通目</span>
+    <span class="tag tag-empathy">④共感（あるある）</span>
+  </div>
+  <div class="msg-concept">売り込みゼロの息抜き。共感エンタメ。ブロック率対策＋信頼残高の補充。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">ちょっと息抜き。いくつ当てはまりますか？ 😂</div>
+
+      <div class="cover theme-green">
+        <span class="cover-badge" style="color:#166534; border-color:#166534;">あるある</span>
+        <div class="cover-illust">🙈</div>
+        <div class="cover-title">ダイエット<br>あるある</div>
+        <div class="cover-sub">わかりすぎて泣ける...</div>
+        <div class="cover-cta">タップして見てみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで5枚（あるあるカード）</div>
+        <div class="carousel">
+          <div class="card">
+            <span class="card-num">01</span>
+            <div class="card-title">明日から本気出す</div>
+            <div class="card-body">（389回目）</div>
+          </div>
+          <div class="card">
+            <span class="card-num">02</span>
+            <div class="card-title">夜中のポテチ</div>
+            <div class="card-body">だけは意志力が効かない。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">03</span>
+            <div class="card-title">ジムの会費</div>
+            <div class="card-body">だけ毎月払い続けてる。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">04</span>
+            <div class="card-title">3日坊主を10回</div>
+            <div class="card-body">繰り返してきた。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">05</span>
+            <div class="card-title">結局、自分に合う<br>方法がわからない</div>
+            <div class="card-body">まま何年も経った。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 5枚カルーセル（あるあるカード）
+  </div>
+  <div class="msg-why">💡 3通連続「情報」の後の息抜き。最後の1枚だけ刺す→次回への布石。</div>
+</div>
+
+<!-- ===== 5通目 ===== -->
+<div class="msg">
+  <div class="msg-head">
+    <span class="day-badge">DAY 8</span>
+    <span>5通目</span>
+    <span class="tag tag-imagine">⑤想像</span>
+  </div>
+  <div class="msg-concept">「やった後の自分」を見せる。数値ゼロ、日常シーンの質感だけで描写。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">もし合う方法が見つかったら、毎日ってどう変わると思いますか？ ✨</div>
+
+      <div class="cover theme-purple">
+        <span class="cover-badge" style="color:#5b21b6; border-color:#5b21b6;">Before / After</span>
+        <div class="cover-illust">🌅🌞🌙</div>
+        <div class="cover-title">GLP-1で変わった<br>ある1日</div>
+        <div class="cover-sub">体験者のリアルな日常</div>
+        <div class="cover-cta">タップして見てみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで4枚（1日の時間帯別）</div>
+        <div class="carousel">
+          <div class="card">
+            <span class="card-num">🌅 朝</span>
+            <div class="card-title">普通にごはんを食べる</div>
+            <div class="card-body">「これ食べたら太るかな」を考えない朝。食べたいものを、適量で。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">🌞 昼</span>
+            <div class="card-title">ランチに罪悪感ゼロ</div>
+            <div class="card-body">好きなものを食べる。カロリー計算しない。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">🌙 夜</span>
+            <div class="card-title">食欲に振り回されない夜</div>
+            <div class="card-body">冷蔵庫を開ける回数が減った。「今日も食べすぎた…」がない。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">💡 結論</span>
+            <div class="card-title">ダイエットしてる感がない</div>
+            <div class="card-body">これが一番変わったこと。体は変わっていくのに。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 4枚カルーセル（時間帯別）
+  </div>
+  <div class="msg-why">💡 CTAはまだ出さない。想像だけさせて「もっと知りたい」を作る。</div>
+</div>
+
+<!-- ===== 6通目 ===== -->
+<div class="msg cta-msg">
+  <div class="msg-head">
+    <span class="day-badge">DAY 10</span>
+    <span>6通目</span>
+    <span class="tag tag-cta">⑥CTA（初回CV導線）</span>
+  </div>
+  <div class="msg-concept">クリニック比較カルーセル。既存の「料金比較表」フォーマット。DMMを自然に推す。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">気になってきたら、まずどこで相談するか決めましょう 🏥</div>
+
+      <div class="cover theme-blue">
+        <span class="cover-badge">最新版</span>
+        <div class="cover-illust">🔍</div>
+        <div class="cover-title">GLP-1クリニック<br>徹底比較</div>
+        <div class="cover-sub">オンライン対応TOP3を一目で</div>
+        <div class="cover-cta">タップして見てみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで4枚（比較表 → 結論）</div>
+        <div class="carousel">
+          <div class="card">
+            <span class="card-num">01</span>
+            <div class="card-title">診察料比較</div>
+            <div class="card-body">DMM ◎ 0円<br>A院 △ 1,650円<br>B院 ○ 無料</div>
+          </div>
+          <div class="card">
+            <span class="card-num">02</span>
+            <div class="card-title">リベルサス料金</div>
+            <div class="card-body">DMM ◎ 7,920円/月<br>A院 △ 9,900円/月<br>B院 ○ 8,500円/月</div>
+          </div>
+          <div class="card">
+            <span class="card-num">03</span>
+            <div class="card-title">サポート</div>
+            <div class="card-body">DMM ◎ 最短当日配送<br>予約30秒<br>診察5分</div>
+          </div>
+          <div class="card" style="background:#fef2f2; border-color:#fca5a5;">
+            <span class="card-num" style="background:#fee2e2; color:#991b1b;">結論</span>
+            <div class="card-title">DMMがおすすめ</div>
+            <div class="card-body">診察0円・最短当日・予約30秒<br>▼ 無料で相談する</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 4枚カルーセル（比較→結論+予約ボタン）
+  </div>
+  <div class="msg-why">💡 既存の「クリニック比較」フォーマットそのまま。5通分の信頼があるから自然に受け入れられる。</div>
+</div>
+
+<!-- ===== 7通目 ===== -->
+<div class="msg cta-msg">
+  <div class="msg-head">
+    <span class="day-badge">DAY 12</span>
+    <span>7通目</span>
+    <span class="tag tag-cta">⑦特典</span>
+  </div>
+  <div class="msg-concept">クーポン情報。既存の「キャンペーン告知」フォーマット。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">今ならクーポンが使えます 🎫</div>
+
+      <div class="cover theme-red">
+        <span class="cover-badge" style="color:#991b1b; border-color:#991b1b;">最大5,000円OFF</span>
+        <div class="cover-illust">💊</div>
+        <div class="cover-title">GLP-1<br>初回クーポン</div>
+        <div class="cover-sub">リベルサス / マンジャロ対応</div>
+        <div class="cover-cta">タップして使ってみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで3枚（薬別クーポン）</div>
+        <div class="carousel">
+          <div class="card" style="background:#fffbeb;">
+            <span class="card-num">リベルサス</span>
+            <div class="card-title">飲み薬タイプ</div>
+            <div class="card-body">通常 7,920円<br>→ <strong style="color:#991b1b;">5,420円</strong><br>（初回限定）</div>
+          </div>
+          <div class="card" style="background:#fffbeb;">
+            <span class="card-num">マンジャロ</span>
+            <div class="card-title">注射タイプ</div>
+            <div class="card-body">初回 <strong style="color:#991b1b;">5,000円OFF</strong><br>（初回限定）</div>
+          </div>
+          <div class="card" style="background:#fef2f2; border-color:#fca5a5;">
+            <span class="card-num" style="background:#fee2e2; color:#991b1b;">使い方</span>
+            <div class="card-title">予約時に自動適用</div>
+            <div class="card-body">▼ クーポン付きで相談する</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 3枚カルーセル（クーポン別）
+  </div>
+  <div class="msg-why">💡 既存の「キャンペーン告知」踏襲。押し売り感ゼロで、お得情報として伝える。</div>
+</div>
+
+<!-- ===== 8通目 ===== -->
+<div class="msg">
+  <div class="msg-head">
+    <span class="day-badge" style="background:#6b7280;">DAY 14</span>
+    <span>8通目（最終）</span>
+    <span class="tag" style="background:#f3f4f6; color:#374151;">⑧背中押し</span>
+  </div>
+  <div class="msg-concept">危機感醸成カルーセル。既存の「放置するとどうなる？」フォーマット踏襲（retention07）。</div>
+  <div class="msg-body">
+    <div class="line-sim">
+      <div class="line-text">最後にひとつだけ、伝えたいことがあります 💌</div>
+
+      <div class="cover theme-gray">
+        <span class="cover-badge" style="color:#374151; border-color:#374151;">最終回</span>
+        <div class="cover-illust">🤔</div>
+        <div class="cover-title">このままで、<br>大丈夫？</div>
+        <div class="cover-sub">「意志が弱いから」を終わらせよう</div>
+        <div class="cover-cta">タップして見てみる ＞</div>
+      </div>
+
+      <div class="carousel-wrap">
+        <div class="carousel-label">▶ スワイプで4枚（問いかけ → 解決 → CTA）</div>
+        <div class="carousel">
+          <div class="card">
+            <span class="card-num">01</span>
+            <div class="card-title">「明日から本気出す」</div>
+            <div class="card-body">何回言いましたか？来年の今日も、同じことを言っていませんか？</div>
+          </div>
+          <div class="card">
+            <span class="card-num">02</span>
+            <div class="card-title">意志の問題じゃない</div>
+            <div class="card-body">食欲はホルモンで決まる。これは体の仕組みの問題。</div>
+          </div>
+          <div class="card">
+            <span class="card-num">03</span>
+            <div class="card-title">診察は0円</div>
+            <div class="card-body">合わなければやめればいい。リスクはほぼゼロ。</div>
+          </div>
+          <div class="card" style="background:#f0fdf4; border-color:#bbf7d0;">
+            <span class="card-num" style="background:#dcfce7; color:#166534;">最後に</span>
+            <div class="card-title">知らないのが、もったいない</div>
+            <div class="card-body">始めなくてもいい。でも知らないままは、もったいない。<br>▼ まず話を聞く</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="msg-structure">
+    <strong>構成：</strong>テキスト1吹き出し ＋ 表紙画像 ＋ 4枚カルーセル（危機感 → 解決 → CTA）
+  </div>
+  <div class="msg-why">💡 既存のretention07「薄毛を放置したら」の構造を踏襲。最後は優しく、でも刺す。</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== スケジュール一覧 ===== -->
+<h2>配信スケジュール一覧</h2>
+<table>
+  <tr><th>通</th><th>DAY</th><th>階段</th><th>表紙テーマ</th><th>カルーセル内容</th><th>CV</th></tr>
+  <tr><td>1</td><td>1</td><td><span class="tag tag-trust">共感</span></td><td>40年食欲に勝てなかった</td><td>4枚（ストーリー）</td><td>—</td></tr>
+  <tr><td>2</td><td>2</td><td><span class="tag tag-proof">証明</span></td><td>GLP-1 体験者の声</td><td>4枚（体験談）</td><td>—</td></tr>
+  <tr><td>3</td><td>4</td><td><span class="tag tag-resolve">解消</span></td><td>GLP-1 よくある質問</td><td>6枚（Q&A）</td><td>—</td></tr>
+  <tr><td>4</td><td>6</td><td><span class="tag tag-empathy">共感</span></td><td>ダイエットあるある</td><td>5枚（あるある）</td><td>—</td></tr>
+  <tr><td>5</td><td>8</td><td><span class="tag tag-imagine">想像</span></td><td>GLP-1で変わった1日</td><td>4枚（時間帯別）</td><td>—</td></tr>
+  <tr><td style="font-weight:700;">6</td><td style="font-weight:700;">10</td><td><span class="tag tag-cta">CTA</span></td><td style="font-weight:700;">クリニック徹底比較</td><td style="font-weight:700;">4枚（比較→結論）</td><td style="font-weight:700;">✅</td></tr>
+  <tr><td style="font-weight:700;">7</td><td style="font-weight:700;">12</td><td><span class="tag tag-cta">特典</span></td><td style="font-weight:700;">初回クーポン</td><td style="font-weight:700;">3枚（クーポン）</td><td style="font-weight:700;">✅</td></tr>
+  <tr><td style="font-weight:700;">8</td><td style="font-weight:700;">14</td><td><span class="tag" style="background:#f3f4f6;color:#374151;">背中</span></td><td style="font-weight:700;">このままで大丈夫？</td><td style="font-weight:700;">4枚（危機→解決）</td><td style="font-weight:700;">✅</td></tr>
+</table>
+
+<!-- ===== 成功判定 ===== -->
+<h2>成功判定</h2>
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-label">開封率</div>
+    <div class="kpi-value">50%+</div>
+    <div class="kpi-note">LINE配信基準</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">ステップCVR</div>
+    <div class="kpi-value">5%+</div>
+    <div class="kpi-note">Lステップ基準</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">ブロック率</div>
+    <div class="kpi-value">&lt;3%</div>
+    <div class="kpi-note">ステップ配信目標</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">6通目CTR</div>
+    <div class="kpi-value">15%+</div>
+    <div class="kpi-note">予約ボタンタップ率</div>
+  </div>
+</div>
+<p><strong>判定タイミング：</strong>50人以上がステップ完走した時点で初回判定。</p>
+
+<!-- ===== 制作物一覧 ===== -->
+<h2>必要な制作物（デザイナー発注分）</h2>
+<table>
+  <tr><th>通</th><th>表紙画像</th><th>カルーセル枚数</th></tr>
+  <tr><td>1</td><td>「40年食欲に勝てなかった」表紙</td><td>4枚（ストーリー）</td></tr>
+  <tr><td>2</td><td>「GLP-1体験者の声」表紙</td><td>4枚（口コミ風）</td></tr>
+  <tr><td>3</td><td>「よくある質問」表紙</td><td>6枚（Q&A交互）</td></tr>
+  <tr><td>4</td><td>「ダイエットあるある」表紙</td><td>5枚（共感系）</td></tr>
+  <tr><td>5</td><td>「変わった1日」表紙</td><td>4枚（時間帯別）</td></tr>
+  <tr><td>6</td><td>「クリニック比較」表紙</td><td>4枚（比較表）</td></tr>
+  <tr><td>7</td><td>「初回クーポン」表紙</td><td>3枚（クーポン）</td></tr>
+  <tr><td>8</td><td>「このままで大丈夫？」表紙</td><td>4枚（危機+CTA）</td></tr>
+</table>
+<p><strong>合計：</strong>表紙8枚 + カルーセル34枚 = <strong>42枚</strong></p>
+
+<!-- ===== 補足 ===== -->
+<h2>補足</h2>
+<div class="note-box">
+  <strong>薬機法配慮</strong>
+  体験談に具体的な体重変化（-Xkg）は使わない。感情の変化・生活シーンのみ。
+</div>
+<div class="note-box green">
+  <strong>ミニマム検証</strong>
+  まず方法診断だけ。結果を見てカロリー→薬に横展開。<br>
+  定期配信（第2層）は一旦やらない。8通で結果が出るか先に検証。
+</div>
+<div class="note-box blue">
+  <strong>タグ構造</strong>
+  シンプルに保つ。方法診断通過者 = このステップに入る。それだけ。分岐しない。
+</div>
+
+<hr class="divider">
+<p style="color:#aaa; font-size:0.72rem; text-align:center; margin-top:2rem;">
+  v3.1 — 既存フォーマット準拠 / 表紙＋カルーセルベース / 2026-04-15
+</p>
+
+</body>
+</html>

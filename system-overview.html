@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINEチーム システム全体像</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #fafafa; padding: 2rem 1.5rem; color: #222; max-width: 800px; margin: 0 auto; }
+h1 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.3rem; }
+h2 { font-size: 1.1rem; font-weight: 700; margin: 2.5rem 0 0.8rem; color: #111; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.3rem; }
+.subtitle { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+p { margin-bottom: 0.8rem; color: #444; font-size: 0.9rem; line-height: 1.8; }
+strong { color: #111; }
+
+/* セクション */
+.section { margin: 2rem 0; }
+
+/* フロー図 */
+.flow { display: flex; flex-direction: column; gap: 0; align-items: center; margin: 1.5rem 0; }
+.flow-row { display: flex; align-items: center; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+.flow-arrow { color: #999; font-size: 1.2rem; }
+.flow-arrow-down { color: #999; font-size: 1rem; text-align: center; padding: 0.3rem 0; }
+
+/* カード */
+.card { background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; padding: 0.8rem 1.2rem; text-align: center; min-width: 140px; }
+.card.blue { border-color: #1976d2; background: #f0f7ff; }
+.card.orange { border-color: #d97706; background: #fff8e1; }
+.card.green { border-color: #4caf50; background: #f0faf0; }
+.card.purple { border-color: #7b1fa2; background: #faf0ff; }
+.card.gray { border-color: #999; background: #f5f5f5; }
+.card-icon { font-size: 1.3rem; }
+.card-title { font-weight: 700; font-size: 0.85rem; margin-top: 0.2rem; }
+.card-desc { font-size: 0.72rem; color: #888; margin-top: 0.2rem; line-height: 1.4; }
+
+/* PC図 */
+.pc-diagram { display: flex; gap: 1.5rem; justify-content: center; margin: 1.5rem 0; flex-wrap: wrap; }
+.pc-box { background: #fff; border: 2px solid #e0e0e0; border-radius: 12px; padding: 1.2rem; width: 220px; }
+.pc-box.ren { border-color: #d97706; }
+.pc-label { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.6rem; text-align: center; }
+.folder { font-family: 'SF Mono', monospace; font-size: 0.75rem; color: #555; line-height: 1.8; padding: 0.5rem; background: #f8f8f8; border-radius: 6px; }
+.folder .highlight { color: #1976d2; font-weight: 600; }
+.folder .shared { color: #4caf50; font-weight: 600; }
+
+/* 吹き出し */
+.bubble { background: #fff8e1; border: 1px solid #f9a825; border-radius: 8px; padding: 0.8rem 1rem; margin: 1rem 0; font-size: 0.85rem; color: #555; }
+.bubble.blue { background: #e3f2fd; border-color: #1976d2; }
+.bubble.green { background: #e8f5e9; border-color: #4caf50; }
+.bubble strong { color: #111; }
+
+/* タイムライン */
+.timeline { margin: 1.5rem 0; }
+.tl-item { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start; }
+.tl-phase { background: #1976d2; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 12px; white-space: nowrap; min-width: 60px; text-align: center; margin-top: 2px; }
+.tl-phase.now { background: #d97706; }
+.tl-phase.future { background: #4caf50; }
+.tl-content { font-size: 0.85rem; color: #444; line-height: 1.6; }
+.tl-content strong { color: #111; }
+
+/* 比較テーブル */
+table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.82rem; }
+th { background: #f5f5f5; padding: 0.5rem 0.8rem; text-align: left; font-weight: 700; border-bottom: 2px solid #e0e0e0; }
+td { padding: 0.5rem 0.8rem; border-bottom: 1px solid #eee; color: #555; }
+td:first-child { font-weight: 600; color: #333; }
+
+.footer { text-align: center; color: #bbb; font-size: 0.75rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e0e0e0; }
+</style>
+</head>
+<body>
+
+<h1>LINEチーム システム全体像</h1>
+<p class="subtitle">2026/4/2 時点の設計メモ — ren把握用</p>
+
+<!-- ============================= -->
+<h2>1. メンバーのPCに置くもの</h2>
+
+<div class="pc-diagram">
+  <div class="pc-box ren">
+    <div class="pc-label">👑 Ren のPC</div>
+    <div class="folder">
+      📁 claude-projects/<br>
+      &nbsp;&nbsp;├── <span class="highlight">roles/</span> CEO/CIO/CMO<br>
+      &nbsp;&nbsp;├── <span class="highlight">knowledge/</span> ノウハウ集<br>
+      &nbsp;&nbsp;├── <span class="highlight">line-dashboard/</span> データ分析<br>
+      &nbsp;&nbsp;└── star-team/ タスク管理
+    </div>
+  </div>
+  <div class="pc-box">
+    <div class="pc-label">👤 Noah のPC</div>
+    <div class="folder">
+      📁 Desktop/<br>
+      &nbsp;&nbsp;└── <span class="highlight">project-noah/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── roles/ CIO/CMO<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── knowledge/ ノウハウ集<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── .claude/skills/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── CLAUDE.md
+    </div>
+  </div>
+  <div class="pc-box">
+    <div class="pc-label">👤 Kate のPC</div>
+    <div class="folder">
+      📁 Desktop/<br>
+      &nbsp;&nbsp;└── <span class="highlight">project-kate/</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── roles/ CIO/CMO<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── knowledge/ ノウハウ集<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── .claude/skills/<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── CLAUDE.md
+    </div>
+  </div>
+</div>
+
+<div class="bubble">
+  <strong>project-〇〇 = 個人フォルダ。</strong>Claude Codeはこのフォルダで起動する。<br>
+  中にrenと同じ知識（roles/, knowledge/）が入ってるから、誰が使っても同じ品質の仕事ができる。<br><br>
+  <strong>配布方法:</strong> スターターキット（ZIPかgit clone）→ リネームして使う
+</div>
+
+<!-- ============================= -->
+<h2>2. タスクボード（全員で共有）</h2>
+
+<div class="flow">
+  <div class="flow-row">
+    <div class="card green">
+      <div class="card-icon">🌐</div>
+      <div class="card-title">Streamlit Cloud</div>
+      <div class="card-desc">タスクボードのアプリ<br>URLでアクセス</div>
+    </div>
+  </div>
+  <div class="flow-arrow-down">↕ 読み書き</div>
+  <div class="flow-row">
+    <div class="card orange">
+      <div class="card-icon">📄</div>
+      <div class="card-title">tasks.json</div>
+      <div class="card-desc">タスクDB（実体）<br>裏で動いてる</div>
+    </div>
+  </div>
+  <div class="flow-arrow-down">↑ 表示 ↓ 編集</div>
+  <div class="flow-row">
+    <div class="card gray">
+      <div class="card-icon">👑</div>
+      <div class="card-title">Ren</div>
+      <div class="card-desc">ブラウザで見る・編集</div>
+    </div>
+    <div class="card gray">
+      <div class="card-icon">👤</div>
+      <div class="card-title">Noah</div>
+      <div class="card-desc">ブラウザで見る・編集</div>
+    </div>
+    <div class="card gray">
+      <div class="card-icon">👤</div>
+      <div class="card-title">Kate</div>
+      <div class="card-desc">ブラウザで見る・編集</div>
+    </div>
+    <div class="card gray">
+      <div class="card-icon">👤</div>
+      <div class="card-title">Rinon</div>
+      <div class="card-desc">ブラウザで見る・編集</div>
+    </div>
+  </div>
+</div>
+
+<div class="bubble blue">
+  <strong>Streamlit化のポイント:</strong><br>
+  ・全員がブラウザのURL1つでタスクボードにアクセス<br>
+  ・タスクの追加・更新・完了もブラウザ上でできる<br>
+  ・tasks.jsonは裏で動いてる。メンバーはgitを触らない<br>
+  ・renが今manage.pyやstar-officeでやってることと同じことが、全員ブラウザでできるようになる
+</div>
+
+<!-- ============================= -->
+<h2>3. 全体の関係図</h2>
+
+<div class="flow">
+  <div class="flow-row">
+    <div class="card purple" style="min-width: 300px;">
+      <div class="card-icon">🧠</div>
+      <div class="card-title">スターターキット（知識）</div>
+      <div class="card-desc">roles/ + knowledge/ + skills/<br>個人フォルダとしてPC内に配置</div>
+    </div>
+    <div style="font-size: 1.5rem; color: #ccc;">+</div>
+    <div class="card green" style="min-width: 300px;">
+      <div class="card-icon">📋</div>
+      <div class="card-title">タスクボード（共有）</div>
+      <div class="card-desc">Streamlit Cloud<br>ブラウザでURL開くだけ</div>
+    </div>
+  </div>
+</div>
+
+<table>
+  <tr><th></th><th>スターターキット</th><th>タスクボード</th></tr>
+  <tr><td>何？</td><td>個人のAI環境</td><td>チーム共有のタスク管理</td></tr>
+  <tr><td>どこ？</td><td>各自のPC内</td><td>Streamlit Cloud（URL）</td></tr>
+  <tr><td>同期</td><td>不要（各自で使う）</td><td>自動（ブラウザで見るだけ）</td></tr>
+  <tr><td>アクセス</td><td>Claude Codeで開く</td><td>ブラウザでURL開く</td></tr>
+  <tr><td>更新</td><td>ren がキット更新 → 再配布</td><td>リアルタイムで全員見える</td></tr>
+</table>
+
+<!-- ============================= -->
+<h2>4. 構築タイムライン</h2>
+
+<div class="timeline">
+  <div class="tl-item">
+    <span class="tl-phase now">今日</span>
+    <div class="tl-content">
+      <strong>スターターキット作成</strong><br>
+      個人フォルダのテンプレート。roles/ + knowledge/ + skills/ + CLAUDE.md + /setup
+    </div>
+  </div>
+  <div class="tl-item">
+    <span class="tl-phase">来週</span>
+    <div class="tl-content">
+      <strong>メンバーGitHub招待 + セットアップ</strong><br>
+      セットアップガイド送付 → Claude Code環境構築 → キット配布
+    </div>
+  </div>
+  <div class="tl-item">
+    <span class="tl-phase future">〜4/7</span>
+    <div class="tl-content">
+      <strong>タスクボードStreamlit化</strong>（CTO担当）<br>
+      star-team/app.py → Streamlit Cloud デプロイ → 全員がURL共有
+    </div>
+  </div>
+  <div class="tl-item">
+    <span class="tl-phase future">4/7〜</span>
+    <div class="tl-content">
+      <strong>運用開始</strong><br>
+      メンバー: 個人フォルダでClaude Code + ブラウザでタスクボード
+    </div>
+  </div>
+</div>
+
+<div class="bubble green">
+  <strong>完成イメージ:</strong> メンバーは2つだけ使う。<br>
+  ① <strong>Claude Code</strong>（project-〇〇/ で起動）→ 業務する<br>
+  ② <strong>ブラウザ</strong>（Streamlit URL）→ タスクを見る・更新する
+</div>
+
+<div class="footer">LINEチーム システム設計 — 2026/4/2</div>
+
+</body>
+</html>

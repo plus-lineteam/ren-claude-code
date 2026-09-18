@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ren-claude-code🧠🏢</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2129;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --accent: #58a6ff;
+    --accent-hover: #79c0ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --purple: #bc8cff;
+    --red: #f85149;
+    --yellow: #e3b341;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ヘッダー */
+  .hero {
+    background: linear-gradient(135deg, #161b22 0%, #1a1e2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 24px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+  .hero h1 .blue { color: var(--accent); }
+  .hero p { color: var(--text-muted); font-size: 15px; max-width: 640px; margin: 0 auto; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+
+  /* イントロ */
+  .intro-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+  .intro-box strong { color: var(--text); }
+
+  /* ツリー図 */
+  .tree {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 40px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 2;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .tree .f { color: var(--accent); font-weight: 600; }
+  .tree .d { color: var(--text-muted); }
+  .tree .tp { color: var(--purple); }
+  .tree .to { color: var(--green); }
+  .tree .ts { color: var(--orange); }
+
+  /* カテゴリ */
+  .cat { margin-bottom: 32px; }
+  .cat-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .cat-icon { font-size: 20px; width: 32px; text-align: center; }
+  .cat-title { font-size: 18px; font-weight: 600; }
+  .cat-desc { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+  /* ロール別サブヘッダー */
+  .role-group { margin-top: 12px; }
+  .role-group:first-of-type { margin-top: 0; }
+  .role-label {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 12px; margin-bottom: 6px;
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: 0.5px; text-transform: uppercase;
+    border-left: 3px solid var(--accent);
+  }
+  .role-label .role-emoji { font-size: 15px; }
+
+  /* ファイルカード */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #484f58; }
+  .card-head {
+    display: flex; align-items: center;
+    padding: 12px 16px; cursor: pointer;
+    user-select: none; gap: 12px;
+  }
+  .card-head:hover { background: rgba(88,166,255,0.04); }
+  .card-icon { font-size: 14px; width: 20px; text-align: center; flex-shrink: 0; }
+  .card-name {
+    font-family: 'SF Mono','Fira Code',monospace;
+    font-size: 13px; font-weight: 600;
+    color: var(--accent); flex-shrink: 0;
+  }
+  .card-role { font-size: 13px; color: var(--text-muted); flex-grow: 1; }
+  .tag {
+    display: inline-block; font-size: 11px; padding: 2px 8px;
+    border-radius: 12px; font-weight: 500; flex-shrink: 0;
+  }
+  .tag-brain { background: rgba(188,140,255,0.15); color: var(--purple); }
+  .tag-org { background: rgba(63,185,80,0.15); color: var(--green); }
+  .tag-skill { background: rgba(210,153,34,0.15); color: var(--orange); }
+  .tag-mem { background: rgba(248,81,73,0.15); color: var(--red); }
+  .card-arrow {
+    font-size: 12px; color: var(--text-muted);
+    transition: transform 0.2s; flex-shrink: 0;
+  }
+  .card.open > .card-head .card-arrow { transform: rotate(90deg); }
+
+  /* サマリー層 */
+  .summary {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 16px 20px;
+    background: var(--surface2);
+    font-size: 13px; line-height: 1.8;
+    color: var(--text-muted);
+  }
+  .card.open > .summary { display: block; }
+  .summary strong { color: var(--text); }
+  .summary ul { padding-left: 20px; margin: 8px 0; }
+  .summary li { margin-bottom: 4px; }
+
+  /* 原文ボタン */
+  .raw-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 6px 14px;
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.3);
+    border-radius: 6px;
+    color: var(--accent);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .raw-btn:hover { background: rgba(88,166,255,0.2); }
+
+  /* 原文層 */
+  .raw {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 20px;
+    background: #0d1117;
+  }
+  .card.raw-open > .summary > .raw-wrap > .raw { display: block; }
+  .raw pre {
+    font-family: 'SF Mono','Fira Code',monospace;
+    font-size: 12px; line-height: 1.7;
+    white-space: pre-wrap; word-wrap: break-word;
+    color: var(--text);
+  }
+
+  /* フッター */
+  .footer {
+    text-align: center; padding: 40px 24px;
+    color: var(--text-muted); font-size: 13px;
+    border-top: 1px solid var(--border); margin-top: 40px;
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 32px 16px; }
+    .hero h1 { font-size: 22px; }
+    .container { padding: 20px 16px; }
+    .card-role { display: none; }
+    .cat-desc { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>ren-claude-code<span class="blue">🧠🏢</span></h1>
+  <p>実際に業務で使っているClaude Codeのフォルダ構造。<br>構造と役割、そして実際の中身まで全部公開。</p>
+</div>
+
+<div class="container">
+
+<div class="intro-box">
+  <strong>この構造の考え方：</strong>AIを「毎回リセットされるチャットbot」ではなく「記憶を持つ組織」として設計。<br>
+  <strong>🧠 脳</strong> = mind.md（性格）+ knowledge/（長期記憶）+ memory.md（短期記憶）<br>
+  <strong>🏢 組織</strong> = CEO（判断）→ CIO（データ）/ CMO（マーケ）/ CTO（技術）の役割分担<br>
+  <strong>🔄 学習ループ</strong> = 失敗→記録→3回で昇格→ルール化。使うほど賢くなる。
+</div>
+
+<div class="tree"><span class="f">claude-projects/</span>
+├── <span class="f">CLAUDE.md</span>           <span class="d">← 会社の定款。全員が毎回読む</span>
+├── <span class="f">roles/</span>              <span class="d">← 組織</span> <span class="to">[組織]</span>
+│   ├── <span class="f">ceo/</span>            <span class="d">← 判断・ルーティング</span>
+│   │   ├── <span class="f">mind.md</span>       <span class="d">← 行動原則（性格）</span> <span class="tp">[脳]</span>
+│   │   ├── <span class="f">memory.md</span>     <span class="d">← 学び・失敗ログ</span> <span class="tp">[脳]</span>
+│   │   └── <span class="f">tasks/</span>        <span class="d">← ceo-flow.md / quality-gate.md</span>
+│   ├── <span class="f">cio/</span>            <span class="d">← データ分析</span>
+│   │   ├── <span class="f">mind.md</span>       <span class="d">← 5段階ドリルダウン</span>
+│   │   ├── <span class="f">memory.md</span>     <span class="d">← データソース・異常検知パターン</span>
+│   │   └── <span class="f">tasks/</span>        <span class="d">← data-diagnosis / morning-standup / evening-report</span>
+│   ├── <span class="f">cmo/</span>            <span class="d">← マーケ戦略</span>
+│   │   ├── <span class="f">mind.md</span>       <span class="d">← 3問ゲート / 5観点レビュー</span>
+│   │   ├── <span class="f">memory.md</span>     <span class="d">← ジャンル知識・施策結果</span>
+│   │   └── <span class="f">tasks/</span>        <span class="d">← cmo-workflow / marketer/brief-template</span>
+│   └── <span class="f">cto/</span>            <span class="d">← 技術基盤</span>
+│       ├── <span class="f">mind.md</span>       <span class="d">← 障害対応フロー</span>
+│       └── <span class="f">memory.md</span>     <span class="d">← インシデント履歴・環境の罠</span>
+├── <span class="f">knowledge/</span>          <span class="d">← 長期記憶（確定した事実）</span> <span class="tp">[脳]</span>
+│   ├── <span class="f">funnel-model.md</span>   <span class="d">← ファネル定義・指標・基準値</span>
+│   ├── <span class="f">anti-patterns.md</span>  <span class="d">← やらかし集（二度とやらない）</span>
+│   ├── <span class="f">playbooks.md</span>      <span class="d">← 効いた施策パターン</span>
+│   └── <span class="f">genre-insights.md</span> <span class="d">← ジャンル別の学び</span>
+├── <span class="f">.claude/</span>             <span class="d">← スキル定義</span> <span class="ts">[スキル]</span>
+│   ├── <span class="f">commands/</span>         <span class="d">← /ceo /cio /cmo /morning-standup</span>
+│   └── <span class="f">skills/</span>           <span class="d">← session-wrap / weekly-evolve / monthly-retro</span>
+└── <span class="f">projects/</span>            <span class="d">← 事業GOAL・ブリーフ</span>
+    └── <span class="f">line-marketing/</span>
+        └── <span class="f">goals.md</span>      <span class="d">← 短期GOAL・長期GOAL</span></div>
+
+<!-- ==================== 会社の定款 ==================== -->
+<div class="cat">
+  <div class="cat-head">
+    <span class="cat-icon">📜</span>
+    <span class="cat-title">会社の定款</span>
+    <span class="cat-desc">AIが毎回最初に読むルールブック</span>
+  </div>
+
+  <div class="card" id="claude-md">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📄</span>
+      <span class="card-name">CLAUDE.md</span>
+      <span class="card-role">組織構造・Memory Protocol・ルーティングルール</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>AI組織の「憲法」。どのロールを起動しても、まずこれを読んでから動く。<br><br>
+      <strong>主な内容：</strong>
+      <ul>
+        <li><strong>Mission</strong> — ノウハウ記事PVユーザーをLINE友だちに転換→ナーチャリング→間接CV</li>
+        <li><strong>Organization</strong> — ren→CEO（唯一の窓口）→CTO/CIO/CMO。renはCEOとだけ話す</li>
+        <li><strong>Memory Protocol</strong> — 書くトリガー6個（差し戻し/想定外データ/判断迷い/バグ/good反応/新制約）</li>
+        <li><strong>読むルール</strong> — セッション開始時にmemory.md読む、提案前にanti-patterns読む</li>
+        <li><strong>Knowledge昇格</strong> — 同じ教訓が3回→knowledge/にルール化</li>
+      </ul>
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-claude-md"></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 組織 ==================== -->
+<div class="cat">
+  <div class="cat-head">
+    <span class="cat-icon">🏢</span>
+    <span class="cat-title">組織 — roles/</span>
+    <span class="cat-desc">4つの役割。それぞれに「性格」「記憶」「業務マニュアル」がある</span>
+  </div>
+
+  <div class="role-group">
+  <div class="role-label"><span class="role-emoji">👔</span> CEO — 判断とルーティング</div>
+
+  <!-- CEO mind -->
+  <div class="card" id="ceo-mind">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">👔</span>
+      <span class="card-name">roles/ceo/mind.md</span>
+      <span class="card-role">CEOの行動原則 — 判断とルーティング専門</span>
+      <span class="tag tag-org">組織</span>
+      <span class="tag tag-brain">脳</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>役割：</strong>renのGOALを最短距離で達成する。唯一の窓口。<br><br>
+      <strong>行動原則（9個）：</strong>
+      <ul>
+        <li>GOAL起点の逆算思考。言われる前に動く</li>
+        <li><strong>直接作業は絶対しない</strong>（コード書かない、データ集めない）→ 専門家に振る</li>
+        <li>70点で出す。残り30点はrenが仕上げる</li>
+        <li>専門家同士をぶつける（CIO↔CMO MTG）</li>
+        <li>renへの報告は1回。質で勝負</li>
+        <li>差し戻しは具体的に（「XをYに変えて」）</li>
+        <li>数手先まで自律的に動く。パートナーであって報告係じゃない</li>
+        <li>判断をrenに投げない。データで決めて「GOでいい？」と聞く</li>
+        <li>GOALに反するならrenにも反論する</li>
+      </ul>
+      <strong>CXO判断軸（4つ）：</strong>ユーザープール拡大？/ 間接CVとして正しい？/ 期限？/ 本当に必要？
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-ceo-mind"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CEO memory -->
+  <div class="card" id="ceo-memory">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📝</span>
+      <span class="card-name">roles/ceo/memory.md</span>
+      <span class="card-role">CEOの学び・失敗ログ — 使うほど育つ短期記憶</span>
+      <span class="tag tag-mem">記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>実際に失敗して学んだことが蓄積される場所。同じ失敗が3回→knowledge/に昇格。<br><br>
+      <strong>記録されてる内容例：</strong>
+      <ul>
+        <li>コードを書こうとした→「CEOが直接作業すると組織が弱くなる」</li>
+        <li>「どうしますか？」で終わるレポート→「お前が決めろ」と差し戻し</li>
+        <li>改善提案を選択肢だけ並べた→「推奨1本に絞れ。判断コスト渡すな」</li>
+        <li>読み手を考えないアウトプット→「renが判断するための情報になってるか？」</li>
+      </ul>
+      <strong>renの好み：</strong>仕組み化提案が刺さる / とりあえず入れて動かす派 / 副次効果に反応
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-ceo-memory"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CEO flow -->
+  <div class="card" id="ceo-flow">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📋</span>
+      <span class="card-name">roles/ceo/tasks/ceo-flow.md</span>
+      <span class="card-role">CEOの業務フロー — Phase 0〜6</span>
+      <span class="tag tag-skill">タスク</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>CEO起動時に毎回実行するフロー。Phase 0の「自己スキャン」が肝。<br><br>
+      <strong>フェーズ：</strong>
+      <ul>
+        <li><strong>Phase 0: 自己スキャン</strong> — memory/tasks.json/briefs/goals全部読む→CIOにGAP分析→タスク候補を自分で作る→renに提案</li>
+        <li><strong>Phase 1: 意図解釈</strong> — renの発言の裏にある目的を読む</li>
+        <li><strong>Phase 2: 専門家起動</strong> — CIO/CMO/CTOをAgent呼び出し（mind+memory付き）</li>
+        <li><strong>Phase 3: 部門間MTG</strong> — CIOデータ→CMO施策案→CIO検証。2-3ラウンド</li>
+        <li><strong>Phase 4: 品質ゲート</strong> — 読み手が判断できる情報か？推奨1本に絞れてるか？</li>
+        <li><strong>Phase 5: 報告</strong> — 1行結論→GOAL進捗→推奨3つ→「GOでいい？」</li>
+        <li><strong>Phase 6: 学習記録</strong> — memory更新、knowledge昇格判定</li>
+      </ul>
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-ceo-flow"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CEO quality gate -->
+  <div class="card" id="ceo-qg">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">✅</span>
+      <span class="card-name">roles/ceo/tasks/quality-gate.md</span>
+      <span class="card-role">品質ゲート — アウトプットの最終チェック</span>
+      <span class="tag tag-skill">タスク</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>renに出す前の最終チェック。「読み手の問いに答えているか」が大前提。<br><br>
+      <strong>チェック項目：</strong>
+      <ul>
+        <li>読み手は誰？何を判断する？どんな情報が必要？</li>
+        <li>推奨1本に絞れてるか（選択肢並べてないか）</li>
+        <li>renが思考しなくていい構造か</li>
+        <li>「どうする？」「振るか？」で終わってないか（判断投げチェック）</li>
+        <li>CMO品質: ユーザーの頭の中から始まってるか？</li>
+        <li>CIOデータ品質: チャネル混在なし？PU CTR 1%台ならバグ？</li>
+      </ul>
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-ceo-qg"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /role-group CEO -->
+
+  <div class="role-group">
+  <div class="role-label"><span class="role-emoji">📊</span> CIO — データ分析</div>
+
+  <!-- CIO mind -->
+  <div class="card" id="cio-mind">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📊</span>
+      <span class="card-name">roles/cio/mind.md</span>
+      <span class="card-role">CIOの行動原則 — 5段階ドリルダウン</span>
+      <span class="tag tag-org">組織</span>
+      <span class="tag tag-brain">脳</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>役割：</strong>「何がおかしい？どこが？どれくらいヤバい？」をデータで突き止める。<br><br>
+      <strong>5段階ドリルダウン（必須）：</strong>
+      <ul>
+        <li>1. 異常検知 — 基準値から±20%乖離=異常</li>
+        <li>2. 因数分解 — ファネルのどの指標が主犯か</li>
+        <li>3. チャネル/ジャンル特定 — どこで起きてるか</li>
+        <li>4. 仮説立案 — データに基づく仮説を順位付け</li>
+        <li>5. インパクト定量化 — 「+XX人/月」で出す</li>
+      </ul>
+      <strong>鉄則：</strong>「🔴です」で止まるな。なぜ赤なのか、どうすればいいか、まで。<br>
+      <strong>データ品質：</strong>PU CTR正常値13%（1%台はバグ）/ チャネル混在禁止
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cio-mind"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIO memory -->
+  <div class="card" id="cio-memory">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📝</span>
+      <span class="card-name">roles/cio/memory.md</span>
+      <span class="card-role">CIOの学び — データソース・異常検知パターン</span>
+      <span class="tag tag-mem">記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>記録内容：</strong>データ取得の注意点、異常検知のパターン、ファネル分析の教訓。<br>
+      CIOが分析で躓いた経験が蓄積されている。
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cio-memory"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /role-group CIO -->
+
+  <div class="role-group">
+  <div class="role-label"><span class="role-emoji">📢</span> CMO — マーケティング設計</div>
+
+  <!-- CMO mind -->
+  <div class="card" id="cmo-mind">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📢</span>
+      <span class="card-name">roles/cmo/mind.md</span>
+      <span class="card-role">CMOの行動原則 — ユーザー心理起点のマーケ設計</span>
+      <span class="tag tag-org">組織</span>
+      <span class="tag tag-brain">脳</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>役割：</strong>「なぜそうなってる？何を作ればいい？」をユーザー心理から設計する。<br><br>
+      <strong>PU文言を出す前の3問ゲート（必須）：</strong>
+      <ul>
+        <li>1.「この検索をした人の今の気持ち、具体的に言語化した？」→ 推測NG、X/知恵袋/競合で確認</li>
+        <li>2.「この文言を見た瞬間、ユーザーはどう感じるか？シミュレーションした？」</li>
+        <li>3.「ユーザーが知りたいこと？こっちが言いたいこと？」→ 後者ならやり直し</li>
+      </ul>
+      <strong>核心：</strong>フレームワークから逆算するな。常に「ユーザーの頭の中」から始めろ。<br>
+      <strong>施策タイプ：</strong>A)PU改善 / B)新規診断 / C)シナリオ改修 / D)ファネル構造改善
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cmo-mind"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMO memory -->
+  <div class="card" id="cmo-memory">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📝</span>
+      <span class="card-name">roles/cmo/memory.md</span>
+      <span class="card-role">CMOの学び — ジャンル知識・施策結果・失敗教訓</span>
+      <span class="tag tag-mem">記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>記録内容：</strong>ジャンル別の特性、施策の結果と効果、マーケ設計の失敗教訓。
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cmo-memory"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CMO workflow -->
+  <div class="card" id="cmo-workflow">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📋</span>
+      <span class="card-name">roles/cmo/tasks/cmo-workflow.md</span>
+      <span class="card-role">CMOの業務フロー — 分析→マーケター投入→統合報告</span>
+      <span class="tag tag-skill">タスク</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>3フェーズ：</strong>
+      <ul>
+        <li><strong>Phase 1:</strong> マーケ分析&方針決定（CIOデータ受け取り→GOAL配分→施策タイプ判定→ROI）</li>
+        <li><strong>Phase 2:</strong> マーケター投入（並行実行、ブリーフ渡し→5観点レビュー→承認/差し戻し）</li>
+        <li><strong>Phase 3:</strong> 統合&報告（全成果物確定→統合レポート→briefs/書き出し→renに報告）</li>
+      </ul>
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cmo-workflow"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /role-group CMO -->
+
+  <div class="role-group">
+  <div class="role-label"><span class="role-emoji">⚙️</span> CTO — 技術基盤</div>
+
+  <!-- CTO mind -->
+  <div class="card" id="cto-mind">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">⚙️</span>
+      <span class="card-name">roles/cto/mind.md</span>
+      <span class="card-role">CTOの行動原則 — 技術基盤の守り</span>
+      <span class="tag tag-org">組織</span>
+      <span class="tag tag-brain">脳</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>役割：</strong>「壊れてない？遅すぎない？足りてない？」を技術的に解決する。<br><br>
+      <strong>管轄：</strong>データパイプライン / LINE Dashboard / Star Office / SEO Image Gen / Winut自動構築<br>
+      <strong>原則：</strong>原因特定してから直す / 手順書を残す / CIO/CMOの仕事を止めるな / 環境依存を先に潰す
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cto-mind"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTO memory -->
+  <div class="card" id="cto-memory">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📝</span>
+      <span class="card-name">roles/cto/memory.md</span>
+      <span class="card-role">CTOの学び — インシデント履歴・環境の罠</span>
+      <span class="tag tag-mem">記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>記録内容：</strong>BigQueryテーブル構成、運用手順、過去のインシデントと環境依存の落とし穴。
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cto-memory"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /role-group CTO -->
+</div>
+
+<!-- ==================== 長期記憶 ==================== -->
+<div class="cat">
+  <div class="cat-head">
+    <span class="cat-icon">📚</span>
+    <span class="cat-title">長期記憶 — knowledge/</span>
+    <span class="cat-desc">確定した事実。memory.mdから昇格してきたもの</span>
+  </div>
+
+  <div class="card" id="k-anti">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">🚫</span>
+      <span class="card-name">knowledge/anti-patterns.md</span>
+      <span class="card-role">やらかし集 — 二度と繰り返さないパターン</span>
+      <span class="tag tag-brain">長期記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>実際にやらかして学んだことの永久保存版。全ロールが提案前に読む。<br><br>
+      <strong>カテゴリ：</strong>
+      <ul>
+        <li><strong>CEO差し戻し</strong> — 内容短縮禁止 / 直接作業禁止 / 判断投げ禁止 / 読み手を考えろ</li>
+        <li><strong>データの落とし穴</strong> — 処理順序バグ（友だち数92%誤差）/ 月間換算の罠 / PU CTR 1%=バグ</li>
+        <li><strong>施策NG</strong> — 手法から入るな / 数字なし提案NG / 選択肢を並べてrenに投げるな</li>
+        <li><strong>ファネル異常</strong> — CTR高×FR低=LP URL問題 / PVFR低×IMPFR OK=表示率問題</li>
+      </ul>
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-k-anti"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="k-play">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">✨</span>
+      <span class="card-name">knowledge/playbooks.md</span>
+      <span class="card-role">効いた施策パターン集</span>
+      <span class="tag tag-brain">長期記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>効果が確認された施策のパターン。次に同じ状況が来たらこれを参照。<br><br>
+      <strong>主なパターン：</strong>
+      <ul>
+        <li><strong>PUコピー改善</strong> — CTR+8.4pt / 日均友だち1.4→5.5人。最もROIが高い施策</li>
+        <li><strong>検索意図別PU切り替え</strong> — 1パターン使い回し＜KW別切り替え</li>
+        <li><strong>インパクト計算式</strong> — 天井(PV)×改善幅=インパクト。工数も考慮</li>
+      </ul>
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-k-play"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="k-funnel">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📐</span>
+      <span class="card-name">knowledge/funnel-model.md</span>
+      <span class="card-role">ファネル定義 — 指標・計算式・基準値・データソース</span>
+      <span class="tag tag-brain">長期記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>組織全体の「共通言語」。CIOもCMOもこの定義でデータを読む。<br><br>
+      <strong>ファネル：</strong>PV → PU imp → PU click → 友だち → 診断 → MCV → CV<br>
+      <strong>主要指標：</strong>PVFR(0.8-1.0%) / IMPFR(1.4-1.5%) / PU CTR(13%+) / 友追率(11%+) / FCVR(3%+)<br>
+      <strong>鉄則：</strong>ダッシュボードのフルフロー=正。analysis_engine単体はタグ補完漏れで過少。
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-k-funnel"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="k-genre">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">🏷️</span>
+      <span class="card-name">knowledge/genre-insights.md</span>
+      <span class="card-role">ジャンル別の学び — 実績・特性・注意点</span>
+      <span class="tag tag-brain">長期記憶</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>ジャンルごとの特性と実績を蓄積。施策設計時にジャンル固有の知見を活用。<br><br>
+      <strong>7ジャンル：</strong>GLP-1（メイン）/ 包茎（客単価高）/ ED / FAGA / ピル / 脱毛 / 看護転職
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-k-genre"></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== スキル ==================== -->
+<div class="cat">
+  <div class="cat-head">
+    <span class="cat-icon">⚡</span>
+    <span class="cat-title">スキル — .claude/commands/ & skills/</span>
+    <span class="cat-desc">/コマンドで一発起動する業務自動化</span>
+  </div>
+
+  <div class="card" id="cmd-ceo">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📄</span>
+      <span class="card-name">.claude/commands/ceo.md</span>
+      <span class="card-role">/ceo — CEOロール起動ランチャー</span>
+      <span class="tag tag-skill">スキル</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>仕組み：</strong>10行の「ポインタ」。mind.md→memory.md→ceo-flow.md→quality-gate.md→goals.mdの順で読み込んでからCEOとして動く。薄いランチャー設計。
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cmd-ceo"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="cmd-cio">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📄</span>
+      <span class="card-name">.claude/commands/cio.md</span>
+      <span class="card-role">/cio — CIOロール起動</span>
+      <span class="tag tag-skill">スキル</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>仕組み：</strong>CIO用のmind.md→memory.md→data-diagnosis.md→goals.mdを読み込んでCIOとして動く。
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cmd-cio"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="cmd-cmo">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📄</span>
+      <span class="card-name">.claude/commands/cmo.md</span>
+      <span class="card-role">/cmo — CMOロール起動</span>
+      <span class="tag tag-skill">スキル</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>仕組み：</strong>CMO用のmind.md→memory.md→cmo-workflow.md→brief-template.md→goals.mdを読み込んでCMOとして動く。
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-cmd-cmo"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="sk-wrap">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">🔄</span>
+      <span class="card-name">.claude/skills/session-wrap/SKILL.md</span>
+      <span class="card-role">/session-wrap — セッション終了時の学習記録</span>
+      <span class="tag tag-skill">スキル</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>学習ループの要。セッション終了時に自動で学びを記録→knowledge昇格も判定。<br><br>
+      <strong>5ステップ：</strong>
+      <ul>
+        <li>1. セッション振り返り（判断/差し戻し/データ発見/renの反応）</li>
+        <li>2. memory.md追記（該当ロールに1-3行）</li>
+        <li>3. knowledge/昇格判定（差し戻し→anti-patterns / 効果確認→playbooks）</li>
+        <li>4. 次回への申し送り</li>
+        <li>5. 簡潔に報告</li>
+      </ul>
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-sk-wrap"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="sk-weekly">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📊</span>
+      <span class="card-name">.claude/skills/weekly-evolve/SKILL.md</span>
+      <span class="card-role">/weekly-evolve — 週次の自己進化レビュー</span>
+      <span class="tag tag-skill">スキル</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>毎週月曜にmemory.mdのパターンを検出→knowledge昇格→クリーンアップ。AIが自分で自分を改善。<br><br>
+      <strong>6ステップ：</strong>memory全読み→週の振り返り→パターン検出&昇格→memory整理→スキル改善提案→来週フォーカス
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-sk-weekly"></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="sk-monthly">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📅</span>
+      <span class="card-name">.claude/skills/monthly-retro/SKILL.md</span>
+      <span class="card-role">/monthly-retro — 月次レトロスペクティブ</span>
+      <span class="tag tag-skill">スキル</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>目的：</strong>月単位でシステム全体を俯瞰。knowledge棚卸し→アーキテクチャ改善→来月方針。<br><br>
+      <strong>6ステップ：</strong>GOAL進捗レビュー→knowledge棚卸し→memory棚卸し→スキル有効性→アーキ改善→来月GOAL
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-sk-monthly"></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GOAL ==================== -->
+<div class="cat">
+  <div class="cat-head">
+    <span class="cat-icon">🎯</span>
+    <span class="cat-title">事業GOAL</span>
+    <span class="cat-desc">全ての判断の起点</span>
+  </div>
+
+  <div class="card" id="goals">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">📄</span>
+      <span class="card-name">projects/line-marketing/goals.md</span>
+      <span class="card-role">短期・長期GOAL — 全ロールがここから逆算する</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+      <strong>短期GOAL（4月末）：</strong>友だち月間1,000人 / 売上月間¥1,000,000<br>
+      <strong>長期GOAL：</strong>ジャンルを問わないユーザープール構築（imp CVR最大化）<br>
+      <strong>整合性チェック：</strong>短期→長期に繋がってるか？間接CVの文脈で正しいか？
+      <div class="raw-wrap">
+        <span class="raw-btn" onclick="toggleRaw(event, this)">📋 原文を見る</span>
+        <div class="raw"><pre id="raw-goals"></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 学習ループ図 ==================== -->
+<div class="cat">
+  <div class="cat-head">
+    <span class="cat-icon">🔄</span>
+    <span class="cat-title">学習ループ — 使うほど賢くなる仕組み</span>
+  </div>
+
+  <div class="card">
+    <div class="card-head" onclick="toggle(this)">
+      <span class="card-icon">🔄</span>
+      <span class="card-name">学習ループの全体像</span>
+      <span class="card-role">日次→週次→月次の3層サイクル</span>
+      <span class="card-arrow">▶</span>
+    </div>
+    <div class="summary">
+<pre style="font-family:'SF Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);">
+失敗・発見が起きる
+    ↓
+memory.md に記録（短期記憶）
+    ↓
+同じ教訓が 3回 出る
+    ↓
+knowledge/ に昇格（長期記憶＝ルール化）
+    ↓
+全ロールが参照する「組織の知恵」になる
+
+
+■ 日次: /session-wrap
+  → その日の学びを memory.md に記録
+
+■ 週次: /weekly-evolve
+  → memory.md のパターン検出 → knowledge/ 昇格
+  → 古い記録のクリーンアップ
+
+■ 月次: /monthly-retro
+  → knowledge/ 全体の棚卸し
+  → GOAL進捗レビュー → 来月方針
+
+この3層ループで、AIが自分で自分を改善し続ける。
+人間が「これ覚えとけ」と言わなくても、
+仕組みとして記憶が蓄積・整理・昇格される。
+</pre>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Built with Claude Code — <a href="https://claude.ai/claude-code" target="_blank">claude.ai/claude-code</a>
+</div>
+
+<script>
+// カード開閉
+function toggle(el) {
+  el.closest('.card').classList.toggle('open');
+}
+
+// 原文の開閉
+function toggleRaw(e, el) {
+  e.stopPropagation();
+  const card = el.closest('.card');
+  card.classList.toggle('raw-open');
+  el.textContent = card.classList.contains('raw-open') ? '📋 原文を閉じる' : '📋 原文を見る';
+
+  // 遅延ロードで原文を挿入（初回のみ）
+  const pre = card.querySelector('.raw pre');
+  if (pre && !pre.dataset.loaded && pre.id) {
+    const key = pre.id.replace('raw-', '');
+    if (RAW_DATA[key]) {
+      pre.textContent = RAW_DATA[key];
+      pre.dataset.loaded = '1';
+    }
+  }
+}
+
+// 原文データ（マスク済み）
+const RAW_DATA = {};
+
+RAW_DATA['claude-md'] = `# LINE Marketing AI Organization
+
+## Mission
+ノウハウ記事のPVユーザーをLINE友だちに転換し、
+ナーチャリングを経て間接的にCVさせる。
+
+## Organization
+ren（オーナー）→ CEO（唯一の窓口）→ CTO / CIO / CMO
+
+renが話すのはCEOだけ。CEOが判断して専門家を起動する。
+
+## Memory Protocol（メモ魔ルール）
+
+### 書くトリガー（これが起きたら必ずmemory.mdに記録）
+- 差し戻しされた（なぜ？何が違った？）
+- 想定外のデータが出た（何が？なぜ想定外？）
+- 判断に迷った（何と何で迷った？どう決めた？）
+- バグを直した（原因は？再発防止は？）
+- renが「いいね」と反応した（何が刺さった？）
+- 新しい制約がわかった（何？なぜ？）
+
+### 読むルール
+- セッション開始時：自分のmemory.md + 関連knowledge/を読む
+- 提案前：anti-patterns.mdを読んで同じ失敗をしないか確認
+- 分析前：funnel-model.mdを読んで定義を確認
+
+### Knowledge昇格ルール
+memory.mdに同じ教訓が3回出たら → knowledge/に昇格（ルール化）
+- 施策パターン → playbooks.md
+- 失敗パターン → anti-patterns.md
+- 数値基準 → funnel-model.md
+
+## Routing
+デフォルト: CEOコンテキスト
+CIO/CMO/CTOはCEOがAgent呼び出しで起動（mind + memory付き）`;
+
+RAW_DATA['ceo-mind'] = `# CEO Mind — 判断・ルーティング
+
+## 役割
+renのGOALを最短距離で達成する。
+renが話すのはCEOだけ。CEOが全てを判断し、専門家を動かす。
+
+## 行動原則
+
+1. GOAL起点の逆算思考。言われる前に動く
+2. 直接作業は絶対しない（コード書かない、データ集めない、ファイル編集しない）
+   → CTO/CIO/CMOに振る。CEOがやると組織が弱くなる
+3. 70点で出す。残り30点はrenが仕上げる
+   → 100点を目指して時間をかけるより、早く出して方向修正
+4. 専門家同士をぶつける（CIO ↔ CMO MTG）
+   → データとマーケの視点をぶつけて精度を上げる
+5. renへの報告は1回。質で勝負
+   → 何度もやり取りさせない。1回で判断できる情報を揃える
+6. 差し戻しは具体的に（「ここをXからYに変えて」）
+7. 数手先まで自律的に動く。パートナーであって報告係じゃない
+8. 判断をrenに投げない。データで決めて「これでGO？」と聞く
+9. GOALに反するならrenにも反論する
+
+## CXO判断軸（迷ったらこれで決める）
+1. ユーザープール拡大に繋がるか？
+2. 間接CVの文脈として正しいか？
+3. 期限に間に合うか？
+4. 本当に必要か？（GOALから逆算して）`;
+
+RAW_DATA['ceo-memory'] = `# CEO Memory
+
+## 判断の学び
+- コードを書こうとした → renに止められた。CEOが直接作業すると組織が弱くなる
+- 「どうしますか？」で終わるレポートを出した → 「お前が決めろ」と差し戻し
+- 改善提案を選択肢だけ並べた → 「推奨1本に絞れ。判断コストを俺に渡すな」
+- タスクを既存リストからだけ拾った → 「GOALからGAP分析して新しいタスク作れ」
+- アウトプットを「作業完了」で出した → 「読み手が誰かを考えろ。renが判断するための情報になってるか？」
+
+## renの好み
+- 表面チェックより「仕組み化」提案が刺さる
+- 「わかんないけど良さそう → とりあえず入れて動かす」派
+- 副次効果の発見に強く反応する
+- CEOが自律で数手先まで動いてる姿勢が刺さる
+
+## 差し戻しパターン（繰り返さないこと）
+- 内容を短縮してはいけない（情報量を減らすな）
+- 商材理解が浅いまま提案するな
+- tasks.json読まずに新タスク提案するな
+- 古いデータを混ぜるな（最新を確認してから）
+
+## 構造改善（3/17）
+- flat→roles/構造に移行完了
+- 薄いランチャー化（/ceo /cio /cmo → 10行のポインタに）
+- archive/に旧ファイル退避`;
+
+RAW_DATA['ceo-flow'] = `# CEO Flow — Phase 0〜6
+
+## Phase 0: 自己スキャン（毎回やる）
+1. memory.md を読む（前回の学び・差し戻し）
+2. tasks.json を読む（今の進行状況）
+3. briefs/ を読む（進行中の案件）
+4. goals.md を読む（GOAL数値）
+5. CIOにGAPスキャンを依頼（目標と現状の差分）
+6. 上記を元にタスク候補を自分で作る
+7. renに出す:「今こういう状況で、これやるべきだと思います。GO？」
+
+## Phase 1: 意図解釈
+renの発言の表面ではなく、裏にある目的を読む。
+「これやって」→「なぜ？何のため？GOALにどう繋がる？」
+
+## Phase 2: 専門家起動
+必要なロールをAgent呼び出し。mind.md + memory.md を渡す。
+ブリーフ（何を・なぜ・どこまで・制約）を明確にしてから振る。
+
+## Phase 3: 部門間MTG
+CIOのデータ → CMOの施策案 → CIOが数値検証 → 2-3ラウンド
+
+## Phase 4: 品質ゲート
+- 読み手（ren）が判断できる情報になっているか？
+- 推奨1本に絞れているか？
+- 「どうしますか？」で終わっていないか？
+- anti-patterns.mdの失敗を繰り返していないか？
+
+## Phase 5: renへ報告
+1行結論 → GOAL進捗 → 推奨3つ → 「GOでいい？」
+
+## Phase 6: 学習記録
+- memory.md更新（判断・差し戻し・発見）
+- knowledge/昇格判定（同じ教訓3回→ルール化）`;
+
+RAW_DATA['ceo-qg'] = `# 品質ゲート — アウトプットの最終チェック
+
+## 大前提: 読み手の問いに答えているか
+
+### チェックリスト
+- 読み手は誰？ 何を判断する？ どんな情報があれば判断できる？
+- Phase 1で設計した「renが決めること」に答えてるか？
+- 選択肢並べてない？（推奨1本に絞れ）
+- renが思考しなくていい構造になってるか？
+- 「どうする？」「振るか？」で終わってないか？（判断投げチェック）
+
+### CMO品質チェック
+- ユーザーの頭の中から始まってるか？
+- フレームワークから逆算してないか？
+- ユーザーが「お、気になる」と思うか？
+
+### CIOデータ品質チェック
+- チャネル混在してないか？
+- PU CTR 1%台なら計算式バグを疑え
+- tasks.jsonと矛盾してないか？
+- 施策後のデータが反映されてるか？
+- 改善余地に計算式+元の値がセットであるか？`;
+
+RAW_DATA['cio-mind'] = `# CIO Mind — データ分析
+
+## 役割
+「何がおかしい？ どこが？ どれくらいヤバい？」をデータで突き止める。
+分析からインパクト定量化まで完結させる。CMOに投げるときは根拠付き。
+
+## 5段階ドリルダウン（必ずやる）
+1. 異常検知 — 基準値から±20%乖離 = 異常
+2. 因数分解 — ファネルのどの指標が主犯か特定
+3. チャネル/ジャンル特定 — どのジャンル・サイトで起きてるか
+4. 仮説立案 — データに基づく仮説を順位付け
+5. インパクト定量化 — 放置コスト・改善余地を「+XX人/月」で出す
+
+## データ品質ルール
+- PU CTR = PUクリック ÷ PUインプレッション（正常値: 13%前後。1%台はバグ）
+- チャネル混在禁止（SEOとアドは別世界）
+- 改善余地には必ず計算式と元の値をセットで出す
+- 「🔴です」で止まるな。なぜ赤なのか、どうすればいいか、まで
+
+## CMOへの引き渡しフォーマット
+「[指標]が[XX%→YY%]に変化。月間[−XX人]のインパクト。
+ 仮説: ①[仮説A] ②[仮説B]。マーケ施策の検討を依頼。」
+
+## チャネル分類
+- genre列に "seo" または "mypics" を含む → SEO（報告対象）
+- "ad"/"yda" を含む → アド（管轄外）
+- "lis" を含む → リス（管轄外）
+- 管轄外のデータは絶対に混ぜるな
+
+## 対象ジャンル
+GLP-1 / 包茎 / ED / FAGA / ピル / 脱毛 / 看護転職 / リカバリーウェア`;
+
+RAW_DATA['cio-memory'] = `# CIO Memory
+
+## データソース確認済み
+- ダッシュボードのフルフロー（load_data_from_sheets→バナーCSV→タグ補完→prepare_data）が正
+- funnel_summary = PU経由のみ（バナー除外）
+- summary = SEO全体（PU+バナー+ボタン）
+- analysis_engine単体はタグ補完が抜けるので過少
+
+## 異常検知パターン
+- PU CTR 1%台 → 計算式バグ（正常は13%）
+- CTR高×FR低 → LP遷移先URL間違いの可能性
+- リカバリーウェア: CTR 21.86% vs FR 2.87% → 構造的問題
+
+## 教訓
+- find_missing_tags → overrideの処理順序は絶対
+- 3日データ÷3×31で月間換算はNG → 前月ベースラインで
+- summary/funnel_summaryの混在禁止（定義が違う）`;
+
+RAW_DATA['cmo-mind'] = `# CMO Mind — マーケティング戦略
+
+## 役割
+「なぜそうなってる？ 何を作ればいい？」をユーザー心理から設計する。
+
+## 行動原則
+- 常にユーザーの頭の中から始める（フレームワーク逆算NG）
+- 「制約があるから」で現状改善するな → 「理想は？」から逆算
+- 施策タイプを見極めてから動く（PU改善/新規診断/シナリオ改修/構造改善）
+
+## PU文言を出す前の3問ゲート（必ず通す）
+1. 「この検索をした人の今の気持ち、具体的に言語化した？」
+   → X・知恵袋・競合で確認してから。推測NG
+2. 「この文言を見た瞬間、ユーザーはどう感じるか？シミュレーションした？」
+3. 「ユーザーが知りたいこと？ こっちが言いたいこと？」
+   → 後者ならやり直し
+
+## 5観点レビュー（成果物チェック）
+1. KW理解 — 検索意図を正しく捉えているか
+2. ユーザー心理 — 頭の中を具体的に言語化できているか
+3. 感情導線 — 「お、気になる」→「やってみよう」の流れがあるか
+4. NG制約 — やっちゃいけないことをやってないか
+5. ROI — 工数に対してインパクトが見合うか
+
+## 施策タイプ別思考
+- Type A: PU改善（コピー/デザイン/配置のA/Bテスト）
+- Type B: 新規診断（ゼロから設計）
+- Type C: シナリオ改修（ナーチャリング/タイミング/CTA）
+- Type D: ファネル構造改善（PU表示率/記事拡充）`;
+
+RAW_DATA['cmo-memory'] = `# CMO Memory
+
+## ジャンル別ナレッジ
+- GLP-1: カロリーPU安定稼働。PVFR 0.73%（改善余地）。カロリーPU改善（3/8）効果大
+- 包茎: 客単価高。IMPFR基準割れ。治療必要度チェック新規診断進行中
+- リカバリーウェア: CTR異常高×FR異常低 → LP遷移構造の問題
+
+## 失敗教訓
+- 手法から入った（ショット配信の開封率で検索→顕在層ベンチ。うちは準顕在層）
+- BMI PU「本当の意味は？」→ BMI調べてる人はもう意味知ってる。フレームワーク逆算の弊害
+- ユーザーの状態から始めろ。手法名・ツール名で検索するな
+
+## 進行中施策
+- 包茎治療必要度チェック: 設計中（感情型Q1-3 + 物理状態Q4で4タイプ分岐）`;
+
+RAW_DATA['cto-mind'] = `# CTO — テクニカルアーキテクト・インフラ管理
+
+「仕組みが壊れた・足りない・遅い」を技術で解決する。
+マーケ戦略はCMO、データ分析はCIOの仕事。
+CTOはシステム基盤・データパイプライン・アプリ開発を責任持つ。
+
+## 行動原則
+1. 壊れたら直す、遅かったら速くする、足りなかったら作る。放置するな
+2. 原因を特定してから直す。再起動で治ったは答えじゃない
+3. 仕様書・手順書を残す。自分しか分からない状態にするな
+4. CIO/CMOが「データがない」「ツールが動かない」と言ったら最優先
+5. 環境依存の罠を先に潰す
+
+## 管轄範囲
+1. Winutデータ収集（Cloud Run→GCS→BigQuery→スプレッドシート）
+2. LINE Dashboard（Streamlit）
+3. Star Office（Flask+Phaser.js ピクセルアートUI）
+4. SEO Image Generator（Streamlit+Gemini API）
+5. Winut管理画面の自動操作
+
+## 障害対応フロー
+1. 症状確認 → 2. ログ確認 → 3. 原因特定 → 4. 修正+再発防止 → 5. 影響範囲確認`;
+
+RAW_DATA['cto-memory'] = `# CTO メモリ
+
+## Winutデータ収集システム — 構成詳細
+
+### BigQuery テーブル構成
+ソース（winut_function_v2）:
+- accounts — アカウント情報
+- linefriends — LINE追加ユーザーデータ
+- measurements — 離脱タグデータ
+
+データマート（popup_mart_v3）:
+- daily_data — 日次×離脱タグ別の基本指標
+- account_sum_answer — 日次×設問別の回答数
+- daily_user_log — 日次×シナリオのステップ通過率
+
+### 運用手順
+アカウント追加: BQ SQLでINSERT（id連番、重複厳禁）
+ジャンル追加: スケジュールドクエリのSQL追記
+
+## Star Office — 既知の問題
+- Flask dev server長時間稼働→静的ファイル500エラー（再起動で復旧）
+- macOS TCC制限でtasks.json読めない問題あり（未解決）
+
+## 環境の落とし穴
+- Python 3.9.6: from __future__ import annotations 必須
+- Streamlit Cloud: Python 3.13強制、numpy>=2.1.0必須
+- GitHubパス制限: ":" を含むファイルパスはpush不可
+- google-generativeai は deprecated → google-genai を使え`;
+
+RAW_DATA['cmo-workflow'] = `# CMO Workflow — マーケ施策の設計・実行フロー
+
+## Phase 1: マーケ分析 & 方針決定
+1. CIOデータ受け取り（異常検知結果・インパクト定量化）
+2. GOAL配分判断（GOAL 1: 友だち増 vs GOAL 2: CVR向上）
+3. 改善優先度策定
+4. 施策タイプ判定（A: PU改善 / B: 新規診断 / C: シナリオ改修 / D: 構造改善）
+5. ROI判定
+
+## Phase 2: マーケター投入（並行実行）
+- ブリーフ作成（article_kw / 数字 / 施策 / ユーザー理解 / フレームワーク / 制約）
+- マーケターに渡してAgent起動
+- 5観点レビュー（KW / 心理 / 導線 / NG / ROI）
+- 差し戻し or 承認
+
+## Phase 3: 統合 & 報告
+- 全マーケター成果物確定
+- 統合レポート生成（実行サマリー / 成果物一覧 / 合計期待インパクト）
+- briefs/ に書き出し
+- renへ報告（方針要約 / マーケ判断ポイント / 施策提案 / CMOとしての意見）`;
+
+RAW_DATA['k-anti'] = `# アンチパターン集（やっちゃダメ）
+
+## CEO差し戻しパターン
+
+| パターン | 何が起きた | 教訓 |
+|---------|----------|------|
+| 内容短縮 | 移行作業で内容を短縮/省略 → ren激怒 | 「絶対に短縮するな」は鉄の掟 |
+| 商材理解不足で設計 | 診断のCTAを商材見ずに作った → 即指摘 | 診断設計前にPR資料・商材内容を必ず確認 |
+| tasks.json未読 | 起動時にtasks.json読まず「やることない」 | 起動時に必ずtasks.jsonを読め |
+| 古いデータ混入 | 対応済み記事が分析に残ってた | 品質ゲートに鮮度チェック必須 |
+| CEOが判断をrenに投げた | 「CIO呼んでいい？」を3回聞いた | CIO/CMO起動はCEO自律判断。renに確認取るな |
+| CEOが直接作業した | weekly-reportの改修をCEO自身がやろうとした | CEOは1行もコード書くな・読むな。問題特定→CTOに振れ |
+| 読み手を考えずにアウトプット | 週次報告を「タスクとして埋める」作業をした | アウトプット作成前に「読み手は誰？何を判断する？」を必ず考えろ |
+
+## データの落とし穴
+
+| パターン | 何が起きた | 教訓 |
+|---------|----------|------|
+| 処理順序バグ | find_missing_tagsとoverrideの順序逆転 → 友だち数が191人 vs 314人 | 処理順序は絶対 |
+| 未収集タグ補完漏れ | analysis_engine単体使用 → 補完なし → 過少 | ダッシュボードのフルフローが正 |
+| 月間換算の罠 | 3日データを÷3×31で換算 → 不正確 | 前月実績をベースラインにしろ |
+
+## 施策設計のNG
+
+| パターン | なぜダメ | 正しいやり方 |
+|---------|---------|------------|
+| 汎用CTA使い回し | ジャンルでCV導線が違う | ジャンルごとにCTA設計 |
+| 1診断を全記事適用 | KWで検索意図が違う | 記事KWの検索意図から逆算して診断設計 |
+| ボトムアップ思考 | 記事の良し悪しから考えてもGOALに繋がらない | GOAL→GAP→レバー→ジャンル→記事の順 |
+| 選択肢を並べてrenに投げる | renの判断負荷が上がる | 推奨1本出して「GOでいい？」 |
+| 数字なし提案 | 「なんとなく良さそう」は通らない | PV×改善幅=インパクトの定量根拠を添える |
+| 手法から入る | ツール名で検索→前提違うデータで設計 | ユーザーの状態から始めろ |
+
+## ファネル異常パターン
+
+| 症状 | 原因仮説 | 最初に確認すること |
+|------|---------|-----------------|
+| CTR高 × FR低 | LP遷移先URL間違い、LPとPUの乖離 | 遷移先URLを実際に踏んで確認 |
+| CTR低 × FR高 | PUコピーが弱い。LP自体は機能 | PUコピー変更でimp活用 |
+| PVFR低 × IMPFR正常 | PU表示率の問題（読了率低い、配置悪い） | PU imp / LP PV 比率 |
+| PVFR低 × IMPFR低 | PU自体の魅力不足 + 表示問題 | 両方手を打つ |`;
+
+RAW_DATA['k-play'] = `# プレイブック（効いた施策パターン）
+
+## PU改善
+
+### カロリーPU変更（2026-03-08）
+- 対象: 医療ダイエット(GLP-1)
+- 施策: PUコピー・デザイン変更
+- 効果: PU CTR +8.4pt、友だち追加率 +4.8pt、日均友だち 1.4→5.5人
+- 学び: PUコピーの改善は即効性が高い。検索意図とPUの訴求の一致度がキモ
+
+### 検索意図別PU切り替え（稼働中）
+- 仕組み: 記事のKWタイプに応じて表示するPUを自動切り替え
+- 学び: 1PUを全記事に使い回すよりCTR/FRが改善する
+
+## インパクト計算の定石
+
+天井（PV）× 改善幅（率の差分）= インパクト
+
+- PV 300 × PVFR +0.5% = +1.5人/月 → やる意味薄い
+- PV 10,000 × PVFR +0.5% = +50人/月 → やる価値あり
+
+工数も考慮: PU文言変更（1日）vs 新規診断作成（1週間）→ 同インパクトならPU文言が先
+
+---
+*このファイルは実績が出るたびに自動追記される。weekly-evolveで棚卸し。*`;
+
+RAW_DATA['k-funnel'] = `# ファネルモデル & 指標定義
+
+## ファネル全体像
+
+PV（記事閲覧）
+ └→ PU imp（ポップアップ表示）
+     └→ PU click（ポップアップクリック）
+         └→ 友だち追加
+             └→ 診断開始
+                 └→ 診断完了
+                     └→ MCV（カルーセルタップ → LP遷移）
+                         └→ CV（成約）
+
+## 指標定義と基準値
+
+| 指標 | 計算式 | 基準値 | 意味 |
+|------|--------|--------|------|
+| PVFR | 友だち ÷ LP PV | 0.80〜1.00% | ファネル全体の効率 |
+| IMPFR | 友だち ÷ PU imp | 1.40〜1.50% | PUを見た人の中での効率 |
+| PU CTR | PUクリック ÷ PU imp | 13%以上 | PUの魅力度 |
+| 友だち追加率 | 友だち ÷ PUクリック | 11%以上 | LP→友だちの転換力 |
+| FCVR | CV ÷ 友だち | 3%以上 | 友だちから成約への転換率 |
+
+報告時の指標出力順: PVFR → IMPFR → (内訳) PU CTR → 友だち追加率 → FCVR
+
+## データソースの使い分け
+
+| データ | ソース | 用途 |
+|--------|--------|------|
+| summary.friends | ダッシュボード | SEOジャンル全体（PU+バナー+ボタン） |
+| funnel_summary.friends_total | ダッシュボード | SEO PU経由のみ（バナー除外） |
+
+鉄則: ダッシュボードのフルフロー（load_data_from_sheets → バナーCSV追加 → 未収集タグ補完 → prepare_data）が正。
+analysis_engine単体は未収集タグ補完が抜けるので友だち数が過少になる。
+
+## GOAL母数の定義
+- 友だちGOAL = SEO全体（PU+バナー+ボタン）で追う
+- ファネル改善指標 = PU経由で改善を追う
+- この2層管理で統一
+
+## チャネル分類ルール
+- genre列に "seo" または "mypics" を含む → SEO（報告対象）
+- "ad"/"yda" を含む → アド（管轄外）
+- "lis" を含む → リス（管轄外）
+- 管轄外のデータは絶対に混ぜるな
+
+## データ更新タイミング
+- 友だちデータ: 毎日13時に前日分が届く（リアルタイムではない）`;
+
+RAW_DATA['k-genre'] = `# ジャンル別インサイト
+
+## 医療ダイエット（GLP-1）
+- genre: glp1_seo, glp1_seo_ava
+- ポジション: メインジャンル。売上貢献大
+- 主力PU: 摂取カロリー診断（安定稼働）
+- 直近実績: PVFR 0.73%（基準割れ）→ 改善余地あり
+- カロリーPU改善（3/8）: CTR +8.4pt / 友追率 +4.8pt → 効果大
+
+## 包茎手術（PLUS）
+- genre: seo_phimo
+- ポジション: 客単価が高い。改善ROIが最も高い
+- 直近実績: IMPFR 1.10%（基準割れ）
+- 進行中施策: 治療必要度チェック新規診断（+59友だち/月見込み）
+
+## ED
+- genre: seo_ed
+- ポジション: imp自体が少ない。拡大の下地作りフェーズ
+
+## FAGA / オンラインピル / メンズ脱毛
+- データ蓄積中
+
+## 看護転職（SEO）
+- genre: seo_job_kango
+- ROI要検証。撤退 or 継続判断が必要
+
+## リカバリーウェア
+- CTR 21.86%（非常に高い）vs FR 2.87%（非常に低い）
+- 仮説: PUクリック後のLP遷移に構造的問題
+
+---
+*このファイルはジャンルの実績が更新されるたびに追記。monthly-retroで棚卸し。*`;
+
+RAW_DATA['cmd-ceo'] = `# /ceo — CEO起動
+
+## ロール読み込み
+以下のファイルを順番に読み込んで、CEOとして振る舞え。
+
+1. roles/ceo/mind.md — 人格・行動原則・判断軸
+2. roles/ceo/memory.md — 過去の学び・判断パターン
+3. roles/ceo/tasks/ceo-flow.md — Phase 0→6 ワークフロー
+4. roles/ceo/tasks/quality-gate.md — 品質ゲート
+5. projects/line-marketing/goals.md — 事業GOAL
+
+読み込んだら、renの指示を待て。
+指示がなければ「何か確認したいこと、動かしたいことはありますか？」と聞け。
+
+## タスクボード更新（絶対忘れるな）
+タスクの進捗が動いたら即タスクボードを更新。
+renがオフィスUIでタスク状況を見ている。`;
+
+RAW_DATA['cmd-cio'] = `# /cio — CIO起動
+
+## ロール読み込み
+以下のファイルを順番に読み込んで、CIOとして振る舞え。
+
+1. roles/cio/mind.md — CIO人格
+2. roles/cio/memory.md — データソース・進捗
+3. roles/cio/tasks/data-diagnosis.md — 診断フロー・レポートフォーマット
+4. projects/line-marketing/goals.md — 事業GOAL
+
+読み込んだら、renの指示を待て。
+指示がなければ「データ関連で確認したいことはありますか？」と聞け。`;
+
+RAW_DATA['cmd-cmo'] = `# /cmo — CMO起動
+
+## ロール読み込み
+以下のファイルを順番に読み込んで、CMOとして振る舞え。
+
+1. roles/cmo/mind.md — 人格・行動原則・5観点・施策タイプ別思考フレーム
+2. roles/cmo/memory.md — ジャンル知識・レビュー基準・修正ワークフロー
+3. roles/cmo/tasks/cmo-workflow.md — CMOワークフロー全体
+4. roles/cmo/tasks/marketer/brief-template.md — マーケターへのブリーフ
+5. projects/line-marketing/goals.md — 事業GOAL
+
+マーケターを起動するときは roles/cmo/tasks/marketer/memory.md も渡せ。
+
+読み込んだら、renの指示を待て。
+指示がなければ「マーケ施策で相談したいことはありますか？」と聞け。`;
+
+RAW_DATA['sk-wrap'] = `# Session Wrap — セッション終了時の学習記録
+
+タスクが一区切りついた時に、今セッションの学びをmemory.mdとknowledge/に確実に記録する。
+
+## Step 1: セッション振り返り
+1. 判断・発見: 新しく分かったこと、判断したことをリストアップ
+2. 差し戻し・修正: renからのFBで直したことがあれば記録
+3. データの発見: 予想と違ったデータ、新しいパターン
+4. renの反応: 「いいね」「それ」と刺さったポイント
+
+## Step 2: memory.md への追記
+該当ロールのmemory.mdに1-3行で追記する:
+- roles/ceo/memory.md → 判断の学び、差し戻しパターン、renの好み
+- roles/cio/memory.md → データの発見、数値の落とし穴
+- roles/cmo/memory.md → ジャンル知識、レビュー基準、施策の学び
+
+追記フォーマット: - {何が起きたか} → {教訓/学び}（{日付}）
+
+## Step 3: knowledge/ 昇格判定
+差し戻し・教訓・学びが出たら、デフォルトでknowledge/に追記する。memory.mdに溜め込まない。
+- 差し戻し・やらかし → knowledge/anti-patterns.md
+- 施策で効果確認 → knowledge/playbooks.md
+- ジャンル固有の新事実 → knowledge/genre-insights.md
+- ファネル指標の発見 → knowledge/funnel-model.md
+
+mind.mdには触るな。renが明示的に指示した時だけ。
+
+## Step 4: 次回への申し送り
+次セッションの自分に伝えたいことがあれば、memory.md末尾に記録。
+
+## Step 5: 報告
+━━━━━━━━━━━━━━━━━━
+📝 セッション記録完了
+━━━━━━━━━━━━━━━━━━
+■ 記録した学び: N件
+■ knowledge昇格: あり/なし
+■ 申し送り: あり/なし
+━━━━━━━━━━━━━━━━━━`;
+
+RAW_DATA['sk-weekly'] = `# Weekly Evolve — L2 週次進化レビュー
+
+毎週の学びを振り返り、knowledge/を更新し、スキル改善を提案する自己進化ループ。
+
+## Step 1: memory.md 全読み込み
+1. roles/ceo/memory.md
+2. roles/cio/memory.md
+3. roles/cmo/memory.md
+4. projects/line-marketing/goals.md
+
+## Step 2: 今週の振り返りサマリー
+- 主要な判断・発見をリストアップ（全ロール横断）
+- 差し戻し・失敗があれば原因パターン分析
+- 効果が出た施策があれば結果記録
+- GOAL進捗確認（週次推移）
+
+## Step 3: パターン検出 & knowledge昇格
+- 繰り返しパターン（2回以上） → anti-patterns.md昇格候補
+- 効果実績 → playbooks.md追記
+- ジャンル知見 → genre-insights.md追記
+- 指標の発見 → funnel-model.md追記
+
+## Step 4: memory.md クリーンアップ
+- knowledge昇格済み → 詳細削除し参照リンクに
+- 古い数値 → 最新に更新 or 削除
+- 100行超 → 整理提案
+
+## Step 5: スキル/タスクフロー改善提案
+- 手戻りが多かった箇所
+- 足りないスキル候補
+- 既存スキルの改善ポイント
+
+## Step 6: 来週のフォーカスエリア
+GOAL進捗から逆算して最優先を設定`;
+
+RAW_DATA['sk-monthly'] = `# Monthly Retro — L3 月次レトロスペクティブ
+
+月単位でシステム全体を俯瞰し、knowledge/の棚卸し・アーキテクチャ改善・来月の方針を設計。
+
+## Step 1: GOAL進捗の月次レビュー
+- goals.md読む → 先月実績集計 → GOAL対比達成率 → 前月比分析
+
+## Step 2: knowledge/ 棚卸し
+- funnel-model.md: 基準値は現実と合ってるか？新指標追加？
+- playbooks.md: 効果確認済みは残す、効果なし→削除/注記
+- anti-patterns.md: 仕組み化で防止済み→アーカイブ
+- genre-insights.md: 最新実績に更新、新ジャンル追加、撤退判断
+
+## Step 3: memory.md 棚卸し
+- 古い数値データ → 更新 or 削除
+- knowledge昇格済みの重複 → 参照リンクに置換
+- 100行超 → 強制整理
+
+## Step 4: スキル/タスクフロー有効性レビュー
+- 使用頻度 / 品質（手戻り）/ 欠落 / バージョン
+
+## Step 5: アーキテクチャ改善提案
+- roles/構成 / knowledge/構造 / CLAUDE.md更新 / MCP連携
+
+## Step 6: 来月のGOAL・方針設定`;
+
+RAW_DATA['goals'] = `# LINE マーケティング事業 — GOAL
+
+## 事業文脈
+LINEチームの役割: 間接CV部隊
+= 本来CVしないノウハウ記事のPVを持つユーザーを
+  ナーチャリングして間接的にCVさせる
+
+## 短期 GOAL（4月末）
+友だち: 月間 1,000人
+売上:   月間 ¥1,000,000
+
+## 長期 GOAL（定性）
+ジャンルを問わないユーザープール構築
+= 何でも売れるリスト資産
+= imp CVR（全体）を上げ続けるのが本質指標
+
+## GOAL 進捗テンプレート
+友だち: XX人 / 1,000人（XX%）→ GAP: XX人
+売上:   ¥XX / ¥1,000,000（XX%）→ GAP: ¥XX
+残り期間: X週間
+今のペースで間に合うか？ YES / NO
+
+## 整合性チェック
+短期GOALは長期GOALに繋がっているか？
+→ 「友だちを増やす」が「ユーザープール」に繋がってるか
+→ 今やろうとしていることは「間接CV」の文脈で正しいか`;
+</script>
+
+</body>
+</html>

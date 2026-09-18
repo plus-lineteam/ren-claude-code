@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リサーチレポート 2026-04-04（深掘り）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; color: #1d1d1f; line-height: 1.7; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 32px 24px; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .header .date { font-size: 14px; opacity: 0.7; }
+  .header .nav { margin-top: 16px; }
+  .header .nav a { color: #4fc3f7; text-decoration: none; font-size: 13px; }
+  .header .nav a:hover { text-decoration: underline; }
+
+  .highlights { background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%); padding: 24px; border-left: 4px solid #ff8f00; margin: 20px 16px; border-radius: 12px; }
+  .highlights h2 { font-size: 16px; margin-bottom: 12px; color: #e65100; }
+  .highlights li { font-size: 14px; margin-bottom: 8px; }
+  .highlights strong { color: #bf360c; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 16px 40px; }
+
+  .section { background: white; border-radius: 12px; padding: 24px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+  .section h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: #1565c0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #f5f5f5; font-weight: 600; white-space: nowrap; }
+
+  .insight-box { background: #e3f2fd; border-left: 3px solid #1976d2; padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-size: 14px; }
+  .insight-box strong { color: #0d47a1; }
+
+  .source-list { font-size: 12px; color: #888; margin-top: 12px; padding-top: 8px; border-top: 1px solid #eee; }
+  .source-list a { color: #1976d2; text-decoration: none; }
+  .source-list a:hover { text-decoration: underline; }
+
+  .code-block { background: #263238; color: #aed581; padding: 16px; border-radius: 8px; font-family: 'SF Mono', monospace; font-size: 13px; overflow-x: auto; margin: 12px 0; white-space: pre; }
+
+  .score-table td:first-child { font-weight: 600; }
+  .score-a { color: #e65100; font-weight: 700; }
+  .score-b { color: #1565c0; font-weight: 600; }
+  .score-c { color: #888; }
+
+  .debate-box { background: #fce4ec; border-left: 3px solid #c62828; padding: 16px; border-radius: 8px; margin: 12px 0; }
+  .debate-box h3 { color: #b71c1c; margin: 0 0 8px; }
+  .debate-box li { font-size: 14px; margin-bottom: 6px; }
+
+  .next-box { background: #e8f5e9; border-left: 3px solid #2e7d32; padding: 16px; border-radius: 8px; margin: 12px 0; }
+
+  .warning-box { background: #fff3e0; border-left: 3px solid #e65100; padding: 16px; border-radius: 8px; margin: 12px 0; }
+  .warning-box h3 { color: #e65100; margin: 0 0 8px; }
+
+  .footer { text-align: center; padding: 32px; font-size: 12px; color: #888; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>リサーチレポート</h1>
+  <div class="date">2026-04-04（深掘りリサーチ） -- 12エントリ収集</div>
+  <div class="nav">
+    <a href="../index.html">Research Hub に戻る</a> | <a href="2026-04-03.html">前日レポート (04-03)</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="highlights">
+    <h2>今日のハイライト</h2>
+    <ol>
+      <li><strong>GLP-1 x noteテスト記事3本パッケージが具体化。</strong> リベルサス体験記/費用比較/失敗パターンの3本。想定KW合計月間7,900検索。LINE誘導は「あなたに合ったGLP-1診断」フック</li>
+      <li><strong>X MCPセットアップ手順が完全確定。</strong> x-mcp (Infatoshi版)で30分構築。最大の落とし穴はWrite権限トークン。OpenTweetは予備として保持</li>
+      <li><strong>ドライバー転職市場の数字が判明。</strong> 5割超が転職検討、採用単価2万円、人材紹介1件134万円。ドラピタ18.7万PV/月で市場規模が実証済み</li>
+      <li><strong>薬機法リスクが最大の障壁。</strong> 「脂肪燃焼」「○kg痩せる」はNG。3層防御フロー（NGワードフィルタ→人間承認→モニタリング）の設計が必須</li>
+    </ol>
+  </div>
+
+  <!-- GLP-1 x note テストマーケ設計 -->
+  <div class="section">
+    <h2>GLP-1 x note テストマーケ設計</h2>
+
+    <h3>noteにおけるGLP-1コンテンツの現状</h3>
+    <table>
+      <tr><th>プラットフォーム</th><th>GLP-1体験記の量</th><th>特徴</th></tr>
+      <tr><td>アメブロ</td><td>多い（人気タグ）</td><td>日記型。写真+体重記録が中心</td></tr>
+      <tr><td>note</td><td class="score-a">少ない（空白地帯）</td><td>解説・分析型が多く、リアル体験記が不足</td></tr>
+      <tr><td>クリニック公式</td><td>増加中</td><td>医師視点。権威性は高いが共感が弱い</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <strong>noteのGLP-1コンテンツは「解説型」が主流で「リアル体験記」が空白。</strong>
+      アメブロにはあるがnoteにはない。この差分がうちの参入ポイント。<br>
+      noteのドメインパワー96.9+検索流入比率40%で、SEO流入も狙える。
+    </div>
+
+    <h3>成功モデル：編集長みゆの体験記</h3>
+    <table>
+      <tr><th>項目</th><th>数値</th></tr>
+      <tr><td>使用薬</td><td>リベルサス</td></tr>
+      <tr><td>期間</td><td>10ヶ月</td></tr>
+      <tr><td>結果</td><td>62.40kg → 50.21kg（-12.19kg）</td></tr>
+      <tr><td>記事の特徴</td><td>数字+心理描写+副作用のリアル。「エモーショナルイーティング」という共感ワード</td></tr>
+    </table>
+
+    <h3>テスト記事3本パッケージ（設計案）</h3>
+    <table>
+      <tr><th>#</th><th>記事タイトル案</th><th>狙うKW</th><th>検索意図</th><th>LINE誘導フック</th></tr>
+      <tr><td>1</td><td>リベルサス体験記：費用・効果・副作用のリアル</td><td>リベルサス 体験談（月1,900）</td><td>体験を知りたい</td><td>「あなたに合ったGLP-1診断」</td></tr>
+      <tr><td>2</td><td>GLP-1ダイエット費用比較：リベルサスvsマンジャロvsオゼンピック</td><td>GLP-1 費用（月2,400）</td><td>比較検討したい</td><td>「月額シミュレーション」</td></tr>
+      <tr><td>3</td><td>GLP-1で失敗する人の3パターン（実例あり）</td><td>GLP-1 副作用（月3,600）</td><td>不安を解消したい</td><td>「リスク診断チェック」</td></tr>
+    </table>
+
+    <div class="insight-box">
+      <strong>記事構成の鍵：</strong><br>
+      - 記事1 = 共感で引く（体験記）→ 「あなたのケースは？」でLINE誘導<br>
+      - 記事2 = 比較検討層を取る → 「最安の始め方を診断」でLINE誘導<br>
+      - 記事3 = 不安層を取る → 「あなたはリスクが高いタイプ？」でLINE誘導<br>
+      <strong>全記事中盤にLINE友だち追加ボタン設置。</strong>noteの公式機能（月額9,800円）で実装。
+    </div>
+
+    <h3>note LINE連携の実態（1次情報）</h3>
+    <ul style="padding-left: 20px; font-size: 14px;">
+      <li>「友だち追加で続きを読む」ボタン → <strong>共感した読者だけがLINE登録する構造</strong></li>
+      <li>実践者の声：「サブスク登録までの導線として機能」「Web回遊率が改善」「成約にもつながっている」</li>
+      <li>具体的なCVR数値は未公開だが、<strong>「濃い読者」が取れる実感</strong>が複数報告</li>
+      <li>うちのPU経由よりもリードの質が高い可能性（記事に共感→登録の温度感）</li>
+    </ul>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://note.com/jolly_mole7232/n/n0353482cab14">リベルサス10ヶ月体験記</a> /
+      <a href="https://note.com/ohba_artlife/n/n9aa5dff0aced">note LINE連携実践レポート</a> /
+      <a href="https://note.com/nihonbashiclinic/n/n335aef99ff37">日本橋クリニック マンジャロ体験記</a>
+    </div>
+  </div>
+
+  <!-- X MCP技術検証 -->
+  <div class="section">
+    <h2>X MCP技術検証</h2>
+
+    <h3>セットアップ手順（確定版）</h3>
+    <div class="code-block">
+# 1. リポジトリクローン & ビルド
+git clone https://github.com/INFATOSHI/x-mcp.git
+cd x-mcp
+npm install
+npm run build
+
+# 2. X Developer Portal で以下を取得（Read+Write権限必須）
+# - X_API_KEY
+# - X_API_SECRET
+# - X_ACCESS_TOKEN
+# - X_ACCESS_TOKEN_SECRET
+# - X_BEARER_TOKEN
+
+# 3. Claude Code に MCP サーバー登録
+claude mcp add --scope user x-twitter \
+  -- node /ABSOLUTE/PATH/TO/x-mcp/dist/index.js
+
+# 4. Claude Code 再起動 → /mcp で接続確認
+</div>
+
+    <h3>選択肢比較（更新版）</h3>
+    <table>
+      <tr><th>手法</th><th>セットアップ</th><th>認証</th><th>データ制御</th><th>推奨度</th></tr>
+      <tr><td><strong>x-mcp (Infatoshi)</strong></td><td>30分（clone+build）</td><td>自前API（5つ）</td><td class="score-a">完全自前</td><td class="score-a">推奨</td></tr>
+      <tr><td>OpenTweet MCP</td><td>5分（npx）</td><td>APIキー1つ</td><td class="score-c">外部依存</td><td class="score-b">予備</td></tr>
+      <tr><td>twitter-mcp (EnesCinr)</td><td>20分</td><td>自前API（4つ）</td><td class="score-a">完全自前</td><td class="score-b">代替</td></tr>
+    </table>
+
+    <div class="warning-box">
+      <h3>注意：2026年2月のX API制限</h3>
+      <ul style="padding-left: 20px; font-size: 14px;">
+        <li><strong>プログラム経由の自動返信が制限された。</strong>投稿（POST）は可能だが、他人の投稿への自動リプライは原則不可</li>
+        <li>自動エンゲージメント戦略は使えない → <strong>投稿+固定ツイート+プロフ導線の「受動型」で設計</strong></li>
+        <li>手動リプライでのエンゲージメント獲得は引き続き有効（リプライの重み=通常の75倍）</li>
+      </ul>
+    </div>
+
+    <div class="insight-box">
+      <strong>結論：x-mcp（Infatoshi版）を採用。</strong>
+      医療系コンテンツはデータ制御が重要なので外部サービス依存は避ける。
+      30分で構築可能。最大の落とし穴は「Write権限トークン生成」のみ。
+    </div>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://github.com/Infatoshi/x-mcp">x-mcp GitHub</a> /
+      <a href="https://opentweet.io/blog/schedule-tweets-from-claude-code-cli-guide">OpenTweet MCP Guide</a> /
+      <a href="https://code.claude.com/docs/ja/mcp">Claude Code MCP公式ドキュメント</a>
+    </div>
+  </div>
+
+  <!-- ドライバー転職市場 -->
+  <div class="section">
+    <h2>ドライバー転職市場の数字</h2>
+
+    <h3>市場データ（確定値）</h3>
+    <table>
+      <tr><th>指標</th><th>数値</th><th>ソース</th></tr>
+      <tr><td>転職検討率</td><td class="score-a">5割強</td><td>物流ウィークリー調査</td></tr>
+      <tr><td>年収減少率</td><td>25%が減少</td><td>レバレジーズ調査</td></tr>
+      <tr><td>採用応募単価</td><td>約2万円/件</td><td>スリーカウント</td></tr>
+      <tr><td>人材紹介報酬</td><td>年収の30%前後</td><td>ネオキャリア</td></tr>
+      <tr><td>大型ドライバー平均年収</td><td>約448万円</td><td>ドライバー転職ナビ</td></tr>
+      <tr><td>1件あたり紹介報酬（推計）</td><td class="score-a">約134万円</td><td>448万×30%</td></tr>
+    </table>
+
+    <h3>主要ドライバー転職サイト</h3>
+    <table>
+      <tr><th>サイト</th><th>規模</th><th>特徴</th></tr>
+      <tr><td>ドラピタ</td><td>月18.7万PV / 8.4万ユーザー</td><td>運送業専門、約3,200社掲載</td></tr>
+      <tr><td>プレックスジョブ</td><td>月3,000人新規登録 / 累計2.5万人</td><td>スカウト形式</td></tr>
+      <tr><td>ドラEVER</td><td>日本最大級</td><td>ドライバー求人専門</td></tr>
+      <tr><td>転職道.COM</td><td>20年運営</td><td>タクシー特化</td></tr>
+    </table>
+
+    <h3>コンテンツ差別化の切り口</h3>
+    <div class="insight-box">
+      <strong>既存の転職サイトは「ドライバーからドライバーへ」の求人マッチング。</strong><br>
+      うちが攻めるべきは「ドライバーの悩み×体験談×LINE相談」の教育コンテンツ型。<br>
+      特に「トラック→タクシー転職」は新しい切り口で、2024年問題で需要が急増中。<br>
+      <strong>アフィリエイト単価は高いが、SEOでの直接参入は専門サイトが強い → note/Xの「体験談型」で攻める。</strong>
+    </div>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://weekly-net.co.jp/news/191799/">物流ウィークリー 転職検討調査</a> /
+      <a href="https://web.toroo.jp/column/14345">ドライバー採用単価</a> /
+      <a href="https://prtimes.jp/main/html/rd/p/000000823.000010591.html">レバレジーズ 2024年問題調査</a>
+    </div>
+  </div>
+
+  <!-- 薬機法リスク -->
+  <div class="section">
+    <h2>薬機法リスクと対策</h2>
+
+    <h3>医療系コンテンツのNG表現</h3>
+    <table>
+      <tr><th>NG表現</th><th>理由</th><th>言い換え例</th></tr>
+      <tr><td class="score-a">「脂肪燃焼」</td><td>薬理作用の標榜</td><td>「体重管理のサポート」</td></tr>
+      <tr><td class="score-a">「食欲抑制」</td><td>薬理作用の標榜</td><td>「食事量の変化を感じた」</td></tr>
+      <tr><td class="score-a">「○kg痩せる」（断言）</td><td>効能効果の保証</td><td>「個人の感想です」「効果には個人差」</td></tr>
+      <tr><td class="score-a">「治る」「治療できる」</td><td>医薬品的な効能</td><td>「医師に相談を」</td></tr>
+      <tr><td>「最安」「業界No.1」</td><td>優良誤認</td><td>「比較的リーズナブル」</td></tr>
+    </table>
+
+    <h3>3層防御フロー（設計案）</h3>
+    <div class="insight-box">
+      <strong>Layer 1: CLAUDE.mdにNGワードフィルタを定義</strong><br>
+      → Claude Codeが投稿文を生成する段階で自動的にNG表現を回避<br><br>
+      <strong>Layer 2: 人間承認フロー</strong><br>
+      → 生成された投稿をLINE通知 → renが「OK」→ 投稿実行<br><br>
+      <strong>Layer 3: 投稿後モニタリング</strong><br>
+      → ユーザー反応・通報リスクの定期チェック
+    </div>
+
+    <div class="warning-box">
+      <h3>規制対象者の範囲（重要）</h3>
+      <ul style="padding-left: 20px; font-size: 14px;">
+        <li>メーカー・広告主だけでなく、<strong>インフルエンサー・アフィリエイターも違反の対象</strong></li>
+        <li>違反時のリスク：企業名公表、投稿削除命令、再発防止命令</li>
+        <li>note/Xでの個人発信でも、商業目的と判断されれば薬機法が適用される</li>
+      </ul>
+    </div>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://www.comnico.jp/we-love-social/yakkihou">SNS×薬機法ガイド</a> /
+      <a href="https://scrum-editor.co.jp/service-product/x-twitter/">医療機関X運用</a> /
+      <a href="https://www.a8.net/compliance/pmd.php">A8.net薬機法ガイド</a>
+    </div>
+  </div>
+
+  <!-- CEO所見 -->
+  <div class="section">
+    <h2>CEO所見</h2>
+
+    <h3>前日の「次回深掘り」4点の回答状況</h3>
+    <table>
+      <tr><th>深掘りテーマ</th><th>状況</th><th>判定</th></tr>
+      <tr><td>note LINE連携の実際のCVR</td><td>具体数値は未公開。「濃い読者が取れる」「成約につながった」の実感報告を複数収集</td><td class="score-b">70%解決</td></tr>
+      <tr><td>X MCPの具体的セットアップ手順</td><td>Infatoshi/x-mcpで完全手順確定。環境変数5つ+コマンド1発</td><td class="score-a">100%解決</td></tr>
+      <tr><td>ドライバー転職のKWボリューム</td><td>直接的なKWボリュームは未取得だが、市場規模（ドラピタ18.7万PV/月）と採用単価（2万円/件）が判明</td><td class="score-b">60%解決</td></tr>
+      <tr><td>GLP-1 x note 記事構成案</td><td>3記事パッケージを設計完了。KW・検索意図・LINE誘導フックまで具体化</td><td class="score-a">100%解決</td></tr>
+    </table>
+
+    <h3>最も重要な発見</h3>
+    <div class="insight-box">
+      <strong>GLP-1 x noteのテストマーケは「今すぐ始められる」段階になった。</strong><br>
+      記事構成、LINE連携手法、薬機法ガイドライン、X自動化手順、全てのピースが揃った。<br>
+      あとは「GOを出すか」だけ。
+    </div>
+
+    <div class="debate-box">
+      <h3>renとのディベートポイント</h3>
+      <ol>
+        <li><strong>noteのGLP-1体験記は「解説型」ばかりで「リアル体験記」が空白。</strong> うちがアメブロ的な体験記をnoteに持ち込めば差別化になる</li>
+        <li><strong>薬機法が最大のリスク。</strong> 「○kg痩せた」は書けない。ただし「個人の感想+医師に相談を」のガードレールで回避可能</li>
+        <li><strong>ドライバー転職は1件134万円のポテンシャル。</strong> ただしSEOは専門サイトが強いのでnote/X経由が正解</li>
+        <li><strong>X MCPのセットアップは30分で終わる。</strong> 技術検証としては十分。あとは「何を投稿するか」のコンテンツ設計</li>
+        <li><strong>note LINE連携のCVRは未判明。</strong> ここはテストマーケで自分たちの数字を取るしかない</li>
+      </ol>
+    </div>
+
+    <div class="next-box">
+      <h3 style="color: #1b5e20; margin: 0 0 8px;">次回深掘りすべき点</h3>
+      <ul style="padding-left: 20px; font-size: 14px;">
+        <li>GLP-1テスト記事の具体的な執筆（体験記のペルソナ設計・構成案の詳細化）</li>
+        <li>note proの申し込み手順・LINE連携設定の具体ステップ</li>
+        <li>「ドライバー転職」の具体的なKWボリュームデータ（Ubersuggest or キーワードプランナー）</li>
+        <li>薬機法NGワード完全リストの作成（CLAUDE.mdに組み込む形式で）</li>
+        <li>X MCPの実際のテスト投稿（技術検証のPoCとして）</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Generated by Research Hub | 2026-04-04 | <a href="../index.html" style="color:#1976d2;">Hub に戻る</a>
+</div>
+
+</body>
+</html>

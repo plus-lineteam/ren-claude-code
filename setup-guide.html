@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>事前セットアップガイド — Claude Code 勉強会</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: #fafafa; color: #222; line-height: 2; max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.3rem; color: #111; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.2rem; font-weight: 700; margin: 2.5rem 0 0.8rem; color: #111; padding-bottom: 0.3rem; border-bottom: 2px solid #e0e0e0; }
+  h3 { font-size: 1rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #333; }
+  p { margin-bottom: 1rem; color: #444; font-size: 0.95rem; }
+  strong { color: #111; }
+  code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-family: 'SF Mono', monospace; }
+  .callout {
+    background: #fff8e1; border-left: 4px solid #f9a825; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;
+  }
+  .callout.blue { background: #e3f2fd; border-color: #1976d2; }
+  .callout.green { background: #e8f5e9; border-color: #388e3c; }
+  .callout p { margin-bottom: 0.3rem; }
+  ol, ul { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.5rem; font-size: 0.95rem; color: #444; }
+  .step-box {
+    background: #fff; border: 1px solid #e0e0e0; border-radius: 10px;
+    padding: 1.2rem 1.5rem; margin: 1rem 0;
+  }
+  .step-num {
+    display: inline-block; background: #1976d2; color: white; width: 28px; height: 28px;
+    border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.8rem; font-weight: 700;
+    margin-right: 0.5rem; vertical-align: middle;
+  }
+  .step-title { font-weight: 700; font-size: 1rem; color: #111; }
+  .step-time { color: #888; font-size: 0.8rem; margin-left: 0.5rem; }
+  .step-detail { margin-top: 0.8rem; }
+  .step-detail ol { margin: 0.5rem 0 0 1.5rem; }
+  .step-detail li { margin-bottom: 0.4rem; font-size: 0.9rem; }
+  img { max-width: 100%; border-radius: 8px; margin: 0.5rem 0; }
+  .prompt-box {
+    background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px;
+    padding: 1.2rem 1.5rem; margin: 1rem 0; font-size: 0.9rem; line-height: 1.8; color: #333;
+  }
+  .copy-hint { color: #888; font-size: 0.8rem; font-style: italic; margin-top: 0.3rem; }
+  .tag-required {
+    display: inline-block; background: #c62828; color: white; font-size: 0.7rem;
+    padding: 1px 8px; border-radius: 4px; font-weight: 700; vertical-align: middle; margin-left: 0.5rem;
+  }
+  .tag-optional {
+    display: inline-block; background: #888; color: white; font-size: 0.7rem;
+    padding: 1px 8px; border-radius: 4px; font-weight: 700; vertical-align: middle; margin-left: 0.5rem;
+  }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  .tab-container { display: flex; gap: 0; margin-bottom: 0; }
+  .tab {
+    padding: 0.6rem 1.2rem; border: 1px solid #ddd; border-bottom: none;
+    border-radius: 8px 8px 0 0; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+    background: #f5f5f5; color: #888;
+  }
+  .tab.active { background: #fff; color: #111; border-bottom: 1px solid #fff; margin-bottom: -1px; z-index: 1; }
+  .tab-content {
+    border: 1px solid #ddd; border-radius: 0 8px 8px 8px; padding: 1.5rem;
+    background: #fff; display: none;
+  }
+  .tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<h1>事前セットアップガイド</h1>
+<p class="subtitle">Claude Code 勉強会 — 当日までにやっておくこと（15分で終わります）</p>
+
+<!-- ===== STEP 1 ===== -->
+<div class="step-box">
+  <span class="step-num">1</span>
+  <span class="step-title">Claude Code をインストール</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">5分</span>
+
+  <div class="step-detail">
+    <p><strong>デスクトップ版とVS Code版、両方インストールしてください。</strong><br>
+    勉強会ではVS Code版をメインで使いますが、デスクトップ版も入れておくと便利です。</p>
+
+    <div class="callout" style="background: #fce4ec; border-color: #c62828;">
+      <p><strong>⚠ Windowsの方は先にこれをやってください</strong></p>
+      <p>Claude Code は <strong>Git Bash</strong> が必須です。</p>
+      <ol style="margin: 0.5rem 0 0.3rem 1.2rem;">
+        <li><a href="https://git-scm.com/downloads/win" target="_blank">git-scm.com/downloads/win</a> から Git for Windows をダウンロード</li>
+        <li>インストール時に<strong>「Add to PATH」にチェック</strong>を入れる</li>
+        <li>インストール完了後、VS Code を再起動</li>
+      </ol>
+      <p style="margin-top: 0.5rem;"><strong>インストール済みなのにエラーが出る場合：</strong><br>
+      PATHに通ってない可能性あり。Windowsの「システム環境変数の編集」→「環境変数」→「新規」で以下を追加：<br>
+      <code>CLAUDE_CODE_GIT_BASH_PATH</code> = <code>C:\Program Files\Git\bin\bash.exe</code><br>
+      設定後、VS Code を再起動。</p>
+    </div>
+
+    <div class="tab-container">
+      <div class="tab active" onclick="switchTab('vscode')">VS Code版（おすすめ）</div>
+      <div class="tab" onclick="switchTab('desktop')">デスクトップ版</div>
+    </div>
+
+    <div class="tab-content active" id="tab-vscode">
+      <p><strong>前提：VS Code がインストール済みであること</strong><br>
+      まだの場合 → <a href="https://code.visualstudio.com/download" target="_blank">VS Code ダウンロード</a></p>
+
+      <ol>
+        <li>VS Code を開く</li>
+        <li>キーボードで <code>Ctrl + Shift + X</code> を押す<br>
+          <small style="color:#888;">→ 左に「拡張機能」パネルが開く</small></li>
+        <li>上の検索バーに <strong>Claude Code</strong> と入力</li>
+        <li>「Claude Code」（発行元: <strong>Anthropic</strong>、認証済みマーク付き）を見つける<br>
+          <small style="color:#888;">→ 似た名前の拡張がありますが、Anthropic公式のものを選んでください</small></li>
+        <li><strong>「インストール」</strong>をクリック</li>
+        <li>インストール完了後、VS Code を再起動<br>
+          <small style="color:#888;">→ 再起動後、右上に ✱ アイコンが表示されればOK</small></li>
+        <li>✱ アイコンをクリック → ログイン画面が出る</li>
+        <li>Claudeアカウントでログイン（次のステップ2で案内）</li>
+      </ol>
+
+      <div class="callout blue">
+        <p><strong>✱ アイコンが見つからない場合：</strong></p>
+        <p><code>Ctrl + Shift + P</code> → 「Claude Code」と入力 → 候補から選択</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-desktop">
+      <ol>
+        <li><a href="https://claude.ai/download" target="_blank">claude.ai/download</a> にアクセス</li>
+        <li>「Download for Windows」をクリック</li>
+        <li>ダウンロードされた <code>.exe</code> ファイルを実行</li>
+        <li>インストーラーの指示に従ってインストール</li>
+        <li>インストール完了後、スタートメニューから「Claude Code」を起動</li>
+        <li>ログイン画面が表示される → Claudeアカウントでログイン</li>
+      </ol>
+
+      <div class="callout">
+        <p><strong>「WindowsによってPCが保護されました」と出た場合：</strong></p>
+        <p>「詳細情報」→「実行」をクリックすれば進めます。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STEP 2 ===== -->
+<div class="step-box">
+  <span class="step-num">2</span>
+  <span class="step-title">アカウントでログイン</span>
+  <span class="tag-required">必須</span>
+  <span class="step-time">1分</span>
+
+  <div class="step-detail">
+    <p>各拠点のClaude Codeアカウントを使用します。<br>
+    ログイン情報は別途共有します。</p>
+  </div>
+</div>
+
+<!-- ===== STEP 3 ===== -->
+<div class="step-box">
+  <span class="step-num">3</span>
+  <span class="step-title">今使ってるAIから「自分の考え方」を抽出する</span>
+  <span class="tag-optional">やっておくとスムーズ</span>
+  <span class="step-time">5分</span>
+
+  <div class="step-detail">
+    <p>ChatGPT / Gemini / Claudeチャット版 — どれか一番使い込んでるAIに、<br>
+    以下のプロンプトをコピーして貼り付けてください。</p>
+
+    <div class="prompt-box">
+      今までの会話から、私の以下の傾向をまとめてください。<br><br>
+      1. 仕事の内容と目的（何をしている人か）<br>
+      2. AIへの修正依頼・不満で多かったこと（「長い」「違う」「それじゃない」等）<br>
+      3. 好きな回答スタイル（長い/短い、丁寧/フランク、結論先/説明先）<br>
+      4. 「これやるな」「こうしろ」と言ったルール・制約<br>
+      5. よく頼む作業トップ3<br>
+      6. 私が大事にしていそうな仕事の価値観・哲学（推測でOK）<br><br>
+      箇条書きで簡潔にお願いします。
+    </div>
+    <p class="copy-hint">↑ これをそのままコピーして、今使ってるAIに貼り付け</p>
+
+    <p>出力をコピーして<strong>メモ帳やメモアプリに保存</strong>しておいてください。<br>
+    当日の初期セットアップで使います。</p>
+
+    <div class="callout">
+      <p><strong>なぜこれをやるの？</strong></p>
+      <p>あなたの考え方・哲学・好みを新しいAIに引き継ぐため。<br>
+      これがあると、初日からあなた好みのAIに近づきます。<br>
+      ゼロから教え直す手間が省ける。</p>
+    </div>
+
+    <div class="callout blue">
+      <p><strong>AIを使い込んでない人は？</strong></p>
+      <p>スキップしてOK。当日のセットアップで4つの質問に答えるだけでも十分です。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STEP 4 (Chrome拡張) ===== -->
+<div class="step-box">
+  <span class="step-num">4</span>
+  <span class="step-title">Chrome拡張「Claude in Chrome」を入れる</span>
+  <span class="tag-optional">おすすめ</span>
+  <span class="step-time">2分</span>
+
+  <div class="step-detail">
+    <p>Claude CodeがChromeブラウザを操作できるようになる拡張機能です。</p>
+
+    <ol>
+      <li>Chromeで <a href="https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn" target="_blank">Claude in Chrome</a> を開く</li>
+      <li>「Chromeに追加」をクリック</li>
+      <li>追加後、拡張機能アイコンをクリックして接続を確認</li>
+    </ol>
+
+    <div class="callout">
+      <p><strong>なぜ入れるの？</strong></p>
+      <p>これがあると、Claude Codeが<strong>Webページを直接見に行ける</strong>ようになる。<br>
+      例えば：</p>
+      <ul>
+        <li>「このURLの記事チェックして」→ 実際にページを開いて中身を読む</li>
+        <li>「競合サイトのH2構成を調べて」→ ブラウザで開いて抽出</li>
+        <li>「このフォームに入力して」→ ブラウザ操作を自動化</li>
+      </ul>
+      <p>ないと「URLの中身を見てください」と言っても中身を読めない。<strong>あると世界が変わる。</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STEP 5 ===== -->
+<div class="step-box">
+  <span class="step-num">5</span>
+  <span class="step-title">「AIにやらせたい仕事」を1つ考えておく</span>
+  <span class="tag-optional">できれば</span>
+  <span class="step-time">考えるだけ</span>
+
+  <div class="step-detail">
+    <p>当日、実際にその仕事をAIと一緒にやります。<br>
+    <strong>何でもOK。普段やってる仕事の中から1つ。</strong></p>
+
+    <p>例：</p>
+    <ul>
+      <li>議事録をまとめる</li>
+      <li>資料のドラフトを作る</li>
+      <li>データを整理する</li>
+      <li>メールの下書きを作る</li>
+      <li>リサーチしてまとめる</li>
+      <li>レポートのフォーマットを統一する</li>
+    </ul>
+
+    <div class="callout green">
+      <p><strong>ポイント：「めんどくさい」と思ってることがベスト。</strong></p>
+      <p>毎回同じことやってるな、地味にだるいな — そういう仕事ほどAIが効く。</p>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="callout green">
+  <p><strong>当日はPCだけ持ってきてください。</strong></p>
+  <p>ステップ1〜2が終わっていればOK。ステップ3は余裕があればやっておくとスムーズです。</p>
+</div>
+
+<hr>
+
+<p style="text-align: center; color: #888; font-size: 0.85rem; margin-top: 2rem;">
+  Claude Code 勉強会 — 事前セットアップガイド
+</p>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  if (tab === 'vscode') {
+    document.querySelectorAll('.tab')[0].classList.add('active');
+    document.getElementById('tab-vscode').classList.add('active');
+  } else {
+    document.querySelectorAll('.tab')[1].classList.add('active');
+    document.getElementById('tab-desktop').classList.add('active');
+  }
+}
+</script>
+
+</body>
+</html>

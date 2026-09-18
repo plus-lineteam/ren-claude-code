@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Hub — LINEチーム新規チャネルリサーチ</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; color: #1d1d1f; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 32px 24px; }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .header p { font-size: 14px; opacity: 0.7; }
+  .stats { display: flex; gap: 24px; margin-top: 16px; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 700; color: #4fc3f7; }
+  .stat-label { font-size: 11px; opacity: 0.6; margin-top: 2px; }
+
+  .controls { background: white; padding: 16px 24px; border-bottom: 1px solid #e5e5e5; position: sticky; top: 0; z-index: 10; }
+  .search-box { width: 100%; padding: 10px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
+  .search-box:focus { outline: none; border-color: #4fc3f7; box-shadow: 0 0 0 3px rgba(79,195,247,0.15); }
+
+  .filter-section { margin-bottom: 8px; }
+  .filter-label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; margin-bottom: 6px; }
+  .filter-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .cat-btn, .filter-btn { padding: 5px 12px; border: 1px solid #ddd; border-radius: 16px; background: white; font-size: 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .cat-btn:hover, .filter-btn:hover { background: #f0f0f0; }
+  .cat-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+  .filter-btn.active { background: #4fc3f7; color: white; border-color: #4fc3f7; }
+
+  .date-select { padding: 5px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 12px; background: white; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 20px 16px; }
+  .result-count { font-size: 12px; color: #888; margin-bottom: 12px; }
+
+  .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s; }
+  .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-1px); }
+  .card.hidden { display: none; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .rank-badge { padding: 3px 8px; border-radius: 12px; color: white; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; }
+  .author { font-size: 12px; color: #666; margin-bottom: 8px; display: block; }
+  .category-badge { padding: 3px 10px; border-radius: 12px; color: white; font-size: 11px; font-weight: 600; }
+  .date { font-size: 12px; color: #888; }
+  .card-title { font-size: 16px; font-weight: 600; color: #1976d2; text-decoration: none; display: block; margin-bottom: 10px; line-height: 1.4; }
+  .card-title:hover { text-decoration: underline; }
+  .card-body { margin-bottom: 10px; }
+  .summary { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 8px; }
+  .insight { font-size: 13px; color: #1a1a2e; background: #f0f7ff; padding: 8px 12px; border-radius: 8px; border-left: 3px solid #4fc3f7; line-height: 1.5; }
+  .metrics { font-size: 12px; color: #666; margin-top: 8px; padding: 4px 8px; background: #f5f5f5; border-radius: 4px; display: inline-block; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { padding: 2px 8px; background: #f0f0f0; border-radius: 10px; font-size: 11px; color: #666; cursor: pointer; }
+  .tag:hover { background: #e0e0e0; }
+
+  /* 武器庫セクション */
+  .picks-section { max-width: 900px; margin: 20px auto 0; padding: 0 16px; }
+  .picks-header { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+  .picks-subtext { font-size: 12px; color: #888; margin-bottom: 12px; }
+  .pick-card { background: white; border-radius: 12px; padding: 16px 20px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .pick-header { margin-bottom: 6px; }
+  .pick-priority { padding: 3px 10px; border-radius: 12px; color: white; font-size: 11px; font-weight: 700; }
+  .pick-title { font-size: 16px; font-weight: 700; color: #1d1d1f; margin-bottom: 8px; }
+  .pick-why { font-size: 13px; color: #1a1a2e; background: #f0f7ff; padding: 8px 12px; border-radius: 8px; border-left: 3px solid #4fc3f7; margin-bottom: 6px; line-height: 1.5; }
+  .pick-action { font-size: 13px; color: #2e7d32; background: #e8f5e9; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; line-height: 1.5; }
+  .pick-impact { font-size: 13px; color: #e65100; background: #fff3e0; padding: 8px 12px; border-radius: 8px; line-height: 1.5; }
+
+  /* レポートセクション */
+  .reports-section { max-width: 900px; margin: 20px auto 0; padding: 0 16px; }
+  .reports-header { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .report-link { display: flex; align-items: center; gap: 12px; background: white; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; text-decoration: none; color: #1d1d1f; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s; }
+  .report-link:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-1px); }
+  .report-date { font-size: 13px; font-weight: 600; color: #1976d2; white-space: nowrap; }
+  .report-title { font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .report-count { font-size: 11px; background: #e3f2fd; color: #1565c0; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+  .report-hl { font-size: 12px; color: #888; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .footer { text-align: center; padding: 32px; font-size: 12px; color: #888; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <h1>🔬 Research Hub</h1>
+    <p>LINEチーム 新規チャネルリサーチデータベース</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">45</div>
+        <div class="stat-label">総エントリ</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">12</div>
+        <div class="stat-label">今日追加</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">リサーチ日数</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="picks-section">
+    <div class="picks-header">🎯 GOALから見た武器庫</div>
+    <div class="picks-subtext">リサーチの中からGOAL達成に直結するアクション候補を厳選</div>
+    
+      <div class="pick-card" style="border-left: 4px solid #FF4444;">
+        <div class="pick-header">
+          <span class="pick-priority" style="background:#FF4444">🔥 最優先</span>
+        </div>
+        <div class="pick-title">GLP-1×noteテストマーケ：3記事→LINE連携で初速検証</div>
+        <div class="pick-why">💡 note上のGLP-1体験談は空白地帯。リベルサス10ヶ月で-12kg等の1次体験記がnoteで高PVを叩いてる。うちのSEO知見+noteドメインパワー(96.9)で検索流入も狙える</div>
+        <div class="pick-action">📋 note proアカウント開設 → GLP-1体験記3本投稿（リベルサス体験/費用比較/副作用リアル） → LINE友だち追加ボタン設置 → 2週間でPV・友だち追加率を計測</div>
+        <div class="pick-impact">📈 月+30-50人の友だち獲得見込み（CPA 196-327円）。テストマーケとしてはnoteの初速が早い</div>
+      </div>
+      <div class="pick-card" style="border-left: 4px solid #FF4444;">
+        <div class="pick-header">
+          <span class="pick-priority" style="background:#FF4444">🔥 最優先</span>
+        </div>
+        <div class="pick-title">X MCP技術検証済み：セットアップ30分で自動投稿環境が完成</div>
+        <div class="pick-why">💡 Infatoshi/x-mcpの手順が明確化。5つの環境変数+claude mcp addコマンド1発で完了。Write権限のトークン生成だけ注意</div>
+        <div class="pick-action">📋 X Developer Portal登録 → Read+Write権限でトークン生成 → x-mcpクローン&ビルド → claude mcp add → テスト投稿</div>
+        <div class="pick-impact">📈 月300-600円でGLP-1特化X→note→LINEの3段導線が完成。週1承認の省力運用モデルが構築可能</div>
+      </div>
+      <div class="pick-card" style="border-left: 4px solid #FF8800;">
+        <div class="pick-header">
+          <span class="pick-priority" style="background:#FF8800">⚡ 有力</span>
+        </div>
+        <div class="pick-title">ドライバー転職：採用単価2万円×5割が転職検討の巨大市場</div>
+        <div class="pick-why">💡 2024年問題で5割強のトラックドライバーが転職検討。採用単価2万円は高単価アフィリ。ドラピタ18.7万PV/月でドライバー求人市場のSEO需要も証明済み</div>
+        <div class="pick-action">📋 ドライバー転職KWリスト作成 → note体験記コンテンツ3本テスト → トラック→タクシー転職切り口で差別化</div>
+        <div class="pick-impact">📈 競合ゼロのSNS×LINE型。採用単価年収30%なら1件13万円の報酬ポテンシャル</div>
+      </div>
+      <div class="pick-card" style="border-left: 4px solid #FF4444;">
+        <div class="pick-header">
+          <span class="pick-priority" style="background:#FF4444">🔥 最優先</span>
+        </div>
+        <div class="pick-title">薬機法リスク管理：医療系X運用のガイドライン整備</div>
+        <div class="pick-why">💡 GLP-1×X/note運用で薬機法違反リスクが最大の障壁。「脂肪燃焼」「食欲抑制」等のNG表現を使うと行政指導リスク</div>
+        <div class="pick-action">📋 薬機法NGワード一覧を作成 → 投稿テンプレにガードレール組み込み → 人間承認フロー必須化</div>
+        <div class="pick-impact">📈 リスク排除。事前にガイドライン整備すれば安全に医療系コンテンツを量産可能</div>
+      </div>
+  </div>
+
+  <div class="reports-section">
+    <div class="reports-header">📋 日次レポート</div>
+    
+      <a href="reports/2026-04-04.html" class="report-link">
+        <span class="report-date">2026-04-04</span>
+        <span class="report-title">深掘りリサーチ（GLP-1テストマーケ設計・X MCP技術検証・ドライバー市場・薬機法）</span>
+        <span class="report-count">12件</span>
+        <span class="report-hl">GLP-1×note記事構成案が具体化 / X MCPセットアップ手順確定 / ドライバー転職市場の採用単価判明 / 薬機法ガイドライン整備</span>
+      </a>
+      <a href="reports/2026-04-03.html" class="report-link">
+        <span class="report-date">2026-04-03</span>
+        <span class="report-title">初回リサーチ（4軸全体）</span>
+        <span class="report-count">33件</span>
+        <span class="report-hl">noteのLINE連携公式機能発見 / X API月300円で自動化可能 / 全ジャンルSNS×LINEがブルーオーシャン</span>
+      </a>
+  </div>
+
+  <div class="controls">
+    <input type="text" class="search-box" placeholder="🔍 キーワードで検索..." id="searchBox">
+    <div class="filter-section">
+      <div class="filter-label">カテゴリ</div>
+      <div class="filter-row" id="catFilters"><button class="cat-btn active" data-cat="all">全カテゴリ</button>
+<button class="cat-btn" data-cat="note" style="--cat-color:#1DB954">📝 note (13)</button>
+<button class="cat-btn" data-cat="x-automation" style="--cat-color:#1DA1F2">🤖 X自動化 (15)</button>
+<button class="cat-btn" data-cat="funnel-design" style="--cat-color:#FF6B35">🎯 導線設計 (11)</button>
+<button class="cat-btn" data-cat="competitor" style="--cat-color:#8B5CF6">🔍 競合・市場 (6)</button>
+</div>
+    </div>
+    <div class="filter-section" style="margin-top: 8px;">
+      <div class="filter-label">タグ</div>
+      <div class="filter-row" id="tagFilters"><button class="filter-btn active" data-filter="all">全て</button>
+<button class="filter-btn" data-filter="ai-automation">AI自動化</button>
+<button class="filter-btn" data-filter="algorithm">アルゴリズム</button>
+<button class="filter-btn" data-filter="claude-code">Claude Code</button>
+<button class="filter-btn" data-filter="competitor">競合分析</button>
+<button class="filter-btn" data-filter="cost">コスト</button>
+<button class="filter-btn" data-filter="driver">ドライバー転職</button>
+<button class="filter-btn" data-filter="faga">FAGA</button>
+<button class="filter-btn" data-filter="funnel-design">導線設計</button>
+<button class="filter-btn" data-filter="general">全般</button>
+<button class="filter-btn" data-filter="glp1">GLP-1</button>
+<button class="filter-btn" data-filter="growth">growth</button>
+<button class="filter-btn" data-filter="instagram">Instagram</button>
+<button class="filter-btn" data-filter="kango">看護転職</button>
+<button class="filter-btn" data-filter="line-funnel">LINE導線</button>
+<button class="filter-btn" data-filter="market">市場動向</button>
+<button class="filter-btn" data-filter="monetization">monetization</button>
+<button class="filter-btn" data-filter="note">note</button>
+<button class="filter-btn" data-filter="pill">ピル</button>
+<button class="filter-btn" data-filter="x-automation">X自動化</button>
+</div>
+    </div>
+    <div class="filter-section" style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+      <div class="filter-label" style="margin-bottom: 0;">日付</div>
+      <select class="date-select" id="dateFilter"><option value="all">全期間</option>
+<option value="2026-04-04">2026-04-04</option>
+<option value="2026-04-03">2026-04-03</option>
+</select>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="result-count" id="resultCount">45件のリサーチを表示中</div>
+    <div id="cardContainer">
+      
+    <div class="card" data-category="note" data-tags="glp1 note monetization" data-date="2026-04-04" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://note.com/jolly_mole7232/n/n0353482cab14" target="_blank" class="card-title">リベルサス10ヶ月で-12.19kg達成の完全体験記</a>
+      <span class="author">by 編集長みゆ</span>
+      <div class="card-body">
+        <p class="summary">リベルサスを10ヶ月使用し62.40kg→50.21kgの-12.19kg減量に成功した詳細体験記。エモーショナルイーティング（ストレスによる無意識食い）が主因だったが、リベルサスで食欲自体が抑制された。副作用・費用・心理変化まで赤裸々に公開。</p>
+        <div class="insight">💡 noteでGLP-1体験記の成功モデル。数字付き・心理描写ありの構成がうちのテスト記事の雛形になる。62kg→50kgのビフォーアフターが共感を呼ぶ典型パターン。</div>
+        <div class="metrics">-12.19kg/10ヶ月、62.40→50.21kg</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="note">note</span><span class="tag" data-tag="monetization">monetization</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="glp1 note market" data-date="2026-04-04" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://note.com/hashtag/GLP1%E3%83%80%E3%82%A4%E3%82%A8%E3%83%83%E3%83%88" target="_blank" class="card-title">note #GLP1ダイエット タグの市場調査</a>
+      <span class="author">by note</span>
+      <div class="card-body">
+        <p class="summary">noteの#GLP1ダイエットタグに記事が蓄積中だが、SEO記事メディアやアメブロと比較すると圧倒的に少ない。アメブロの#GLP1ダイエットは人気タグで多数の体験記あり。noteは体験記形式よりも「解説・分析」型が多い傾向。</p>
+        <div class="insight">💡 noteのGLP-1は「解説型」が多く「リアル体験記」は空白。アメブロにはあるがnoteにはない。この差分がうちの参入ポイント。体験記+データ+LINE誘導の3点セットで差別化。</div>
+        <div class="metrics">アメブロ: GLP-1タグ人気 / note: まだ少数</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="note">note</span><span class="tag" data-tag="market">市場動向</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note line-funnel funnel-design" data-date="2026-04-04" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://note.com/ohba_artlife/n/n9aa5dff0aced" target="_blank" class="card-title">note公式LINE連携の実践レポート（ohba.artlife）</a>
+      <span class="author">by ohba.artlife</span>
+      <div class="card-body">
+        <p class="summary">noteに「LINE友だち追加で読む」ボタンを実際に設置した1次レポート。記事→LINEで「濃い読者」とつながる導線が作れると報告。共感した読者が友だちになるため、一度きりの関係で終わらず長くファンになってくれる実感あり。</p>
+        <div class="insight">💡 note LINE連携は「共感した読者だけがLINE登録する」構造。つまりナーチャリング不要の高温度リードが取れる。うちのPU経由よりもリードの質が高い可能性。</div>
+        <div class="metrics">具体数値は非公開だが「効果が出せそう」との実感報告</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="funnel-design">導線設計</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="glp1 note funnel-design line-funnel" data-date="2026-04-04" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://note.com/hashtag/GLP1%E3%83%80%E3%82%A4%E3%82%A8%E3%83%83%E3%83%88" target="_blank" class="card-title">GLP-1テスト記事構成案：3記事パッケージ</a>
+      <span class="author">by 自社分析</span>
+      <div class="card-body">
+        <p class="summary">リサーチから導出したGLP-1×noteテスト記事3本パッケージ。(1)リベルサス体験記（費用・効果・副作用のリアル） (2)GLP-1ダイエット費用比較（リベルサスvsマンジャロvsオゼンピック） (3)GLP-1で失敗する人の3パターン。全記事中盤にLINE友だち追加ボタン設置。</p>
+        <div class="insight">💡 記事1は共感で引く、記事2は比較検討層を取る、記事3は不安層を取る。3記事で検索意図を網羅。LINE誘導は「あなたに合ったGLP-1がわかる診断」をフックに。</div>
+        <div class="metrics">想定KW: リベルサス体験談(月間1,900)、GLP-1費用(月間2,400)、GLP-1副作用(月間3,600)</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="note">note</span><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="line-funnel">LINE導線</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code ai-automation" data-date="2026-04-04" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://github.com/Infatoshi/x-mcp" target="_blank" class="card-title">x-mcp完全セットアップガイド（Infatoshi版）</a>
+      <span class="author">by Infatoshi</span>
+      <div class="card-body">
+        <p class="summary">Claude Code/Desktop/Cursor等で使えるX API MCPサーバー。手順: (1)git clone→npm install→npm run build (2)X Developer PortalでRead+Write権限のトークン生成（Readだけだと403エラー） (3)環境変数5つ設定（X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, X_BEARER_TOKEN） (4)claude mcp add --scope user x-twitter -- node /path/to/x-mcp/dist/index.js</p>
+        <div class="insight">💡 セットアップ手順が完全に明確化された。30分で構築可能。最大の注意点は「Write権限のトークン生成」。ReadOnlyだと投稿が403で弾かれる。</div>
+        <div class="metrics">構築時間30分、環境変数5つ、npm依存</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="ai-automation">AI自動化</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code ai-automation" data-date="2026-04-04" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://opentweet.io/blog/schedule-tweets-from-claude-code-cli-guide" target="_blank" class="card-title">OpenTweet MCP：X投稿のさらに簡単な選択肢</a>
+      <span class="author">by OpenTweet</span>
+      <div class="card-body">
+        <p class="summary">OpenTweetはX API認証の複雑さを隠蔽するサービス。claude mcp addコマンド1発+APIキー1つだけで投稿可能。npx経由なのでgit cloneも不要。ただし外部サービス依存のためデータ制御に注意。</p>
+        <div class="insight">💡 x-mcp（自前API）とOpenTweet（マネージドサービス）の2択。医療系は自前APIの方がデータ管理の安心感がある。まずx-mcpで始めてOpenTweetは予備として。</div>
+        <div class="metrics">セットアップ5分、APIキー1つのみ</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="ai-automation">AI自動化</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation general" data-date="2026-04-04" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://code.claude.com/docs/ja/mcp" target="_blank" class="card-title">X API 2026年制限事項：プログラム返信が制限</a>
+      <span class="author">by Claude Code Docs / X公式</span>
+      <div class="card-body">
+        <p class="summary">2026年2月時点で、Xはセルフサービス層でのAPI経由プログラム返信を制限。投稿は可能だが、他人の投稿への自動返信は原則不可（メンション・引用された場合のみ可能）。自動エンゲージメント戦略に制約あり。</p>
+        <div class="insight">💡 自動返信によるエンゲージメント獲得戦略は使えない。投稿+固定ツイート+プロフ導線の「受動型」で設計する必要がある。リプライの重み75倍というアルゴリズム知見はあるが、手動リプライで対応。</div>
+        <div class="metrics">自動返信: 制限 / 投稿: 制限なし</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="competitor" data-tags="driver market competitor" data-date="2026-04-04" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#8B5CF6">🔍 競合・市場</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://weekly-net.co.jp/news/191799/" target="_blank" class="card-title">ドライバー転職市場：5割強が転職検討、タクシーシフト加速</a>
+      <span class="author">by 物流ウィークリー</span>
+      <div class="card-body">
+        <p class="summary">2024年問題の影響調査で5割強のトラックドライバーが転職を検討。トラック→タクシーへの転職希望が増加中。25%のドライバーが年収減少を経験。労働時間上限規制がトリガー。</p>
+        <div class="insight">💡 「トラック→タクシー転職」は新しい切り口。既存の転職サイトは「ドライバーからドライバーへ」の軸だが、「ドライバーから異業種へ」の需要も大きい。コンテンツの差別化ポイント。</div>
+        <div class="metrics">転職検討率50%超、年収減少25%、タクシーシフト増加</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="driver">ドライバー転職</span><span class="tag" data-tag="market">市場動向</span><span class="tag" data-tag="competitor">競合分析</span></div>
+    </div>
+
+    <div class="card" data-category="competitor" data-tags="driver market competitor" data-date="2026-04-04" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#8B5CF6">🔍 競合・市場</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://web.toroo.jp/column/14345" target="_blank" class="card-title">ドライバー転職の採用単価と求人サイト市場規模</a>
+      <span class="author">by トルー / neo-career</span>
+      <div class="card-body">
+        <p class="summary">ドライバー採用の応募単価は約2万円。人材紹介経由だと年収の30%前後（年収448万なら約134万円/件）。ドラピタは月間18.7万PV・8.4万ユーザー。プレックスジョブは月3,000人新規登録、累計2.5万人。ドラEVERは日本最大級。</p>
+        <div class="insight">💡 採用単価2万円=アフィリエイト報酬としても高単価。人材紹介なら1件134万円。求人市場の規模が実証済み。ただしSEOでの参入はドラピタ等の専門サイトが強い→note/Xの「体験談型」で攻めるのが正解。</div>
+        <div class="metrics">応募単価2万円、人材紹介1件134万円、ドラピタ18.7万PV/月</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="driver">ドライバー転職</span><span class="tag" data-tag="market">市場動向</span><span class="tag" data-tag="competitor">競合分析</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="glp1 general funnel-design" data-date="2026-04-04" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://www.comnico.jp/we-love-social/yakkihou" target="_blank" class="card-title">SNS×薬機法ガイドライン：医療系コンテンツのNG表現一覧</a>
+      <span class="author">by コムニコ / A8.net薬機法ガイド</span>
+      <div class="card-body">
+        <p class="summary">SNSでの薬機法違反リスクまとめ。NG表現: 「脂肪燃焼」「食欲抑制」「○kg痩せる」等の薬理作用表現。違反者はメーカー・広告主だけでなくインフルエンサー・アフィリエイターも対象。企業名公表・投稿削除・再発防止命令のリスク。</p>
+        <div class="insight">💡 GLP-1コンテンツで「○kg痩せた」と断言するのはNGの可能性。「個人の感想」「効果には個人差」等のただし書きが必須。投稿テンプレにガードレールを組み込む設計が不可欠。</div>
+        <div class="metrics">違反リスク: 企業名公表、投稿削除、再発防止命令</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="general">全般</span><span class="tag" data-tag="funnel-design">導線設計</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="x-automation glp1 general" data-date="2026-04-04" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://scrum-editor.co.jp/service-product/x-twitter/" target="_blank" class="card-title">医療機関のX運用における薬機法対策</a>
+      <span class="author">by Scrum Editor</span>
+      <div class="card-body">
+        <p class="summary">医療機関がX運用する際の薬機法対策フレームワーク。表現ガイドラインの共有（NGワード一覧+推奨表現）、投稿後モニタリング（ユーザー反応・誤解リスク確認）、投稿承認フローの3層防御。</p>
+        <div class="insight">💡 うちのX自動投稿に「薬機法チェック→人間承認→投稿」の3層フローを組み込む。Claude Codeの投稿生成時にNGワードフィルタをCLAUDE.mdに定義すれば自動ガードレールになる。</div>
+        <div class="metrics">3層防御: NGワードフィルタ→人間承認→投稿後モニタリング</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="glp1 note competitor" data-date="2026-04-04" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-04</span>
+      </div>
+      <a href="https://note.com/nihonbashiclinic/n/n335aef99ff37" target="_blank" class="card-title">日本橋クリニック：マンジャロ体験記（医師の1次発信）</a>
+      <span class="author">by 日本橋クリニック</span>
+      <div class="card-body">
+        <p class="summary">医師自身がマンジャロを体験し、6週間で10kg減を目指すリアルレポートをnoteで公開。初回注射の痛み、寒気、副作用、食欲変化を詳細に記録。クリニック公式noteの集患コンテンツとしても機能。</p>
+        <div class="insight">💡 クリニック公式がnoteで体験記を出すモデル。うちは「患者目線」で差別化。医師の発信は権威性があるが共感が弱い。一般人の赤裸々な体験記の方がリード獲得には効く。</div>
+        <div class="metrics">6週間で10kg減目標のリアルレポート</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="note">note</span><span class="tag" data-tag="competitor">競合分析</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note line-funnel general" data-date="2026-04-03" data-rank="B" style="border-left: 4px solid #4488FF;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#4488FF">B 公式</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/info/n/n240ff75a22b6" target="_blank" class="card-title">note公式 LINE友だち追加ボタン機能</a>
+      <span class="author">by note公式</span>
+      <div class="card-body">
+        <p class="summary">note記事途中に「友だち追加で続きを読む」ボタンを設置可能。2026年1月に全ユーザー開放。月額9,800円〜17,380円。</p>
+        <div class="insight">💡 うちのPU→LINE導線と完全に同じ構造。移植コストゼロ。月50人獲得ならCPA 196〜348円。</div>
+        <div class="metrics">月額9,800円〜17,380円</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note glp1 competitor" data-date="2026-04-03" data-rank="B" style="border-left: 4px solid #4488FF;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#4488FF">B 公式</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/hashtag/%E3%83%80%E3%82%A4%E3%82%A8%E3%83%83%E3%83%88" target="_blank" class="card-title">note #ダイエット タグの市場規模</a>
+      <span class="author">by note</span>
+      <div class="card-body">
+        <p class="summary">noteの#ダイエット日記タグに44,847件以上の記事が存在。ダイエット市場はnoteでも巨大。ただしGLP-1特化はほぼ空白。</p>
+        <div class="insight">💡 GLP-1体験談でnote参入すれば先行者利益。Amebaにはあるがnoteは手薄。</div>
+        <div class="metrics">#ダイエット 44,847件+</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="competitor">競合分析</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation cost general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://shintaro-blog.com/x-api-pay-per-use/" target="_blank" class="card-title">X API従量課金制（2026年2月〜）</a>
+      <span class="author">by しんたろ</span>
+      <div class="card-body">
+        <p class="summary">2026年2月に従量課金制ローンチ。投稿1件$0.01（約1.5円）、読取$0.005。初回$5チャージ。月90投稿で約135円。</p>
+        <div class="insight">💡 コストがほぼゼロ。旧Basicプラン月$200と比較して98%コストダウン。予算のハードルがない。</div>
+        <div class="metrics">投稿$0.01/件、月90投稿=約135円</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="cost">コスト</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://notai.jp/blog/x-api-mcp/" target="_blank" class="card-title">Claude Code + X MCP サーバー活用ガイド</a>
+      <span class="author">by notai</span>
+      <div class="card-body">
+        <p class="summary">Claude Codeから直接X APIを叩けるMCPサーバー。投稿・収集・DM自動化がClaude Code内で完結。画像生成は別途必要。</p>
+        <div class="insight">💡 最もシンプルな構成。うちの既存スキル体制にそのまま乗る。/x-postスキルとして追加可能。</div>
+        <div class="metrics">API従量課金のみ</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://zenn.dev/gappy/articles/claude-code-x-post" target="_blank" class="card-title">CLAUDE.mdに書くだけでX投稿できる仕組み</a>
+      <span class="author">by gappy</span>
+      <div class="card-body">
+        <p class="summary">CLAUDE.mdにルール書くだけでClaude Codeからの自動投稿をスキル化できる。既存のCLAUDE.md運用体制にそのまま組み込める。</p>
+        <div class="insight">💡 CMOのスキルとして/x-postを追加するだけで実装完了。技術的ハードルが極めて低い。</div>
+        
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code line-funnel" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://library.libecity.com/articles/01KMDD2JD3F6V3TE0NBCWY347Z" target="_blank" class="card-title">Claude CodeとLINEで作るX自動投稿システム</a>
+      <span class="author">by リベシティ投稿者</span>
+      <div class="card-body">
+        <p class="summary">毎日20:30にAI投稿案生成→LINE通知→人間が「OK」→翌朝・翌夜に自動投稿。X API $5チャージで16ヶ月持つ。</p>
+        <div class="insight">💡 人間承認フロー付きで医療系ジャンルの暴走リスク排除。LINE Messaging APIの知見がうちにはある。</div>
+        <div class="metrics">X API $5で16ヶ月運用</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="line-funnel">LINE導線</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation algorithm general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://yoshikazunomori.com/blog/digitalmarketing/x-algorithm/" target="_blank" class="card-title">2026年Xアルゴリズム完全攻略</a>
+      <span class="author">by よしかずの森</span>
+      <div class="card-body">
+        <p class="summary">リプライの質が最重要（特定条件で通常投稿の75倍の重み）。FF比率0.6〜1.0以下が理想。テーマ1〜2つに絞って専門アカウント認定を狙う。</p>
+        <div class="insight">💡 ジャンル特化アカウント運用が正解。医療ダイエット専門、転職専門など分けるべき。</div>
+        <div class="metrics">リプライ: 通常投稿の75倍の重み</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="algorithm">アルゴリズム</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="funnel-design x-automation line-funnel" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/kazuaki_ito_/n/nf2934cda7850" target="_blank" class="card-title">X→LINE誘導 売り込みゼロの5つの方法</a>
+      <span class="author">by いとうかずあき</span>
+      <div class="card-body">
+        <p class="summary">共感起点型（悩み言語化→解決→LINEで詳しく）、ノウハウ出し惜しみ型（7割出す→残りはLINEで）、実績ドン型の3テンプレ。</p>
+        <div class="insight">💡 医療系の悩みは「共感」で距離が縮まる。共感起点型がうちに最適。</div>
+        
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="line-funnel">LINE導線</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="funnel-design line-funnel general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://momentummarketing.co.jp/2026/01/28/official-line/" target="_blank" class="card-title">X→公式LINE誘導の最強戦略</a>
+      <span class="author">by Momentum Marketing</span>
+      <div class="card-body">
+        <p class="summary">プロフ文構造: キャッチコピー(WHO×WHAT)→実績→CTA。「登録」より「受け取る」「手に入れる」が効く。外部リンク付き投稿はリーチ低下。</p>
+        <div class="insight">💡 Xの本文にLINEリンク貼るとリーチ下がる。プロフかリプ欄にリンク。固定ツイートにCTA。</div>
+        <div class="metrics">「受け取る」等の能動動詞でCVR向上</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="funnel-design note line-funnel" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/modern_act777/n/ne0dcd1cf70e6" target="_blank" class="card-title">noteからLINE登録を量産するテンプレ3選</a>
+      <span class="author">by modern_act777</span>
+      <div class="card-body">
+        <p class="summary">共感ストーリー型、問題解決型、未来提示型の3つのCTAテンプレ。記事中盤（納得ピーク）+記事末尾のサンドイッチ配置が効果的。</p>
+        <div class="insight">💡 うちの診断フックと組み合わせれば強力。「あなたに合った○○を30秒で診断→LINEで」。</div>
+        
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="note">note</span><span class="tag" data-tag="line-funnel">LINE導線</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="funnel-design line-funnel general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://jiritatkg.com/line-friend/" target="_blank" class="card-title">LINE友だち登録特典 効果的な8タイプ</a>
+      <span class="author">by JIRITA</span>
+      <div class="card-body">
+        <p class="summary">診断ゲーム（潜在→顕在変換）、チェックリスト、レポート/PDF、クーポン、ステップ配信、過去有料動画、書籍、お試しサンプル。診断が最も温度感高い。</p>
+        <div class="insight">💡 診断フックは登録後の温度感が最高+セグメント可能。うちの既存PU診断ノウハウがそのまま転用できる。</div>
+        <div class="metrics">診断: 登録後温度 高 / ナーチャリング相性 高</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="competitor" data-tags="competitor kango instagram" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#8B5CF6">🔍 競合・市場</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://sg.wantedly.com/companies/quick/post_articles/978077" target="_blank" class="card-title">看護roo! SNS運用で大躍進</a>
+      <span class="author">by Wantedly/看護roo!</span>
+      <div class="card-body">
+        <p class="summary">看護roo!がInstagramで12.1万フォロワー。マーケター×元看護師編集者のチームでゼロから成功。LINE転職相談への導線。</p>
+        <div class="insight">💡 看護転職はInstagram競合が強い。うちが参入するならnote×体験談の切り口で差別化。</div>
+        <div class="metrics">Instagram 12.1万フォロワー</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="competitor">競合分析</span><span class="tag" data-tag="kango">看護転職</span><span class="tag" data-tag="instagram">Instagram</span></div>
+    </div>
+
+    <div class="card" data-category="competitor" data-tags="competitor pill line-funnel" data-date="2026-04-03" data-rank="B" style="border-left: 4px solid #4488FF;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#4488FF">B 公式</span>
+          <span class="category-badge" style="background:#8B5CF6">🔍 競合・市場</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://mederi.jp/magazine/pills/service01/" target="_blank" class="card-title">mederi（メデリピル）LINE 45万人の導線</a>
+      <span class="author">by mederi公式</span>
+      <div class="card-body">
+        <p class="summary">LINE登録者45万人。LINE完結型のオンラインピル処方。QRコード→LINE友だち追加→問診→診療→処方郵送。圧倒的トッププレイヤー。</p>
+        <div class="insight">💡 ピルはmederiが強すぎて正面勝負は非効率。うちは「教育コンテンツ型」でレイヤーを変える必要。</div>
+        <div class="metrics">LINE友だち45万人</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="competitor">競合分析</span><span class="tag" data-tag="pill">ピル</span><span class="tag" data-tag="line-funnel">LINE導線</span></div>
+    </div>
+
+    <div class="card" data-category="competitor" data-tags="competitor faga line-funnel" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#8B5CF6">🔍 競合・市場</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://www.lstepoffcial.com/blog/%E5%BA%83%E5%91%8A%E3%81%AB%E9%A0%BC%E3%82%89%E3%81%AA%E3%81%84%E7%BE%8E%E5%AE%B9%E3%82%AF%E3%83%AA%E3%83%8B%E3%83%83%E3%82%AF%E3%81%AE%E9%9B%86%E5%AE%A2%E6%B3%95%EF%BC%9Aline%E9%9B%86%E5%AE%A2/" target="_blank" class="card-title">広告に頼らない美容クリニックのLINE集客</a>
+      <span class="author">by MARKELINE/Lstep</span>
+      <div class="card-body">
+        <p class="summary">MARKELINE社の事例。広告費をかけずにLINE集客で美容クリニックの集患に成功。SNSコンテンツ→LINE誘導の体系的導線。</p>
+        <div class="insight">💡 美容医療×LINE集客の成功事例。FAGA参入時の参考モデル。</div>
+        
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="competitor">競合分析</span><span class="tag" data-tag="faga">FAGA</span><span class="tag" data-tag="line-funnel">LINE導線</span></div>
+    </div>
+
+    <div class="card" data-category="competitor" data-tags="competitor glp1 market" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#8B5CF6">🔍 競合・市場</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/pharma_manage/n/n8d780ad0a071" target="_blank" class="card-title">肥満治療 日本元年 — GLP-1市場急拡大</a>
+      <span class="author">by ファーマ経営研究所</span>
+      <div class="card-body">
+        <p class="summary">2026年はZepbound薬価収載で「肥満治療元年」。GLP-1市場が急拡大中。クリニック直営の集患がメインで、メディア型×SNS×LINEは空白。</p>
+        <div class="insight">💡 市場パイが拡大中＝早期参入メリット大。メディア型で先行者利益を取れる窓が開いてる。</div>
+        <div class="metrics">2026年 肥満治療元年</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="competitor">競合分析</span><span class="tag" data-tag="glp1">GLP-1</span><span class="tag" data-tag="market">市場動向</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="funnel-design note x-automation" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/skill_template/n/n73a8b9c29cd5" target="_blank" class="card-title">noteとXを組み合わせた導線設計</a>
+      <span class="author">by skill_template</span>
+      <div class="card-body">
+        <p class="summary">Xで結論だけ短く投稿→「詳しい方法はnoteにまとめました」でリンク。Xの文字制限を逆手に取る最もシンプルな導線。</p>
+        <div class="insight">💡 X→noteへの最も自然な導線パターン。うちのジャンルでも「○○の費用相場は△万円→詳しくはnote」で使える。</div>
+        
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="note">note</span><span class="tag" data-tag="x-automation">X自動化</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code ai-automation" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://x.com/akaoniudetate/status/2039627365555552556" target="_blank" class="card-title">X自動投稿のロードマップ（なまお）</a>
+      <span class="author">by なまお@akaoniudetate</span>
+      <div class="card-body">
+        <p class="summary">Claude Codeで「AI分身」を作る手順。過去投稿30-100本→文体分析→システムプロンプト生成→Anthropic API+X APIで自動投稿。dry run→人間レビュー→投稿の段階的自動化。</p>
+        <div class="insight">💡 うちの技術スタック（Claude Code + API）で全て実装可能。ジャンル別ペルソナを作れば複数アカウント運用も視野に。</div>
+        <div class="metrics">所要時間1-3時間、コスト低（API従量のみ）</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="ai-automation">AI自動化</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code ai-automation general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/yusuke77/n/n1aefe133be43" target="_blank" class="card-title">非エンジニアがClaude CodeでXを自動運用している話</a>
+      <span class="author">by 新居祐介</span>
+      <div class="card-body">
+        <p class="summary">非エンジニアがClaude Codeで週次自動運用を構築。日曜夜にAIが翌週7日分の投稿ドラフトを自動生成→月〜土は朝7時・昼12時・夜19時に自動投稿。人間は週の頭に1週間分のポスト内容を承認するだけ。アナリティクスデータを見て投稿の最適化も自動。</p>
+        <div class="insight">💡 人間承認フロー付きの自動運用モデルはうちの医療系ジャンルに最適。暴走リスクを排除しつつ工数90%減。週1承認だけの運用は現実的。</div>
+        <div class="metrics">週3投稿×自動、月額約3,000円（Claude Pro代のみ）</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="ai-automation">AI自動化</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code ai-automation general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/gamisuke0507/n/n840e681fc0e5" target="_blank" class="card-title">非エンジニアがClaude Codeだけで「X完全自動化」を1時間で作った全手順</a>
+      <span class="author">by 石神大輔（Human Capital AI Lead）</span>
+      <div class="card-body">
+        <p class="summary">プログラミング経験ゼロの著者がClaude Codeだけで1時間でX完全自動化システムを構築。AI人格プロファイル、投稿生成モジュール、X投稿モジュール、スケジューラーの4モジュール構成。全プロンプト公開。朝7:00に曜日に合わせた投稿を自動生成。</p>
+        <div class="insight">💡 1時間で構築可能という再現性の高さが強み。うちのCMOスキルにそのまま組み込める。全プロンプト公開なのでカスタマイズ容易。</div>
+        <div class="metrics">構築時間1時間、プログラミング経験不要</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="ai-automation">AI自動化</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation ai-automation funnel-design general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/chaen_channel/n/ne0bafeb85f44" target="_blank" class="card-title">チャエン：0→18万フォロワー、採用700件・売上数億円のX運用完全攻略</a>
+      <span class="author">by チャエン（茶圓将裕）/ デジライズCEO</span>
+      <div class="card-body">
+        <p class="summary">Xフォロワー18万人、採用700件、売上数億円を達成した全ノウハウ。5.6万字。AI活用で投稿自動生成ボット構築、X投稿分析術、Weekly分析、AI情報収集の自動化まで網羅。150社以上にAI研修を提供。</p>
+        <div class="insight">💡 日本のAI×X運用の最高峰事例。フォロワー→採用→売上の導線設計が参考になる。うちのLINE誘導にも応用可能な構造。</div>
+        <div class="metrics">18万フォロワー、採用700件、売上数億円、150社AI研修</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="ai-automation">AI自動化</span><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note monetization general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/kurashikilog/n/nf2e8c1a116b6" target="_blank" class="card-title">note収益化：月10〜20万をアフィリエイトだけで稼ぐ実践例</a>
+      <span class="author">by クラシキログ</span>
+      <div class="card-body">
+        <p class="summary">note開始8ヶ月で月10〜20万円を達成。2025年3月実績: 月収¥151,637（Amazon ¥92,473 / 楽天 ¥5,264 / 成約系 ¥53,900）。月間PV 12万、記事数116本、フォロワー149人。有料記事ゼロ、アフィリエイトのみで収益化。</p>
+        <div class="insight">💡 フォロワー149人でも月12万PVで月15万円。PVさえ取れれば少フォロワーでも収益化可能。うちのSEO知見を活かしてnoteのSEOも攻められる。</div>
+        <div class="metrics">月収¥151,637、月間PV 12万、フォロワー149人、記事116本、8ヶ月</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="monetization">monetization</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note monetization ai-automation general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/ai_freak/n/n883d57b11a97" target="_blank" class="card-title">note収益化：半年で月間収益50万円超を達成した実例</a>
+      <span class="author">by AI FREAK</span>
+      <div class="card-body">
+        <p class="summary">2025年1月からnote本格運用を開始。初月¥38,500→6ヶ月目（2025年6月）に月間収益50万円超。サブスクリプション（メンバーシップ）が主な収益源。AI関連コンテンツの情報発信。</p>
+        <div class="insight">💡 AIコンテンツ×サブスクは急成長中。メンバーシップ売上は前年同月比+81.3%とnote全体で爆発中。うちもジャンル特化メンバーシップの可能性あり。</div>
+        <div class="metrics">初月¥38,500→6ヶ月目で月50万円超、サブスク中心</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="monetization">monetization</span><span class="tag" data-tag="ai-automation">AI自動化</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note monetization general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/ai_freak/n/n271c3156ebea" target="_blank" class="card-title">note収益化：1ヶ月半で10万円達成の実践例</a>
+      <span class="author">by AI FREAK</span>
+      <div class="card-body">
+        <p class="summary">noteを1ヶ月半本気で運用し、合計売上¥104,180を達成。毎日2〜3時間の執筆。サブスクリプションが収益の柱。ただし著者自身が「キャプチャは改ざんできる」と述べ、透明性に言及。</p>
+        <div class="insight">💡 1ヶ月半で10万円は再現性の指標として参考になる。サブスク型は一度積み上がると右肩上がり。</div>
+        <div class="metrics">1.5ヶ月で¥104,180、毎日2-3時間執筆</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="monetization">monetization</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="line-funnel funnel-design general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/soldout_official/n/n988a52648022" target="_blank" class="card-title">LINE公式アカウント友だち数15倍・獲得数1.4倍の事例</a>
+      <span class="author">by ソウルドアウト株式会社</span>
+      <div class="card-body">
+        <p class="summary">2年間でLINE友だち数が436人→6,717人（15倍）に増加。獲得数も半年平均で35件→50件（1.4倍）。Cookie規制に対応するリターゲティング補完機能としてLINE公式アカウントを活用。</p>
+        <div class="insight">💡 Cookie規制対応としてのLINE活用は今後のトレンド。リターゲティングの代替としてLINEナーチャリングの価値が上がる。うちのファネルモデルと整合。</div>
+        <div class="metrics">友だち436→6,717人（15倍/2年）、獲得35→50件/月（1.4倍）</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="line-funnel funnel-design general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/lancers_webinar/n/n4540db5358c4" target="_blank" class="card-title">LINE登録2倍・CVR3倍を実現した「配信を頑張らない」攻略法</a>
+      <span class="author">by ランサーズ公式</span>
+      <div class="card-body">
+        <p class="summary">D2C・EC・美容クリニック等を対象に「登録後3日が勝負」のデータに基づくステップ配信鉄則。配信を頑張らない=初動3日の自動配信で勝負する設計思想。LINE登録2倍・CVR3倍の実績。</p>
+        <div class="insight">💡 「登録後3日が勝負」はうちのステップ配信設計に直結する知見。初動3日の自動配信シナリオを強化すべき。美容クリニック事例はFAGA/GLP-1に転用可能。</div>
+        <div class="metrics">LINE登録2倍、CVR3倍、対象: D2C/EC/美容クリニック</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note line-funnel funnel-design general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/taraco_mom/n/n7dc3ffb95d85" target="_blank" class="card-title">note×LINE公式アカウント連携機能を試してみた結果</a>
+      <span class="author">by ウミノ（AIとマーケティングの専門家）</span>
+      <div class="card-body">
+        <p class="summary">note pro のLINE友だち追加機能を実際に試した1次レポート。「友だち追加で続きを読む」ボタンをnote記事に設置。企業アカウント限定。「使い方次第ではかなり効果が出せそう」との実感報告。</p>
+        <div class="insight">💡 noteの公式LINE連携機能の実践レポート。うちが参入する時の実装イメージの参考になる。</div>
+        <div class="metrics">具体数字非公開だが「興味深い結果」と報告</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note line-funnel monetization general" data-date="2026-04-03" data-rank="S" style="border-left: 4px solid #FF4444;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF4444">S 実践者</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/aibamiu/n/ne3ac6732c1cf" target="_blank" class="card-title">90%の人が知らないnote集客術（累計売上2億超の実践者）</a>
+      <span class="author">by 相羽みう</span>
+      <div class="card-body">
+        <p class="summary">累計売上2億円超の実践者。noteをGoogle検索からの流入チャネルとして活用し、メルマガ・LINE公式にリスト化→オンライン講座販売。noteのSEO力（ドメインパワー）を活かした集客が特徴。</p>
+        <div class="insight">💡 noteのドメインパワーを活かしてSEO流入→LINE誘導の導線はうちのSEO知見と相性が良い。自前メディアより初速が早い可能性。</div>
+        <div class="metrics">累計売上2億円超</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="monetization">monetization</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note growth general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/omochi_wordpress/n/n80889ec9c859" target="_blank" class="card-title">noteフォロワー1000人達成の具体ステップ（6ヶ月）</a>
+      <span class="author">by 童顔社長</span>
+      <div class="card-body">
+        <p class="summary">noteを6ヶ月で0→1000フォロワー達成。手順: (1)100投稿書けるテーマ探し (2)最速で100投稿 (3)スキ100以上のキラーコンテンツ作成 (4)固定記事に設定 (5)フォロー導線コンテンツ作成 (6)全記事末尾に導線埋め込み。</p>
+        <div class="insight">💡 100投稿→キラーコンテンツ→固定記事のフレームワークは再現性が高い。うちのジャンル特化noteでも同じ流れで行ける。</div>
+        <div class="metrics">0→1000フォロワー/6ヶ月</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="growth">growth</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation growth general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/yudainakata/n/ncefa56adbda0" target="_blank" class="card-title">1年でXフォロワー1万人達成ロードマップ</a>
+      <span class="author">by なぁさん（中田雄大）</span>
+      <div class="card-body">
+        <p class="summary">1年で1万フォロワー達成のロードマップ（12,996文字）。初期1〜2ヶ月は日1〜3投稿でトライ&エラー。フォロワー1,000人前後で伸びが停滞→5,000人前後で差別化が問われる→1万人は投稿パターンの継続的な更新が必須。</p>
+        <div class="insight">💡 フォロワー1000→5000の壁を越えるには差別化が必要。医療系の専門性はここで強みになる。</div>
+        <div class="metrics">1年で1万フォロワー達成、日1-3投稿</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="growth">growth</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code line-funnel ai-automation" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/chaen_channel/n/ndebdc9d60265" target="_blank" class="card-title">Claude Code × LINE HarnessでLINE運用を完全自動化</a>
+      <span class="author">by チャエン（茶圓将裕）</span>
+      <div class="card-body">
+        <p class="summary">Claude CodeとLINE Harnessを組み合わせてLINE運用を完全自動化する手法。従来のLINE運用は構築だけで数十万〜数百万・月の運用費も数十万が相場だったところを月額0円での運用を実現。</p>
+        <div class="insight">💡 LINE運用自動化のコスト破壊。うちの既存LINE運用にもClaude Code統合で大幅効率化の余地がある。</div>
+        <div class="metrics">従来: 構築数十万〜数百万+月額数十万 → 月額0円運用</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="ai-automation">AI自動化</span></div>
+    </div>
+
+    <div class="card" data-category="x-automation" data-tags="x-automation claude-code ai-automation general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DA1F2">🤖 X自動化</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/paltere/n/n53941a0a8b06" target="_blank" class="card-title">Claude Code×Xで「放置運用」する方法</a>
+      <span class="author">by パル</span>
+      <div class="card-body">
+        <p class="summary">毎日1時間かかっていたX運用を6分に短縮する放置運用の手法。X公式APIを使った完全合法の自動化。コピペで動くコード付き。運用時間90%削減。プログラミング未経験者向け。</p>
+        <div class="insight">💡 運用時間90%削減は魅力的。投稿承認だけ人間がやるモデルで医療系のリスク管理と両立可能。</div>
+        <div class="metrics">運用時間: 1時間/日→6分/日（90%削減）</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="x-automation">X自動化</span><span class="tag" data-tag="claude-code">Claude Code</span><span class="tag" data-tag="ai-automation">AI自動化</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="funnel-design" data-tags="line-funnel funnel-design general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#FF6B35">🎯 導線設計</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/lycbiz/n/n979038520b89" target="_blank" class="card-title">LINEヤフー：2ヶ月で70,000人の友だち増加事例</a>
+      <span class="author">by LINEヤフー for Business</span>
+      <div class="card-body">
+        <p class="summary">友だちになる理由と約束を明確にすることで、約2ヶ月で70,000人の友だち増加を達成した事例。LINE公式アカウントの友だち獲得の最新施策と規模拡大の4ステップを解説。</p>
+        <div class="insight">💡 「なぜ友だちになるべきか」の言語化が鍵。うちのPU診断フックも「あなたに合った○○がわかる」という明確な理由付けが重要。</div>
+        <div class="metrics">2ヶ月で+70,000人</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="line-funnel">LINE導線</span><span class="tag" data-tag="funnel-design">導線設計</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+
+    <div class="card" data-category="note" data-tags="note monetization general" data-date="2026-04-03" data-rank="A" style="border-left: 4px solid #FF8800;">
+      <div class="card-header">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="rank-badge" style="background:#FF8800">A プロ分析</span>
+          <span class="category-badge" style="background:#1DB954">📝 note</span>
+        </div>
+        <span class="date">2026-04-03</span>
+      </div>
+      <a href="https://note.com/yamatun/n/n78107e3f2812" target="_blank" class="card-title">note収益化完全ガイド2026：月1万→100万円ロードマップ</a>
+      <span class="author">by 世界の中野</span>
+      <div class="card-body">
+        <p class="summary">2026年版note収益化ガイド。実用ノウハウ系の平均価格¥1,842で読み物系（¥983）の1.9倍。メンバーシップ売上は前年同月比+81.3%、購入件数+86.3%と爆発的成長。「役に立つ」コンテンツほど高単価で売れるトレンド。</p>
+        <div class="insight">💡 メンバーシップの爆発的成長はうちの「ジャンル特化有料コミュニティ」の可能性を示唆。実用ノウハウ系が高単価=医療系コンテンツは高単価のポテンシャルあり。</div>
+        <div class="metrics">メンバーシップ売上+81.3%/年、実用系平均¥1,842</div>
+      </div>
+      <div class="card-tags"><span class="tag" data-tag="note">note</span><span class="tag" data-tag="monetization">monetization</span><span class="tag" data-tag="general">全般</span></div>
+    </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    最終更新: 2026-04-04T10:00:00 | Generated by Research Hub
+  </div>
+
+<script>
+  // フィルタ状態
+  let activeCategory = 'all';
+  let activeTag = 'all';
+  let activeDate = 'all';
+  let searchQuery = '';
+
+  function applyFilters() {
+    const cards = document.querySelectorAll('.card');
+    let visible = 0;
+    cards.forEach(card => {
+      const cat = card.dataset.category;
+      const tags = card.dataset.tags;
+      const date = card.dataset.date;
+      const text = card.textContent.toLowerCase();
+
+      const catMatch = activeCategory === 'all' || cat === activeCategory;
+      const tagMatch = activeTag === 'all' || tags.includes(activeTag);
+      const dateMatch = activeDate === 'all' || date === activeDate;
+      const searchMatch = !searchQuery || text.includes(searchQuery.toLowerCase());
+
+      if (catMatch && tagMatch && dateMatch && searchMatch) {
+        card.classList.remove('hidden');
+        visible++;
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+    document.getElementById('resultCount').textContent = visible + '件のリサーチを表示中';
+  }
+
+  // カテゴリフィルタ
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.dataset.cat;
+      applyFilters();
+    });
+  });
+
+  // タグフィルタ
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTag = btn.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  // タグクリック（カード内のタグ）
+  document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const tagValue = tag.dataset.tag;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.dataset.filter === tagValue) b.classList.add('active');
+      });
+      activeTag = tagValue;
+      applyFilters();
+    });
+  });
+
+  // 日付フィルタ
+  document.getElementById('dateFilter').addEventListener('change', (e) => {
+    activeDate = e.target.value;
+    applyFilters();
+  });
+
+  // 検索
+  document.getElementById('searchBox').addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    applyFilters();
+  });
+</script>
+</body>
+</html>

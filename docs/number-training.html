@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINE事業 数字研修</title>
+<style>
+  :root {
+    --primary: #1a1a2e;
+    --accent: #e94560;
+    --accent2: #0f3460;
+    --bg: #f8f9fa;
+    --card: #ffffff;
+    --text: #2d3436;
+    --muted: #636e72;
+    --success: #00b894;
+    --warning: #fdcb6e;
+    --danger: #d63031;
+    --border: #dfe6e9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* ========== HERO ========== */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent2) 100%);
+    color: #fff;
+    padding: 80px 20px 60px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 2.4rem; margin-bottom: 12px; letter-spacing: -0.5px; }
+  .hero p { font-size: 1.1rem; opacity: 0.85; max-width: 600px; margin: 0 auto; }
+  .hero .goal-badge {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 10px 28px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 30px;
+    font-size: 0.95rem;
+  }
+
+  /* ========== NAV ========== */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+  }
+  .nav a {
+    display: inline-block;
+    padding: 14px 18px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav a:hover, .nav a.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ========== CONTENT ========== */
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+  .chapter {
+    margin-bottom: 60px;
+    scroll-margin-top: 60px;
+  }
+  .chapter-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .chapter h2 {
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+  .chapter-subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+  }
+  .card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    color: var(--primary);
+  }
+
+  /* ========== FUNNEL DIAGRAM ========== */
+  .funnel-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 30px 0;
+  }
+  .funnel-step {
+    position: relative;
+    text-align: center;
+    padding: 16px 20px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    transition: transform 0.2s;
+  }
+  .funnel-step:hover { transform: scale(1.03); }
+  .funnel-step .num {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 800;
+  }
+  .funnel-step .label { font-size: 0.8rem; opacity: 0.9; }
+  .funnel-arrow {
+    font-size: 1.2rem;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+  .funnel-metric {
+    position: absolute;
+    right: -180px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .funnel-metric::before {
+    content: '←';
+    margin-right: 4px;
+  }
+
+  /* ========== EQUATION ========== */
+  .equation-box {
+    background: linear-gradient(135deg, var(--primary), var(--accent2));
+    color: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    margin: 24px 0;
+  }
+  .equation-box .eq-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .equation-box .eq-main {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .equation-box .eq-sub {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 12px;
+  }
+
+  /* ========== METRICS TABLE ========== */
+  .metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+  }
+  .metrics-table th {
+    background: var(--primary);
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .metrics-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .metrics-table tr:hover { background: #f1f3f5; }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .badge-ok { background: #d4edda; color: #155724; }
+  .badge-ng { background: #f8d7da; color: #721c24; }
+  .badge-warn { background: #fff3cd; color: #856404; }
+
+  /* ========== THINKING FLOW ========== */
+  .thinking-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 20px 0;
+  }
+  .think-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .think-num {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+  .think-content {
+    flex: 1;
+    padding-bottom: 24px;
+    border-left: 3px solid var(--border);
+    margin-left: -22px;
+    padding-left: 34px;
+  }
+  .think-step:last-child .think-content { border-left-color: transparent; }
+  .think-content h4 { font-size: 1rem; margin-bottom: 4px; }
+  .think-content p { color: var(--muted); font-size: 0.9rem; }
+
+  /* ========== LEVER TABLE ========== */
+  .lever-row {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 100px;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .lever-row:last-child { border-bottom: none; }
+  .lever-name { font-weight: 700; }
+  .lever-desc { font-size: 0.9rem; color: var(--muted); }
+  .ctrl-high { color: var(--success); font-weight: 700; }
+  .ctrl-mid { color: #e17055; font-weight: 700; }
+  .ctrl-low { color: var(--danger); font-weight: 700; }
+
+  /* ========== INSIGHT BOX ========== */
+  .insight {
+    background: #fff3e0;
+    border-left: 4px solid #ff9800;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+    font-size: 0.95rem;
+  }
+  .insight strong { color: #e65100; }
+
+  .key-point {
+    background: #e8f5e9;
+    border-left: 4px solid var(--success);
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+    font-size: 0.95rem;
+  }
+  .key-point strong { color: #1b5e20; }
+
+  .danger-box {
+    background: #fce4ec;
+    border-left: 4px solid var(--danger);
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+  }
+
+  /* ========== EXERCISE ========== */
+  .exercise {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .exercise-num {
+    background: var(--accent);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+  .exercise-header h3 {
+    font-size: 1.1rem;
+    color: var(--primary);
+    margin: 0;
+  }
+
+  .exercise-scenario {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .exercise-scenario h4 {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .exercise-question {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin: 16px 0 12px;
+    color: var(--primary);
+  }
+
+  .answer-area {
+    margin: 12px 0;
+  }
+  .answer-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    background: #fff;
+  }
+  .answer-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  textarea.answer-input {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .choice-grid {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .choice-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    background: #fff;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    text-align: left;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .choice-btn:hover { border-color: var(--accent); background: #fef0f3; }
+  .choice-btn.selected { border-color: var(--accent); background: #fef0f3; }
+  .choice-btn.correct { border-color: var(--success); background: #d4edda; }
+  .choice-btn.wrong { border-color: var(--danger); background: #f8d7da; }
+
+  .reveal-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: inherit;
+    margin-top: 12px;
+  }
+  .reveal-btn:hover { background: #c0392b; }
+
+  .answer-reveal {
+    display: none;
+    margin-top: 20px;
+    padding: 24px;
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border-radius: 8px;
+    border: 1px solid #c8e6c9;
+  }
+  .answer-reveal.show { display: block; }
+  .answer-reveal h4 {
+    color: #1b5e20;
+    margin-bottom: 12px;
+    font-size: 1rem;
+  }
+  .answer-reveal p, .answer-reveal li {
+    font-size: 0.9rem;
+    line-height: 1.8;
+  }
+  .answer-reveal .calc {
+    background: #fff;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    border: 1px solid #c8e6c9;
+  }
+
+  .exercise-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.85rem;
+  }
+  .exercise-data-table th {
+    background: var(--accent2);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: right;
+    font-weight: 600;
+  }
+  .exercise-data-table th:first-child { text-align: left; }
+  .exercise-data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: right;
+  }
+  .exercise-data-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+  }
+
+  /* ========== SUMMARY ========== */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .summary-item {
+    text-align: center;
+    padding: 24px 16px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .summary-item .icon { font-size: 2rem; margin-bottom: 8px; }
+  .summary-item h4 { font-size: 0.95rem; margin-bottom: 4px; }
+  .summary-item p { font-size: 0.8rem; color: var(--muted); }
+
+  .progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 1.8rem; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .funnel-metric { display: none; }
+    .lever-row { grid-template-columns: 1fr; gap: 4px; }
+    .nav a { padding: 12px 14px; font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <h1>LINE事業 — 数字の見方</h1>
+  <p>数字を見て、ボトルネックを特定して、打ち手を出す。<br>この3ステップが自分でできるようになる研修。</p>
+  <div class="goal-badge">GOAL：数字からロジカルに打ち手を導けるようになる</div>
+</div>
+
+<!-- ==================== NAV ==================== -->
+<div class="nav">
+  <div class="nav-inner">
+    <a href="#ch0">Ch.0 前提</a>
+    <a href="#ch1">Ch.1 ファネル</a>
+    <a href="#ch2">Ch.2 指標</a>
+    <a href="#ch3">Ch.3 思考順序</a>
+    <a href="#ch4">Ch.4 レバー</a>
+    <a href="#ch5">Ch.5 実践</a>
+  </div>
+</div>
+
+<!-- ==================== CONTENT ==================== -->
+<div class="container">
+
+<!-- ======================================== -->
+<!-- Chapter 0: 前提                          -->
+<!-- ======================================== -->
+<div class="chapter" id="ch0">
+  <span class="chapter-label">Chapter 0</span>
+  <h2>うちのチームは何屋か</h2>
+  <p class="chapter-subtitle">数字を理解する前に、まず「何のための数字か」を知る</p>
+
+  <div class="card">
+    <h3>間接CV部隊 = ナーチャリング屋</h3>
+    <p>うちのチームの仕事をひとことで言うと：</p>
+    <div class="equation-box">
+      <div class="eq-label">LINEチームのミッション</div>
+      <div class="eq-main">本来CVしないユーザーを<br>LINEでナーチャリングしてCVさせる</div>
+    </div>
+
+    <p style="margin-top:20px;">ネット上には「ダイエット方法」「ED治療薬ランキング」みたいな<strong>ノウハウ記事</strong>がたくさんある。これを読んだ人は情報収集が目的で、すぐに商品を買ったりクリニックに申し込んだりはしない。</p>
+
+    <p style="margin-top:12px;">でも、その人たちをLINE友だちにして、診断コンテンツや配信で関係を育てれば、一定割合がCVする。この<strong>「直接は買わない人を、間接的にCVさせる」</strong>のがうちの仕事。</p>
+
+    <div class="insight">
+      <strong>ここが最重要：</strong>直接CVはSEO（CV記事）チームやリスティングチームの仕事。うちの介在価値は「本来CVしない人をCVさせる」こと。この違いを忘れると、追う数字がズレる。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>チームが追うGOAL</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
+      <div style="background:#e8f5e9; padding:20px; border-radius:8px; text-align:center;">
+        <div style="font-size:0.8rem; color:#666;">友だち（月間）</div>
+        <div style="font-size:2rem; font-weight:800; color:#1b5e20;">1,000人</div>
+      </div>
+      <div style="background:#e3f2fd; padding:20px; border-radius:8px; text-align:center;">
+        <div style="font-size:0.8rem; color:#666;">売上（月間）</div>
+        <div style="font-size:2rem; font-weight:800; color:#0d47a1;">¥100万</div>
+      </div>
+    </div>
+    <p style="margin-top:16px; color:var(--muted); font-size:0.9rem;">年間GOAL: 売上 ¥2,500万。月¥100万→¥200万に引き上げ + 新チャネルで¥100万上乗せ = 月¥300万ペースを目指す。</p>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Chapter 1: ファネル                       -->
+<!-- ======================================== -->
+<div class="chapter" id="ch1">
+  <span class="chapter-label">Chapter 1</span>
+  <h2>ファネル全体像</h2>
+  <p class="chapter-subtitle">ユーザーがどんな流れでCVまで辿り着くか — 水が流れるパイプをイメージしろ</p>
+
+  <div class="card">
+    <h3>LINE友だち獲得ファネル</h3>
+    <p>ユーザーは以下の流れで友だちになり、最終的にCVする。各段階で人数は減っていく。「どこで何人漏れてるか」を見るのがうちの仕事。</p>
+
+    <div class="funnel-diagram">
+      <div class="funnel-step" style="background:#3498db; width:90%; max-width:500px;">
+        <span class="label">STEP 1</span>
+        <span class="num">記事PV</span>
+        <div style="font-size:0.8rem; opacity:0.9;">ノウハウ記事を読みに来た人</div>
+      </div>
+      <div class="funnel-arrow">▼</div>
+
+      <div class="funnel-step" style="background:#2980b9; width:75%; max-width:420px;">
+        <span class="label">STEP 2</span>
+        <span class="num">PU表示（imp）</span>
+        <div style="font-size:0.8rem; opacity:0.9;">ポップアップが表示された人</div>
+      </div>
+      <div class="funnel-arrow">▼ <span style="font-size:0.75rem; color:var(--accent);">PU CTR</span></div>
+
+      <div class="funnel-step" style="background:#8e44ad; width:55%; max-width:320px;">
+        <span class="label">STEP 3</span>
+        <span class="num">PUクリック</span>
+        <div style="font-size:0.8rem; opacity:0.9;">ポップアップをタップした人</div>
+      </div>
+      <div class="funnel-arrow">▼ <span style="font-size:0.75rem; color:var(--accent);">友だち追加率</span></div>
+
+      <div class="funnel-step" style="background:#e74c3c; width:35%; max-width:220px;">
+        <span class="label">STEP 4</span>
+        <span class="num">友だち追加</span>
+        <div style="font-size:0.8rem; opacity:0.9;">LINE友だちになった人</div>
+      </div>
+      <div class="funnel-arrow">▼ <span style="font-size:0.75rem; color:var(--accent);">FCVR</span></div>
+
+      <div class="funnel-step" style="background:#c0392b; width:18%; max-width:140px;">
+        <span class="label">STEP 5</span>
+        <span class="num">CV</span>
+        <div style="font-size:0.8rem; opacity:0.9;">成約</div>
+      </div>
+    </div>
+
+    <div class="key-point">
+      <strong>パイプのイメージ：</strong>上から水（ユーザー）が流れてくる。各段階に「穴」が空いていて、水が漏れる。穴が大きいところ = 改善チャンス。穴を塞げば下に流れる水が増える = 友だちが増える = 売上が増える。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>PU（ポップアップ）って何？</h3>
+    <p>記事を読んでいる途中で出てくる小さなバナーのこと。「あなたに合うダイエット方法を診断しませんか？」みたいなやつ。</p>
+    <ul style="margin-top:12px; padding-left:20px; color:var(--muted); font-size:0.9rem;">
+      <li><strong>imp</strong> = ポップアップが表示された回数（impression）</li>
+      <li><strong>click</strong> = ポップアップをクリック/タップした回数</li>
+      <li>PUの文言やデザインを変えると、クリック率が大きく変わる = うちの主戦場</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Chapter 2: 指標マップ                     -->
+<!-- ======================================== -->
+<div class="chapter" id="ch2">
+  <span class="chapter-label">Chapter 2</span>
+  <h2>指標マップ — 方程式を理解する</h2>
+  <p class="chapter-subtitle">全ての数字はひとつの方程式から分解できる</p>
+
+  <div class="card">
+    <h3>大方程式（これが全て）</h3>
+    <div class="equation-box">
+      <div class="eq-label">売上の方程式</div>
+      <div class="eq-main">売上 = 友だち数 × FCVR × 客単価</div>
+      <div class="eq-sub">売上を上げるには、この3つのどれかを上げればいい</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:20px;">
+      <div style="background:#e8f5e9; padding:16px; border-radius:8px; text-align:center;">
+        <div style="font-weight:700;">友だち数</div>
+        <div style="font-size:0.8rem; color:#666; margin-top:4px;">何人が友だちになったか</div>
+        <div style="font-size:0.75rem; color:#888; margin-top:8px;">3月実績: 1,088人</div>
+      </div>
+      <div style="background:#e3f2fd; padding:16px; border-radius:8px; text-align:center;">
+        <div style="font-weight:700;">FCVR</div>
+        <div style="font-size:0.8rem; color:#666; margin-top:4px;">友だちのうち何%がCVしたか</div>
+        <div style="font-size:0.75rem; color:#888; margin-top:8px;">3月実績: 2.64%</div>
+      </div>
+      <div style="background:#f3e5f5; padding:16px; border-radius:8px; text-align:center;">
+        <div style="font-weight:700;">客単価</div>
+        <div style="font-size:0.8rem; color:#666; margin-top:4px;">1CVあたりの売上</div>
+        <div style="font-size:0.75rem; color:#888; margin-top:8px;">3月実績: ¥33,769</div>
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top:20px;">
+      <strong>検算してみよう：</strong>1,088人 × 2.64% × ¥33,769 = 約¥97万。3月の売上実績¥97.9万とほぼ一致する。方程式が正しいことがわかる。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>友だち数の分解（ここがうちの主戦場）</h3>
+    <p>「友だち数」をさらに分解すると：</p>
+
+    <div class="equation-box" style="background:linear-gradient(135deg, #00b894, #00cec9);">
+      <div class="eq-label">友だち数の分解</div>
+      <div class="eq-main">友だち = PV × PVFR</div>
+      <div class="eq-sub">記事を読んだ人数 × そのうち友だちになった割合</div>
+    </div>
+
+    <p style="margin-top:20px;">もうひとつ似た指標がある：</p>
+    <div class="equation-box" style="background:linear-gradient(135deg, #0984e3, #6c5ce7); margin-top:8px;">
+      <div class="eq-label">もうひとつの見方</div>
+      <div class="eq-main">IMPFR = 友だち ÷ PU表示数</div>
+      <div class="eq-sub">PUが表示された人のうち、友だちになった割合</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;">
+      <div style="background:#f8f9fa; padding:16px; border-radius:8px;">
+        <div style="font-weight:700; margin-bottom:4px;">PVFR</div>
+        <div style="font-size:0.9rem; color:var(--muted);">記事を読んだ<strong>全員</strong>のうち友だちになった割合</div>
+        <div style="font-size:0.8rem; color:#888; margin-top:8px;">= 友だち ÷ PV</div>
+      </div>
+      <div style="background:#f8f9fa; padding:16px; border-radius:8px;">
+        <div style="font-weight:700; margin-bottom:4px;">IMPFR</div>
+        <div style="font-size:0.9rem; color:var(--muted);">PUが<strong>表示された人</strong>のうち友だちになった割合</div>
+        <div style="font-size:0.8rem; color:#888; margin-top:8px;">= 友だち ÷ PU imp</div>
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top:16px;">
+      <strong>PVFRとIMPFRの関係：</strong>PUは記事を読んだ人の40〜50%くらいに表示される。だから<strong>IMPFRはPVFRのだいたい2倍くらいの数字になる</strong>（PVFR 0.5%ならIMPFR 1.0%くらい）。今はこの「約2倍」で覚えておけばOK。ただし今後PUの表示条件（どのタイミングで出すか、誰に出すか）を変えたら、この比率は変わる。
+    </div>
+
+    <p style="margin-top:20px; font-weight:700;">PVFRが低い時、原因は2つしかない：</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
+      <div style="background:#fce4ec; padding:16px; border-radius:8px;">
+        <div style="font-weight:700; color:#c0392b;">PU CTRが低い</div>
+        <div style="font-size:0.85rem; color:var(--muted); margin-top:6px;">PUが出てるのにタップされてない。<br>→ <strong>PUの文言が刺さってない。</strong>記事を読んでる人の「次の関心事」とPUの訴求がズレてる</div>
+      </div>
+      <div style="background:#fff3e0; padding:16px; border-radius:8px;">
+        <div style="font-weight:700; color:#e65100;">友だち追加率が低い</div>
+        <div style="font-size:0.85rem; color:var(--muted); margin-top:6px;">PUはタップされてるのに友だちにならない。<br>→ <strong>タップした先（LINE追加画面）で離脱してる。</strong>「思ってたのと違った」と感じさせてる</div>
+      </div>
+    </div>
+    <p style="margin-top:8px; font-size:0.85rem; color:var(--muted);">この2つのどちらが悪いかで、やるべき施策が全然変わる。だから「PVFRが低い」で止まらず、必ずこの2つに分けて見る。</p>
+  </div>
+
+  <div class="card">
+    <h3>指標一覧 — 基準値つき</h3>
+    <p>指標を見る順番が大事。<strong>上から順に見る。</strong></p>
+
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>指標</th>
+          <th>意味</th>
+          <th>計算式</th>
+          <th>基準値</th>
+          <th>3月実績</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PVFR</strong></td>
+          <td>ファネル全体の効率</td>
+          <td>友だち ÷ PV</td>
+          <td>0.80〜1.00%</td>
+          <td>0.51% <span class="badge badge-ng">基準割れ</span></td>
+        </tr>
+        <tr>
+          <td><strong>IMPFR</strong></td>
+          <td>PUを見た人の中での効率</td>
+          <td>友だち ÷ PU imp</td>
+          <td>1.40〜1.50%</td>
+          <td>1.16% <span class="badge badge-ng">基準割れ</span></td>
+        </tr>
+        <tr style="background:#f8f9fa;">
+          <td style="padding-left:32px;">↳ PU CTR</td>
+          <td>PUのクリック率（IMPFRの内訳）</td>
+          <td>click ÷ imp</td>
+          <td>13%以上</td>
+          <td>13.4% <span class="badge badge-ok">OK</span></td>
+        </tr>
+        <tr style="background:#f8f9fa;">
+          <td style="padding-left:32px;">↳ 友だち追加率</td>
+          <td>クリック後の追加率（IMPFRの内訳）</td>
+          <td>友だち ÷ click</td>
+          <td>11%以上</td>
+          <td>8.0% <span class="badge badge-ng">最大ボトルネック</span></td>
+        </tr>
+        <tr>
+          <td><strong>FCVR</strong></td>
+          <td>友だちからCVへの転換率</td>
+          <td>CV ÷ 友だち</td>
+          <td>3%以上</td>
+          <td>2.64% <span class="badge badge-warn">やや低い</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-point">
+      <strong>見る順番の理由：</strong>PVFRは「全体の健康診断」。異常があったらIMPFRに降りて、さらにCTR・追加率に降りて原因を特定する。いきなりCTRだけ見ても、全体がどうなってるかわからない。<strong>広い → 狭いの順で見る。</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Chapter 3: 思考順序                       -->
+<!-- ======================================== -->
+<div class="chapter" id="ch3">
+  <span class="chapter-label">Chapter 3</span>
+  <h2>数字の見方 — 思考の順番</h2>
+  <p class="chapter-subtitle">ここが研修の核。「数字を見る時のOS」をインストールする</p>
+
+  <div class="card">
+    <h3>原則：全てGOALから逆算する</h3>
+    <div class="danger-box">
+      <strong>❌ やりがちなNG：</strong>「この記事のCTRが低いから改善しよう」<br>
+      → 記事の良し悪しからボトムアップで考えてる。GOALに対してその改善が必要かどうかが判断できてない。
+    </div>
+    <div class="key-point">
+      <strong>✅ 正しい思考：</strong>「GOALまであと200人足りない → どの記事を改善すれば200人埋まるか → この記事はPV 10,000でPVFR 0.3%だから、0.8%に改善できれば+50人 → やる価値ある」
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>思考フロー（この順番で必ず考える）</h3>
+    <div class="thinking-flow">
+      <div class="think-step">
+        <div class="think-num">1</div>
+        <div class="think-content">
+          <h4>GOALとのGAPを出す</h4>
+          <p>「友だち1,000人のGOALに対して、今のペースだと800人着地。あと200人足りない」<br>まずGAPの大きさを把握する。これが全ての起点。</p>
+        </div>
+      </div>
+      <div class="think-step">
+        <div class="think-num">2</div>
+        <div class="think-content">
+          <h4>「友だちを増やしたいのか、CVRを上げたいのか」を決める</h4>
+          <p>売上 = 友だち数 × FCVR × 客単価。<strong>今どっちが足りないかで、触る場所が自動的に決まる：</strong></p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+            <div style="background:#e8f5e9; padding:12px; border-radius:8px; font-size:0.85rem;">
+              <strong style="color:#1b5e20;">友だちが足りない → FR施策</strong><br>
+              → PU文言を変える、診断を作る<br>
+              <span style="color:#666;">= ファネルの上半分を触る</span>
+            </div>
+            <div style="background:#e3f2fd; padding:12px; border-radius:8px; font-size:0.85rem;">
+              <strong style="color:#0d47a1;">CVRが足りない → FCVR施策</strong><br>
+              → カルーセル改修、リテンション配信<br>
+              <span style="color:#666;">= ファネルの下半分を触る</span>
+            </div>
+          </div>
+          <p style="margin-top:8px;">変数を決めれば触る箇所は決まる。迷わない。</p>
+        </div>
+      </div>
+      <div class="think-step">
+        <div class="think-num">3</div>
+        <div class="think-content">
+          <h4>触る箇所の中で、どこが一番効くか特定する</h4>
+          <p>FR施策なら：PU CTRと友だち追加率のどちらが基準割れしてるか確認。<strong>穴が大きい方を先に塞ぐ。</strong></p>
+        </div>
+      </div>
+      <div class="think-step">
+        <div class="think-num">4</div>
+        <div class="think-content">
+          <h4>天井 × 改善幅 = インパクトを計算</h4>
+          <p>穴が見つかったら「その穴を塞いだら何人増えるか」をフェルミ推定する。<br>
+          <strong>PV（天井）× 改善できる率の差分 = 増える友だち数</strong></p>
+        </div>
+      </div>
+      <div class="think-step">
+        <div class="think-num">5</div>
+        <div class="think-content">
+          <h4>インパクト × 工数でROIを判断</h4>
+          <p>同じインパクトなら、工数が少ない方を先にやる。<br>PU文言変更（1日）vs 新規診断作成（1週間）→ 文言変更が先。</p>
+        </div>
+      </div>
+      <div class="think-step">
+        <div class="think-num">6</div>
+        <div class="think-content">
+          <h4>GAPが埋まるか確認</h4>
+          <p>「この施策で+50人、あの施策で+30人、合計+80人。GAPの200人には120人足りない」<br>→ 足りないなら新しい打ち手を追加。足りるなら実行に移す。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>実例：この思考フローを実際にやるとこうなる</h3>
+    <p style="color:var(--muted); margin-bottom:16px;">2026年3月、実際にチームで動いた判断の流れ。</p>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:20px; margin-bottom:16px;">
+      <div style="font-size:0.8rem; color:var(--accent); font-weight:700; margin-bottom:4px;">STEP 1 — GOALとのGAP</div>
+      <p style="font-size:0.9rem;">3月GOAL: 友だち1,000人。3/7時点のペース: 日均25人 → 月775人着地。<strong>GAP: 225人。</strong></p>
+    </div>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:20px; margin-bottom:16px;">
+      <div style="font-size:0.8rem; color:var(--accent); font-weight:700; margin-bottom:4px;">STEP 2 — 友だちを増やすか、CVRを上げるか</div>
+      <p style="font-size:0.9rem;">月775人着地 → <strong>友だちが足りない</strong>。まずFR施策。PUを触る方向で考える。</p>
+    </div>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:20px; margin-bottom:16px;">
+      <div style="font-size:0.8rem; color:var(--accent); font-weight:700; margin-bottom:4px;">STEP 3 — CTR vs 追加率のどちらが穴か</div>
+      <p style="font-size:0.9rem;">ダイエット記事群を確認 → PU CTR 8.8%（基準13%に対して大幅割れ）。<strong>PUの文言が刺さってない。ここが穴。</strong></p>
+    </div>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:20px; margin-bottom:16px;">
+      <div style="font-size:0.8rem; color:var(--accent); font-weight:700; margin-bottom:4px;">STEP 4 — 天井 × 改善幅 = インパクト</div>
+      <p style="font-size:0.9rem;">ダイエット「摂取カロリー計算」記事: 月間PV 15,000。PVFR 0.27% → 0.80%に改善できれば：<br>
+      <strong>15,000 × 0.53% = +79人/月</strong>。GAP 225人のうち35%を1記事で埋められる。</p>
+    </div>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:20px; margin-bottom:16px;">
+      <div style="font-size:0.8rem; color:var(--accent); font-weight:700; margin-bottom:4px;">STEP 5 — 工数は？</div>
+      <p style="font-size:0.9rem;">PU文言の変更だけなら<strong>1日で完了</strong>。新規診断を1から作る必要はない。ROI最強。</p>
+    </div>
+
+    <div style="background:#e8f5e9; border-radius:8px; padding:20px;">
+      <div style="font-size:0.8rem; color:var(--success); font-weight:700; margin-bottom:4px;">結果（3/8にPU文言変更を実施）</div>
+      <table class="exercise-data-table" style="margin:8px 0;">
+        <thead><tr><th style="text-align:left;">指標</th><th>変更前</th><th>変更後</th></tr></thead>
+        <tbody>
+          <tr><td>PU CTR</td><td>8.8%</td><td>17.2%</td></tr>
+          <tr><td>日均友だち</td><td>1.4人</td><td>5.5人</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.9rem; margin-top:8px;">1日の作業で日均+4.1人 = <strong>月間+127人</strong>。3月は最終的に友だち1,088人でGOAL達成した。</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>天井 × 改善幅 = インパクト（最重要の計算）</h3>
+    <p>改善ポイントが見つかった時、<strong>「それ、やる意味あるの？」</strong>を判断する計算。</p>
+
+    <div class="danger-box" style="margin-top:16px;">
+      <strong>よくあるワナ：</strong><br>
+      「この記事、PU CTRが5%しかない。改善すれば13%まで上がるはず！」<br>
+      → 改善幅+8ptは確かにデカい。<strong>でもその記事の月間PV、300しかないよ？</strong>
+    </div>
+
+    <div style="background:#f8f9fa; border-radius:8px; padding:20px; margin-top:16px; font-family:monospace; font-size:0.95rem; text-align:center;">
+      PV 300 × PVFR 0.2% → 1.0% に改善<br>
+      = 300 × 0.8% = <strong style="color:var(--danger);">+2.4人/月</strong><br><br>
+      <span style="font-family:inherit; font-size:0.85rem; color:var(--muted);">改善ポイントは山ほど見つかる。CTRも追加率も基準割れ。<br>でも全部直しても<strong>友だち月2人しか増えない。</strong>それ、1週間かけてやる仕事か？</span>
+    </div>
+
+    <p style="margin-top:20px;">一方、PVが大きい記事なら同じ改善幅でもインパクトが全然違う：</p>
+    <div style="background:#e8f5e9; border-radius:8px; padding:20px; margin-top:8px; font-family:monospace; font-size:0.95rem; text-align:center;">
+      PV 15,000 × PVFR 0.3% → 0.8% に改善<br>
+      = 15,000 × 0.5% = <strong style="color:var(--success);">+75人/月</strong>
+    </div>
+
+    <div class="key-point" style="margin-top:20px;">
+      <strong>本質：</strong>改善点はどの記事にもある。問題は<strong>「その改善に天井（PV）が伴ってるか」</strong>。PVが小さい記事は、どれだけ率を上げても友だちは増えない。<strong>だからまずPVを見て、「この記事は攻める価値があるか」を先に判断する。</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Chapter 4: レバー操作                     -->
+<!-- ======================================== -->
+<div class="chapter" id="ch4">
+  <span class="chapter-label">Chapter 4</span>
+  <h2>レバー操作 — 何を動かせるか</h2>
+  <p class="chapter-subtitle">うちがコントロールできるもの/できないものを見極める</p>
+
+  <div class="card">
+    <h3>コントロール度マップ</h3>
+    <div class="lever-row" style="border-bottom:2px solid var(--border); font-weight:700; font-size:0.85rem; color:var(--muted);">
+      <div>レバー</div>
+      <div>打ち手</div>
+      <div>コントロール度</div>
+    </div>
+    <div class="lever-row">
+      <div class="lever-name">PV（母数）</div>
+      <div class="lever-desc">SEO順位、新記事投下。検索ボリュームは市場依存</div>
+      <div class="ctrl-low">低い</div>
+    </div>
+    <div class="lever-row" style="background:#e8f5e9;">
+      <div class="lever-name">PVFR / IMPFR</div>
+      <div class="lever-desc">PU文言改善、診断コンテンツ設計、LP改修</div>
+      <div class="ctrl-high">高い ★主戦場</div>
+    </div>
+    <div class="lever-row" style="background:#e8f5e9;">
+      <div class="lever-name">PU CTR</div>
+      <div class="lever-desc">PU文言・デザイン変更。記事の検索意図に合ったオファー</div>
+      <div class="ctrl-high">高い</div>
+    </div>
+    <div class="lever-row" style="background:#e8f5e9;">
+      <div class="lever-name">友だち追加率</div>
+      <div class="lever-desc">LP改修、LINE追加画面の改善</div>
+      <div class="ctrl-high">高い</div>
+    </div>
+    <div class="lever-row" style="background:#e8f5e9;">
+      <div class="lever-name">FCVR</div>
+      <div class="lever-desc">リテンション配信、診断後の出口設計（カルーセル改修）</div>
+      <div class="ctrl-high">高い</div>
+    </div>
+    <div class="lever-row">
+      <div class="lever-name">客単価</div>
+      <div class="lever-desc">ジャンルミックス（高単価ジャンルの比率を上げる）</div>
+      <div class="ctrl-low">低い</div>
+    </div>
+
+    <div class="key-point" style="margin-top:20px;">
+      <strong>結論：</strong>うちがコントロールできるのは<strong>PVFR（PU文言・診断）と FCVR（配信・出口設計）</strong>。PVと客単価は市場やSEOチーム次第。だから「率」の改善に集中する。
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>実例：PU文言変更で何が起きるか</h3>
+    <p>2026年3月、ダイエット記事のPU文言を変えた実例：</p>
+
+    <table class="metrics-table" style="margin-top:12px;">
+      <thead>
+        <tr><th>指標</th><th>変更前（3/1〜7）</th><th>変更後（3/8〜9）</th><th>変化</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PU CTR</td>
+          <td>8.8%</td>
+          <td>17.2%</td>
+          <td style="color:var(--success); font-weight:700;">+8.4pt</td>
+        </tr>
+        <tr>
+          <td>友だち追加率</td>
+          <td>7.7%</td>
+          <td>12.5%</td>
+          <td style="color:var(--success); font-weight:700;">+4.8pt</td>
+        </tr>
+        <tr>
+          <td>PVFR</td>
+          <td>0.27%</td>
+          <td>0.87%</td>
+          <td style="color:var(--success); font-weight:700;">+0.60pt</td>
+        </tr>
+        <tr>
+          <td>日均友だち</td>
+          <td>1.4人</td>
+          <td>5.5人</td>
+          <td style="color:var(--success); font-weight:700;">+4.1人/日</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight">
+      <strong>たった1つのPU文言変更で、日均友だちが4倍近くになった。</strong>PU文言 = 「記事を読んでいるユーザーの頭の中にある次の関心事」に刺さる一言を出せるかどうか。コードを書く技術じゃなくて、ユーザー理解の深さが結果を決める。
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- Chapter 5: 実践演習                       -->
+<!-- ======================================== -->
+<div class="chapter" id="ch5">
+  <span class="chapter-label">Chapter 5</span>
+  <h2>実践 — 実際の判断を追体験する</h2>
+  <p class="chapter-subtitle">これまでにチームが実際にやった判断を3つ紹介する。「なぜそう判断したか」を考えながら読んでほしい</p>
+
+  <!-- ===== ケース1: カロリーPU改善 ===== -->
+  <div class="exercise">
+    <div class="exercise-header">
+      <div class="exercise-num">1</div>
+      <h3>ケース：PU文言を変えて日均友だちが4倍になった話</h3>
+    </div>
+
+    <div class="exercise-scenario">
+      <h4>2026年3月7日 — 状況</h4>
+      <p>友だちGOAL 1,000人に対して、月初7日間のペースだと<strong>775人着地</strong>。GAP 225人。友だちが足りない → FR施策 → PUを見る。</p>
+      <p style="margin-top:12px;">ダイエット「摂取カロリー計算」記事のデータ：</p>
+      <table class="exercise-data-table" style="margin-top:8px;">
+        <thead><tr><th style="text-align:left;">指標</th><th>実績</th><th>基準値</th></tr></thead>
+        <tbody>
+          <tr><td>月間PV</td><td>15,000</td><td>—</td></tr>
+          <tr><td>PVFR</td><td>0.27%</td><td>0.80%</td></tr>
+          <tr><td>PU CTR</td><td>8.8%</td><td>13%</td></tr>
+          <tr><td>友だち追加率</td><td>7.7%</td><td>11%</td></tr>
+          <tr><td>日均友だち</td><td>1.4人</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="exercise-question">「この記事、PVFRめちゃ低いけどPV 15,000もある。ここ改善したら何人増える？」</p>
+    <div class="answer-area">
+      <input type="text" class="answer-input" placeholder="計算してみて">
+    </div>
+
+    <p class="exercise-question">CTRも追加率も両方ダメ。でもチームがまずやったのはPU文言の変更。追加率の改善じゃなかった。なんでだと思う？</p>
+    <div class="answer-area">
+      <textarea class="answer-input" placeholder=""></textarea>
+    </div>
+
+    <button class="reveal-btn" onclick="toggleAnswer('ans1')">実際にどう判断したか見る</button>
+    <div class="answer-reveal" id="ans1">
+      <h4>チームの判断と結果</h4>
+
+      <p><strong>Q1. インパクト：</strong></p>
+      <div class="calc">
+        PV 15,000 × (0.80% - 0.27%) = <strong>+79人/月</strong><br>
+        GAP 225人のうち35%を、この1記事だけで埋められる。攻める価値あり。
+      </div>
+
+      <p style="margin-top:16px;"><strong>Q2. なぜまずPU文言か：</strong></p>
+      <p>CTRも追加率も両方低い。でもファネルの順番は<strong>「まずPUをタップしてもらう → その後に友だちになる」</strong>。タップされてない段階で追加率を直しても意味がない。だからまずCTR（= PU文言）を先に改善した。</p>
+      <p style="margin-top:8px;">もう一つの理由：<strong>PU文言変更は1日でできる。</strong>診断の刷新やLP改修は数日かかる。まず1日でできることをやって効果を見てから、次を判断する方が効率的。</p>
+
+      <p style="margin-top:16px;"><strong>結果（3/8にPU文言変更を実施）：</strong></p>
+      <table class="exercise-data-table" style="margin:8px 0;">
+        <thead><tr><th style="text-align:left;">指標</th><th>変更前</th><th>変更後</th><th>変化</th></tr></thead>
+        <tbody>
+          <tr><td>PU CTR</td><td>8.8%</td><td>17.2%</td><td style="color:var(--success); font-weight:700;">+8.4pt</td></tr>
+          <tr><td>友だち追加率</td><td>7.7%</td><td>12.5%</td><td style="color:var(--success); font-weight:700;">+4.8pt</td></tr>
+          <tr><td>日均友だち</td><td>1.4人</td><td>5.5人</td><td style="color:var(--success); font-weight:700;">×3.9倍</td></tr>
+        </tbody>
+      </table>
+
+      <div class="key-point" style="margin-top:12px;">
+        <strong>注目：</strong>PU文言を変えただけなのに、CTRだけでなく<strong>追加率も7.7%→12.5%に上がった。</strong>PUの訴求が検索意図にハマると、タップした人の「本気度」も上がる → 追加率も連動して改善する。1つの施策で複数の指標が動くことがある。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ケース2: 包茎の診断刷新 ===== -->
+  <div class="exercise">
+    <div class="exercise-header">
+      <div class="exercise-num">2</div>
+      <h3>ケース：CTRは高いのに友だちにならない。診断を丸ごと作り直した話</h3>
+    </div>
+
+    <div class="exercise-scenario">
+      <h4>2026年3月中旬 — 状況</h4>
+      <p>包茎ジャンルの記事群（kasei, toha等）のデータ：</p>
+      <table class="exercise-data-table" style="margin-top:8px;">
+        <thead><tr><th style="text-align:left;">指標</th><th>実績</th><th>基準値</th></tr></thead>
+        <tbody>
+          <tr><td>月間PV（記事群合計）</td><td>9,500</td><td>—</td></tr>
+          <tr><td>PU CTR</td><td>18.5%</td><td>13%</td></tr>
+          <tr><td>友だち追加率</td><td>4.1%</td><td>11%</td></tr>
+          <tr><td>既存の診断</td><td colspan="2">「治し方まるわかり診断」</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:8px; font-size:0.9rem; color:var(--muted);">CTR 18.5%は基準の13%を大幅に超えている。PUはめちゃくちゃタップされてる。なのに友だちにならない。</p>
+    </div>
+
+    <p class="exercise-question">Q1. ケース1と同じように「PU文言を変えよう」で解決できるか？</p>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="selectChoice(this, 'ex2q1', false)">A. できる。文言を変えればもっとタップされて友だちも増える</button>
+      <button class="choice-btn" onclick="selectChoice(this, 'ex2q1', true)">B. できない。CTRは既に高いから、文言の問題じゃない</button>
+    </div>
+
+    <p class="exercise-question">Q2. チームは「治し方まるわかり診断」を廃止して、新しい診断を作ることにした。なぜだと思う？</p>
+    <div class="answer-area">
+      <textarea class="answer-input" placeholder="考えを書く..."></textarea>
+    </div>
+
+    <button class="reveal-btn" onclick="toggleAnswer('ans2')">実際にどう判断したか見る</button>
+    <div class="answer-reveal" id="ans2">
+      <h4>チームの判断</h4>
+
+      <p><strong>Q1. 答え：B.</strong> CTR 18.5%は基準の1.4倍。PUはちゃんと仕事してる。文言を変えても意味がない。</p>
+
+      <p style="margin-top:16px;"><strong>Q2. 診断を作り直した理由：</strong></p>
+      <p>穴は<strong>友だち追加率 4.1%</strong>（基準11%の半分以下）。PUをタップした後に離脱してる。</p>
+      <p style="margin-top:8px;">調べたら原因は<strong>「検索意図と診断のミスマッチ」</strong>だった：</p>
+      <ul style="padding-left:20px; font-size:0.9rem; line-height:1.8; margin-top:8px;">
+        <li>これらの記事を読む人は「自分は包茎なのか？治療が必要なのか？」を知りたい</li>
+        <li>でも既存の診断は「治し方まるわかり」→ もう治療する前提の人向け</li>
+        <li>「まだ治療が必要かどうかもわからない人」に「治し方診断」を出しても刺さらない</li>
+      </ul>
+      <p style="margin-top:12px;">→ 新しく<strong>「治療必要度チェック」</strong>を作った。「自分に治療が必要かどうか」を判定する診断。検索意図にマッチする内容に変えた。</p>
+
+      <div class="calc" style="margin-top:12px;">
+        期待効果: 友だち追加率 4.1% → 11%<br>
+        PV 9,500 × (PVFR改善分) = <strong>+59人/月</strong>
+      </div>
+
+      <div class="key-point" style="margin-top:16px;">
+        <strong>ケース1との違い：</strong>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
+          <div style="background:#fff; padding:12px; border-radius:6px; font-size:0.85rem;">
+            <strong>ケース1（カロリー）</strong><br>
+            穴 = CTR → PU文言変更<br>
+            工数: 1日
+          </div>
+          <div style="background:#fff; padding:12px; border-radius:6px; font-size:0.85rem;">
+            <strong>ケース2（包茎）</strong><br>
+            穴 = 追加率 → 診断刷新<br>
+            工数: 5日
+          </div>
+        </div>
+        <p style="margin-top:8px; font-size:0.9rem;">同じ「PVFRが低い」でも、穴の場所が違えば打ち手も工数も全然違う。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ケース3: EDの「触らない」判断 ===== -->
+  <div class="exercise">
+    <div class="exercise-header">
+      <div class="exercise-num">3</div>
+      <h3>ケース：追加率3.0%なのに「触るな」と判断した話</h3>
+    </div>
+
+    <div class="exercise-scenario">
+      <h4>2026年3月 — 状況</h4>
+      <p>ED「精力剤おすすめ10選」記事。この1記事だけでEDジャンルの全売上を稼いでいる。</p>
+      <table class="exercise-data-table" style="margin-top:8px;">
+        <thead><tr><th style="text-align:left;">指標</th><th>実績</th><th>基準値</th></tr></thead>
+        <tbody>
+          <tr><td>月間PV</td><td>3,700</td><td>—</td></tr>
+          <tr><td>PU CTR</td><td>14.9%</td><td>13%</td></tr>
+          <tr><td>友だち追加率</td><td>3.0%</td><td>11%</td></tr>
+          <tr><td>月間CV</td><td>5〜6件</td><td>—</td></tr>
+          <tr><td>月間売上</td><td>¥106,000</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:8px; font-size:0.9rem; color:var(--muted);">友だち追加率 3.0%は基準11%の<strong>1/4以下</strong>。数字だけ見れば改善最優先に見える。</p>
+    </div>
+
+    <p class="exercise-question">Q1. 追加率3.0%はひどい数字。でもチームは「このPUは絶対触るな」と判断した。なぜだと思う？</p>
+    <div class="answer-area">
+      <textarea class="answer-input" placeholder="考えを書く..."></textarea>
+    </div>
+
+    <p class="exercise-question">Q2. じゃあ友だちを増やすためにチームは何をしたか？</p>
+    <div class="choice-grid">
+      <button class="choice-btn" onclick="selectChoice(this, 'ex3q2', false)">A. 追加率を上げるためにLP改修をした</button>
+      <button class="choice-btn" onclick="selectChoice(this, 'ex3q2', true)">B. 既存PUは残して、2本目のPUを追加した</button>
+      <button class="choice-btn" onclick="selectChoice(this, 'ex3q2', false)">C. ED記事は後回しにして他ジャンルを優先した</button>
+    </div>
+
+    <button class="reveal-btn" onclick="toggleAnswer('ans3')">実際にどう判断したか見る</button>
+    <div class="answer-reveal" id="ans3">
+      <h4>チームの判断</h4>
+
+      <p><strong>Q1. なぜ触らないか：</strong></p>
+      <p><strong>このPUからCVが出てる。</strong>追加率3.0%はゴミだが、追加された少数の友だちがちゃんとCVしていて、月5〜6件・¥10.6万の売上を生んでいる。</p>
+      <p style="margin-top:8px;">PU文言を変えたら追加率は上がるかもしれない。でも<strong>今CVしてる導線を壊すリスクがある。</strong>追加率が上がっても、CVしない友だちが増えるだけかもしれない。「数字が悪い=直すべき」とは限らない。<strong>CVが出ているものは触らない。</strong></p>
+
+      <p style="margin-top:16px;"><strong>Q2. 答え：B. 2本目のPUを追加した</strong></p>
+      <p>既存PUは温存（CV稼ぎ頭を守る）。別の切り口で2本目のPUを追加して、既存PUでは拾えなかった層を獲りに行った。</p>
+
+      <div class="insight" style="margin-top:16px;">
+        <strong>このケースの教訓：</strong>数字の改善は手段であって目的じゃない。目的は<strong>売上を上げること。</strong>追加率3.0%が「悪い数字」でも、売上が出てるなら触る必要はない。<strong>「指標が基準割れ = 即改善」と反射的に動くな。その指標の裏で何が起きてるか（CVが出てるか）まで見ろ。</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== まとめ問題 ===== -->
+  <div class="exercise" style="border-color: var(--accent2);">
+    <div class="exercise-header">
+      <div class="exercise-num" style="background:var(--accent2);">★</div>
+      <h3>総合 — 3ケースを踏まえて判断してみよう</h3>
+    </div>
+
+    <div class="exercise-scenario">
+      <h4>シナリオ</h4>
+      <p>GOALまであと<strong>150人</strong>足りない。以下の5つの選択肢がある。</p>
+      <table class="exercise-data-table" style="margin-top:12px;">
+        <thead>
+          <tr><th style="text-align:left;">施策</th><th>月間PV</th><th>現在PVFR</th><th>改善後見込み</th><th>インパクト</th><th>工数</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>A. ダイエット摂取カロリー PU文言変更</td><td>15,000</td><td>0.27%</td><td>0.80%</td><td>?</td><td>1日</td></tr>
+          <tr><td>B. ダイエット16時間断食 PU文言変更</td><td>8,000</td><td>0.35%</td><td>0.75%</td><td>?</td><td>1日</td></tr>
+          <tr><td>C. 包茎カントン 診断刷新</td><td>4,000</td><td>0.45%</td><td>0.90%</td><td>?</td><td>5日</td></tr>
+          <tr><td>D. ED精力剤 既存PU改修</td><td>3,700</td><td>0.75%</td><td>1.00%</td><td>?</td><td>2日</td></tr>
+          <tr><td>E. FAGA費用 PU文言変更</td><td>500</td><td>0.20%</td><td>1.00%</td><td>?</td><td>1日</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:8px; font-size:0.85rem; color:var(--muted);">※ ED精力剤の既存PUは月5〜6件のCVを出している稼ぎ頭</p>
+    </div>
+
+    <p class="exercise-question">Q1. 各施策のインパクト（+何人）を計算しろ。</p>
+    <div class="answer-area">
+      <textarea class="answer-input" placeholder="A: &#10;B: &#10;C: &#10;D: &#10;E: "></textarea>
+    </div>
+
+    <p class="exercise-question">Q2. やるべき施策はどれ？やるべきでない施策はどれ？理由つきで。</p>
+    <div class="answer-area">
+      <textarea class="answer-input" style="min-height:100px;" placeholder="やるべき: &#10;やるべきでない: &#10;理由:"></textarea>
+    </div>
+
+    <p class="exercise-question">Q3. やるべき施策を、着手する順番に並べろ。</p>
+    <div class="answer-area">
+      <textarea class="answer-input" placeholder="1位: &#10;2位: &#10;3位: "></textarea>
+    </div>
+
+    <button class="reveal-btn" onclick="toggleAnswer('ans4')">答え合わせ</button>
+    <div class="answer-reveal" id="ans4">
+      <h4>解答</h4>
+
+      <p><strong>Q1. インパクト計算：</strong></p>
+      <div class="calc">
+        A. 摂取カロリー: 15,000 × (0.80% - 0.27%) = <strong>+79人</strong><br>
+        B. 16時間断食: 8,000 × (0.75% - 0.35%) = <strong>+32人</strong><br>
+        C. カントン: 4,000 × (0.90% - 0.45%) = <strong>+18人</strong><br>
+        D. ED精力剤: 3,700 × (1.00% - 0.75%) = <strong>+9人</strong><br>
+        E. FAGA: 500 × (1.00% - 0.20%) = <strong>+4人</strong>
+      </div>
+
+      <p style="margin-top:20px;"><strong>Q2. やるべき / やるべきでない：</strong></p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:8px 0;">
+        <div style="background:#d4edda; padding:16px; border-radius:8px;">
+          <strong style="color:#155724;">やるべき：A, B, C</strong>
+          <ul style="font-size:0.85rem; padding-left:16px; margin-top:8px; line-height:1.8;">
+            <li>A: +79人/1日。ROI最強</li>
+            <li>B: +32人/1日。Aの次にやれる</li>
+            <li>C: +18人/5日。工数かかるが確実にインパクトある</li>
+          </ul>
+        </div>
+        <div style="background:#f8d7da; padding:16px; border-radius:8px;">
+          <strong style="color:#721c24;">やるべきでない：D, E</strong>
+          <ul style="font-size:0.85rem; padding-left:16px; margin-top:8px; line-height:1.8;">
+            <li>D: <strong>ケース3の教訓。</strong>CVが出てるPUを触ったら売上¥10.6万/月を失うリスク</li>
+            <li>E: PV 500。全部直しても+4人。時間の無駄</li>
+          </ul>
+        </div>
+      </div>
+
+      <p style="margin-top:16px;"><strong>Q3. 着手順：</strong></p>
+      <ol style="padding-left:20px; line-height:2.2;">
+        <li><strong>A. 摂取カロリー</strong> — +79人/1日。まずこれ</li>
+        <li><strong>B. 16時間断食</strong> — +32人/1日。翌日すぐやれる</li>
+        <li><strong>C. カントン</strong> — +18人/5日。A+Bと並行で進められる</li>
+      </ol>
+
+      <div class="calc" style="margin-top:12px;">
+        合計: 79 + 32 + 18 = <strong>129人</strong>（GAP 150人の86%）<br>
+        A+Bだけで2日で+111人。残りはCの完成を待つ
+      </div>
+
+      <div class="key-point" style="margin-top:16px;">
+        <strong>3つのケースの判断基準まとめ：</strong>
+        <ul style="padding-left:20px; line-height:2; margin-top:8px;">
+          <li><strong>天井（PV）を見て攻める価値があるか判断</strong>（ケース1 vs E）</li>
+          <li><strong>穴がCTRか追加率かで打ち手が変わる</strong>（ケース1 vs ケース2）</li>
+          <li><strong>CVが出てるものは触らない</strong>（ケース3 vs D）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================================== -->
+<!-- まとめ                                    -->
+<!-- ======================================== -->
+<div class="chapter" id="summary">
+  <span class="chapter-label">Summary</span>
+  <h2>研修のまとめ</h2>
+
+  <div class="summary-grid">
+    <div class="summary-item">
+      <div class="icon">🎯</div>
+      <h4>GOAL起点</h4>
+      <p>常にGOALから逆算。ボトムアップで数字を見ない</p>
+    </div>
+    <div class="summary-item">
+      <div class="icon">🔍</div>
+      <h4>構造で見る</h4>
+      <p>方程式で分解。どのレバーがボトルネックか特定する</p>
+    </div>
+    <div class="summary-item">
+      <div class="icon">⚡</div>
+      <h4>インパクトで動く</h4>
+      <p>天井×改善幅=インパクト。「やる価値があるか」を数字で判断</p>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center; padding:40px;">
+    <h3 style="margin-bottom:16px;">数字を見る時のOS</h3>
+    <div style="font-size:1.1rem; line-height:2.2; font-weight:600;">
+      <span style="color:var(--accent);">GOAL</span> → GAP → ボトルネック特定 → インパクト計算 → 打ち手
+    </div>
+    <p style="margin-top:16px; color:var(--muted);">この流れが自然にできるようになれば、<br>どんな数字を見ても「次に何をすべきか」が導ける。</p>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+function toggleAnswer(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
+  const btn = el.previousElementSibling;
+  if (el.classList.contains('show')) {
+    btn.textContent = '答えを閉じる';
+    btn.style.background = '#636e72';
+  } else {
+    btn.textContent = '答え合わせ';
+    btn.style.background = '';
+  }
+}
+
+function selectChoice(btn, group, isCorrect) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.choice-btn').forEach(b => {
+    b.classList.remove('selected', 'correct', 'wrong');
+  });
+  btn.classList.add('selected');
+  if (isCorrect) {
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    parent.querySelectorAll('.choice-btn').forEach(b => {
+      if (b.getAttribute('onclick').includes('true')) {
+        b.classList.add('correct');
+      }
+    });
+  }
+}
+
+// Sticky nav active state
+const navLinks = document.querySelectorAll('.nav a');
+const chapters = document.querySelectorAll('.chapter');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  chapters.forEach(ch => {
+    const top = ch.offsetTop - 80;
+    if (scrollY >= top) current = ch.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>

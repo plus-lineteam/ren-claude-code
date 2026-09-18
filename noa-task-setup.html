@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タスクボード連携セットアップ — Noa</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  background: #fafafa; color: #222; line-height: 2; max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
+}
+h1 { font-size: 1.5rem; font-weight: 800; margin: 0 0 0.3rem; color: #111; }
+.subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+h2 { font-size: 1.2rem; font-weight: 700; margin: 2.5rem 0 0.8rem; color: #111; padding-bottom: 0.3rem; border-bottom: 2px solid #e0e0e0; }
+p { margin-bottom: 1rem; color: #444; font-size: 0.95rem; }
+strong { color: #111; }
+code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-family: 'SF Mono', monospace; }
+a { color: #1976d2; }
+ol, ul { margin: 0.5rem 0 1rem 1.5rem; }
+li { margin-bottom: 0.5rem; font-size: 0.95rem; color: #444; }
+
+.callout { background: #fff8e1; border-left: 4px solid #f9a825; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+.callout.blue { background: #e3f2fd; border-color: #1976d2; }
+.callout.red { background: #fce4ec; border-color: #c62828; }
+.callout.green { background: #e8f5e9; border-color: #388e3c; }
+.callout p { margin-bottom: 0.3rem; }
+
+.step-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+.step-num { display: inline-block; background: #10B981; color: white; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.8rem; font-weight: 700; margin-right: 0.5rem; vertical-align: middle; }
+.step-title { font-weight: 700; font-size: 1rem; color: #111; }
+
+pre { background: #1e1e1e; color: #d4d4d4; border-radius: 6px; padding: 0.8rem 1rem; margin: 0.5rem 0 1rem; font-size: 0.82rem; overflow-x: auto; line-height: 1.6; font-family: 'SF Mono', monospace; }
+
+.check-list { list-style: none; margin-left: 0; }
+.check-list li { padding: 0.3rem 0; font-size: 0.9rem; }
+.check-list li::before { content: "\2610  "; font-size: 1rem; }
+
+.copy-box { background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin: 1rem 0; position: relative; }
+.copy-box pre { margin: 0; background: #1e1e1e; }
+.copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: #1976d2; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; }
+.copy-btn:hover { background: #1565c0; }
+</style>
+</head>
+<body>
+
+<h1>🟢 タスクボード連携セットアップ</h1>
+<p class="subtitle">Noa用 — Claude Codeのチャットにこのページの指示を貼るだけ</p>
+
+<div class="callout blue">
+<p><strong>GOAL:</strong> Noaが以下の3つを使える状態にする</p>
+<ol>
+<li><strong>タスクボード</strong>（line-team リポ）→ タスクの追加・更新・完了をgit経由で管理</li>
+<li><strong>renのスキル・knowledge</strong>（claude-projects リポ）→ 読み取り専用で参照</li>
+<li><strong>クラウドボード</strong> → ブラウザでタスク確認</li>
+</ol>
+</div>
+
+<div class="callout red">
+<p><strong>⚠️ 重要ルール</strong></p>
+<ul>
+<li><strong>line-team リポ</strong> → Write権限あり。タスク管理で使う。pushしていい</li>
+<li><strong>claude-projects リポ</strong> → <strong>Read-only。絶対にpushしない。</strong> 参考・スキル取得用。<code>git pull</code> だけ</li>
+</ul>
+</div>
+
+<h2>セットアップ手順</h2>
+
+<p>以下を <strong>Claude Codeのチャットに貼って「全部実行して」</strong> と言うだけ。</p>
+
+<div class="step-box">
+<span class="step-num">1</span>
+<span class="step-title">line-teamをクローン（タスク管理用）</span>
+<pre>cd "$HOME\OneDrive\デスクトップ\project-noa"
+git clone https://plussaitounoa-lgtm@github.com/Ren-japan/line-team.git</pre>
+<p>GitHubの認証を求められたらログイン。</p>
+</div>
+
+<div class="step-box">
+<span class="step-num">2</span>
+<span class="step-title">claude-projectsをクローン（参考用・Read-only）</span>
+<pre>cd "$HOME\OneDrive\デスクトップ\project-noa"
+git clone https://plussaitounoa-lgtm@github.com/Ren-japan/claude-projects.git</pre>
+<p>※既にある場合は <code>cd claude-projects &amp;&amp; git pull</code> でOK</p>
+</div>
+
+<div class="step-box">
+<span class="step-num">3</span>
+<span class="step-title">タスク管理の動作確認</span>
+<pre>cd "$HOME\OneDrive\デスクトップ\project-noa\line-team"
+python3 manage.py list</pre>
+<p>タスク一覧が表示されればOK。</p>
+</div>
+
+<div class="step-box">
+<span class="step-num">4</span>
+<span class="step-title">テストタスクを追加してpush</span>
+<pre>python3 manage.py add --title "セットアップ完了確認" --purpose "タスク操作〜pushが通ることを確認" --assignee Noa --created-by Noa
+git add data/tasks.json
+git commit -m "test: セットアップ確認 (Noa)"
+git push</pre>
+<p>push成功したら <a href="https://line-team-board.streamlit.app/noa" target="_blank">クラウドボード</a> を開いてタスクが見えるか確認。</p>
+</div>
+
+<div class="step-box">
+<span class="step-num">5</span>
+<span class="step-title">CLAUDE.mdにタスク管理設定を追記</span>
+<p>以下をCLAUDE.mdの末尾に追記：</p>
+<pre>## タスク管理
+
+チームのタスクボードは line-team リポで管理。
+
+- タスク管理リポ: ~/OneDrive/デスクトップ/project-noa/line-team/
+- 参考リポ（Read-only）: ~/OneDrive/デスクトップ/project-noa/claude-projects/
+- クラウドボード: https://line-team-board.streamlit.app/noa
+
+### 操作手順
+
+cd ~/OneDrive/デスクトップ/project-noa/line-team
+git pull
+python3 manage.py &lt;コマンド&gt;
+git add data/tasks.json
+git commit -m "update: 内容 (Noa)"
+git push
+
+### コマンド
+
+- 自分のタスク確認: python3 manage.py list --assignee Noa
+- 全タスク確認: python3 manage.py list
+- ステータス変更: python3 manage.py update t5 --column done
+- メモ追加: python3 manage.py note t5 "作業メモ"
+- タスク追加: python3 manage.py add --title "タイトル" --purpose "目的" --assignee Noa --created-by Noa
+
+### ルール
+
+- 操作前に必ず git pull
+- 操作後は必ず git push（data/tasks.json だけaddする）
+- claude-projects は絶対にpushしない（Read-only）
+- 会話中にタスクが発生したら自動でtasks.jsonに追加する</pre>
+</div>
+
+<h2>完了チェック</h2>
+
+<ul class="check-list">
+<li>line-team クローン済み</li>
+<li>claude-projects クローン済み（Read-only）</li>
+<li>manage.py list でタスク一覧が見える</li>
+<li>テストタスクをpushできた</li>
+<li><a href="https://line-team-board.streamlit.app/noa">クラウドボード</a> でタスクが見える</li>
+<li>CLAUDE.mdにタスク管理セクション追記済み</li>
+</ul>
+
+<h2>リンク集</h2>
+
+<ul>
+<li><a href="https://line-team-board.streamlit.app/noa" target="_blank">🟢 Noaのタスクボード</a></li>
+<li><a href="https://line-team-board.streamlit.app" target="_blank">📋 チーム全体ボード</a></li>
+<li><a href="https://github.com/Ren-japan/line-team" target="_blank">📦 line-team リポジトリ</a></li>
+</ul>
+
+</body>
+</html>

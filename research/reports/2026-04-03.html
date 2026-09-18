@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リサーチレポート 2026-04-03（初回）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; color: #1d1d1f; line-height: 1.7; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 32px 24px; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .header .date { font-size: 14px; opacity: 0.7; }
+  .header .nav { margin-top: 16px; }
+  .header .nav a { color: #4fc3f7; text-decoration: none; font-size: 13px; }
+  .header .nav a:hover { text-decoration: underline; }
+
+  .highlights { background: linear-gradient(135deg, #fff8e1 0%, #fff3e0 100%); padding: 24px; border-left: 4px solid #ff8f00; margin: 20px 16px; border-radius: 12px; }
+  .highlights h2 { font-size: 16px; margin-bottom: 12px; color: #e65100; }
+  .highlights li { font-size: 14px; margin-bottom: 8px; }
+  .highlights strong { color: #bf360c; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 16px 40px; }
+
+  .section { background: white; border-radius: 12px; padding: 24px; margin-top: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+  .section h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: #1565c0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #f5f5f5; font-weight: 600; white-space: nowrap; }
+
+  .insight-box { background: #e3f2fd; border-left: 3px solid #1976d2; padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-size: 14px; }
+  .insight-box strong { color: #0d47a1; }
+
+  .source-list { font-size: 12px; color: #888; margin-top: 12px; padding-top: 8px; border-top: 1px solid #eee; }
+  .source-list a { color: #1976d2; text-decoration: none; }
+  .source-list a:hover { text-decoration: underline; }
+
+  .code-block { background: #263238; color: #aed581; padding: 16px; border-radius: 8px; font-family: 'SF Mono', monospace; font-size: 13px; overflow-x: auto; margin: 12px 0; white-space: pre; }
+
+  .score-table td:first-child { font-weight: 600; }
+  .score-a { color: #e65100; font-weight: 700; }
+  .score-b { color: #1565c0; font-weight: 600; }
+  .score-c { color: #888; }
+
+  .debate-box { background: #fce4ec; border-left: 3px solid #c62828; padding: 16px; border-radius: 8px; margin: 12px 0; }
+  .debate-box h3 { color: #b71c1c; margin: 0 0 8px; }
+  .debate-box li { font-size: 14px; margin-bottom: 6px; }
+
+  .next-box { background: #e8f5e9; border-left: 3px solid #2e7d32; padding: 16px; border-radius: 8px; margin: 12px 0; }
+
+  .footer { text-align: center; padding: 32px; font-size: 12px; color: #888; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📋 リサーチレポート</h1>
+  <div class="date">2026-04-03（初回リサーチ）— 33エントリ収集</div>
+  <div class="nav">
+    <a href="../index.html">← Research Hub に戻る</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="highlights">
+    <h2>🔥 今日のハイライト</h2>
+    <ol>
+      <li><strong>noteに「LINE友だち追加で読む」ボタンが公式機能としてある（月額9,800円〜）。</strong> うちのPU→LINE導線と完全に同じ構造。移植コストゼロ</li>
+      <li><strong>X API従量課金で月90投稿 = 約135円。</strong> Claude Code + X MCPで投稿がClaude Code内完結。月額合計300-600円</li>
+      <li><strong>うちの既存ジャンルで「SNS×LINE誘導のメディア型」をやってるプレイヤーはほぼゼロ。</strong> どのジャンルもブルーオーシャン</li>
+    </ol>
+  </div>
+
+  <!-- 軸1: note -->
+  <div class="section">
+    <h2>📝 軸1: note収益化・集客</h2>
+
+    <h3>プラットフォーム基本データ</h3>
+    <table>
+      <tr><th>項目</th><th>数値</th></tr>
+      <tr><td>会員数</td><td>777万人</td></tr>
+      <tr><td>年間流通総額</td><td>170億円超</td></tr>
+      <tr><td>月間収益クリエイター</td><td>4万人以上</td></tr>
+      <tr><td>トップ1,000平均年商</td><td>897万円</td></tr>
+      <tr><td>ドメインパワー</td><td>96.9/100</td></tr>
+      <tr><td>検索流入比率</td><td>約40%</td></tr>
+    </table>
+
+    <h3>note公式LINE連携機能（最重要）</h3>
+    <div class="insight-box">
+      <strong>💡 2026年1月に全ユーザーに開放。</strong>
+      記事途中に「友だち追加で続きを読む」ボタンを設置可能。月額 note pro 9,800円 / 個人 17,380円。<br>
+      <strong>うちのPU→LINE導線と完全に同じ構造。移植コストゼロ。月50人獲得ならCPA 196〜348円。</strong>
+    </div>
+
+    <h3>note × うちのジャンル相性</h3>
+    <table>
+      <tr><th>ジャンル</th><th>相性</th><th>理由</th></tr>
+      <tr><td>医療ダイエット(GLP-1)</td><td class="score-a">◎</td><td>#ダイエット 44,847件。GLP-1体験談はnote空白地帯</td></tr>
+      <tr><td>看護転職</td><td class="score-b">○</td><td>転職はnote売れ筋Top7。体験談需要あり</td></tr>
+      <tr><td>ED</td><td class="score-b">○</td><td>匿名性が活きる。競合少ない</td></tr>
+      <tr><td>包茎/FAGA/ピル</td><td class="score-c">△</td><td>noteの雰囲気と合わない or 規制厳しい</td></tr>
+      <tr><td>メンズ脱毛/RW</td><td class="score-c">×</td><td>競合多い or ニッチすぎ</td></tr>
+    </table>
+
+    <h3>noteアフィリエイト制約</h3>
+    <p>使えるASP: Amazon、楽天のみ（A8等は不可）。ただしうちの目的は「LINE友だち獲得」なのでこの制約は関係ない。</p>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://note.com/info/n/n240ff75a22b6">note公式LINE友だち追加機能</a> /
+      <a href="https://biz.note.com/n/n70ce1ef74eec">note pro LINE連携</a> /
+      <a href="https://note.com/yamatun/n/n78107e3f2812">note収益化完全ガイド2026</a>
+    </div>
+  </div>
+
+  <!-- 軸2: X自動化 -->
+  <div class="section">
+    <h2>🤖 軸2: X運用・自動化</h2>
+
+    <h3>X API料金（2026年4月時点）</h3>
+    <table>
+      <tr><th>操作</th><th>単価</th></tr>
+      <tr><td>ツイート投稿（POST）</td><td>$0.01/件（約1.5円）</td></tr>
+      <tr><td>データ読取（GET）</td><td>$0.005/件</td></tr>
+      <tr><td>初回チャージ</td><td>最低$5（約750円）</td></tr>
+    </table>
+
+    <h3>コスト試算</h3>
+    <table>
+      <tr><th>投稿頻度</th><th>月間</th><th>X API</th><th>Anthropic API</th><th>合計</th></tr>
+      <tr><td>1日1投稿</td><td>30件</td><td>45円</td><td>50-150円</td><td><strong>約100-200円</strong></td></tr>
+      <tr><td>1日3投稿</td><td>90件</td><td>135円</td><td>150-450円</td><td><strong>約300-600円</strong></td></tr>
+      <tr><td>1日10投稿</td><td>300件</td><td>450円</td><td>500-1,500円</td><td><strong>約1,000-2,000円</strong></td></tr>
+    </table>
+
+    <h3>自動化手法比較</h3>
+    <table>
+      <tr><th>手法</th><th>コスト</th><th>特徴</th><th>相性</th></tr>
+      <tr><td><strong>Claude Code + X MCP</strong></td><td>API従量のみ</td><td>Claude Code内完結。最もシンプル</td><td class="score-a">◎</td></tr>
+      <tr><td>Claude Code + Typefully</td><td>+$8/月</td><td>下書き・予約・分析あり</td><td class="score-b">○</td></tr>
+      <tr><td>Claude Code + LINE通知</td><td>API従量のみ</td><td>人間承認フロー付き</td><td class="score-a">◎</td></tr>
+      <tr><td>GAS + スプシ</td><td>無料</td><td>テンプレ投稿向き</td><td class="score-c">△</td></tr>
+      <tr><td>SocialDog</td><td>¥1,480~/月</td><td>フォロワー分析・KW監視</td><td class="score-c">△</td></tr>
+    </table>
+
+    <h3>推奨構成</h3>
+    <div class="insight-box">
+      <strong>Claude Code + X MCP + LINE通知</strong><br>
+      Claude Code (CMO) → 投稿文生成 → LINE通知 → ren確認「OK」→ X MCP → X API → 投稿<br>
+      医療系ジャンルの暴走リスク排除（人間チェック）。段階的に自動化度を上げられる。
+    </div>
+
+    <h3>X→note導線の鉄則</h3>
+    <ul style="padding-left: 20px; font-size: 14px;">
+      <li><strong>本文にリンク貼るとアルゴリズムでリーチ下がる</strong></li>
+      <li>プロフかリプ欄にリンクを置く</li>
+      <li>「続きはnoteで」「プロフのリンクから」で誘導</li>
+    </ul>
+
+    <h3>2026年Xアルゴリズム攻略</h3>
+    <ul style="padding-left: 20px; font-size: 14px;">
+      <li>リプライの質が最重要（通常投稿の75倍の重みで評価される場合あり）</li>
+      <li>FF比率0.6〜1.0以下が理想</li>
+      <li>テーマ1〜2つに絞って「専門アカウント」認定を狙う</li>
+    </ul>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://shintaro-blog.com/x-api-pay-per-use/">X API従量課金の料金</a> /
+      <a href="https://notai.jp/blog/x-api-mcp/">XMCP組み込み完全ガイド</a> /
+      <a href="https://zenn.dev/gappy/articles/claude-code-x-post">CLAUDE.mdでX投稿</a> /
+      <a href="https://yoshikazunomori.com/blog/digitalmarketing/x-algorithm/">2026年Xアルゴリズム完全攻略</a>
+    </div>
+  </div>
+
+  <!-- 軸3: 導線設計 -->
+  <div class="section">
+    <h2>🎯 軸3: 導線設計（X/note → LINE）</h2>
+
+    <h3>心理フック効果比較</h3>
+    <table>
+      <tr><th>フック</th><th>登録ハードル</th><th>登録後温度</th><th>ナーチャリング相性</th></tr>
+      <tr><td><strong>診断</strong></td><td>低（楽しい）</td><td class="score-a">高</td><td class="score-a">高（セグメント可能）</td></tr>
+      <tr><td><strong>続きはLINEで</strong></td><td>中</td><td class="score-a">高</td><td class="score-a">高（文脈繋がる）</td></tr>
+      <tr><td>無料プレゼント</td><td>低</td><td>中</td><td>中</td></tr>
+      <tr><td>限定/期間限定</td><td>低</td><td>中〜低</td><td>低</td></tr>
+    </table>
+
+    <h3>パターンA: Xプロフ→LINE</h3>
+    <p style="font-size: 14px;">プロフ文の構造:</p>
+    <ol style="padding-left: 20px; font-size: 14px;">
+      <li>キャッチコピー（WHO × WHAT）— 「誰の、どんな悩みを解決するか」</li>
+      <li>実績・権威性 — 「○○名が登録済み」の社会的証明</li>
+      <li>CTA — 「受け取る」「手に入れる」等の能動的動詞が効く</li>
+    </ol>
+
+    <h3>パターンB: X投稿/固定ツイート→LINE</h3>
+    <table>
+      <tr><th>テンプレ</th><th>構造</th></tr>
+      <tr><td><strong>共感起点型</strong></td><td>悩み言語化 → 自分も同じだった → 「詳しくはLINEで」</td></tr>
+      <tr><td><strong>ノウハウ出し惜しみ型</strong></td><td>有益情報7割出す → 「残りはLINEで」</td></tr>
+      <tr><td><strong>実績ドン型（固定ツイート）</strong></td><td>実績数字 → 無料公開中 → CTA</td></tr>
+    </table>
+    <p style="font-size: 13px; color: #666; margin-top: 8px;">心理トリガー: 返報性 / 希少性・FOMO / 社会的証明 / 好奇心ギャップ（ツァイガルニク効果）</p>
+
+    <h3>パターンC: note→LINE</h3>
+    <div class="insight-box">
+      記事中盤（納得ピーク狙い）+ 記事末尾が最も効果的。note公式LINE連携ボタンを使えば自動設置。
+    </div>
+
+    <h3>うちで最も効く導線 TOP3</h3>
+    <ol style="padding-left: 20px; font-size: 14px;">
+      <li><strong>note記事 × 診断フック → LINE</strong> — うちの既存PU診断ノウハウをそのまま転用</li>
+      <li><strong>Xプロフ + 固定ツイート × 共感起点 → LINE</strong> — 医療悩みは共感で距離が縮まる</li>
+      <li><strong>note × 無料→有料の壁にLINEを挟む</strong> — 情報収集期間が長いジャンル向け</li>
+    </ol>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://note.com/kazuaki_ito_/n/nf2934cda7850">X→LINE誘導法5選</a> /
+      <a href="https://momentummarketing.co.jp/2026/01/28/official-line/">X→公式LINE最強戦略</a> /
+      <a href="https://note.com/modern_act777/n/ne0dcd1cf70e6">noteからLINE登録テンプレ3選</a>
+    </div>
+  </div>
+
+  <!-- 軸4: 競合 -->
+  <div class="section">
+    <h2>🔍 軸4: 競合・市場</h2>
+
+    <h3>ジャンル別SNS×LINE競合状況</h3>
+    <table>
+      <tr><th>ジャンル</th><th>競合強度</th><th>主な競合</th><th>うちの差別化</th></tr>
+      <tr><td>GLP-1</td><td>中</td><td>クリニック直営が主。メディア型は不在</td><td>ノウハウ記事×診断PU×ナーチャリング</td></tr>
+      <tr><td>ED/精力剤</td><td class="score-a">低</td><td>グレーゾーンのアダルトアフィリのみ</td><td>ガイドライン準拠の正攻法で差別化</td></tr>
+      <tr><td>看護転職</td><td style="color:#c62828;">高</td><td>看護roo!(IG 12.1万人)、マイナビ</td><td>「まだ迷ってる潜在層」切り口</td></tr>
+      <tr><td>ドライバー転職</td><td class="score-a">極低</td><td>SNS×LINE誘導ほぼゼロ</td><td>完全ブルーオーシャン</td></tr>
+      <tr><td>FAGA</td><td class="score-a">極低</td><td>SNSコンテンツ→LINE型が空白</td><td>セルフチェック診断で潜在需要掘り起こし</td></tr>
+      <tr><td>オンラインピル</td><td style="color:#c62828;">極高</td><td>mederi LINE 45万人</td><td>レイヤーを変える（教育コンテンツ型）</td></tr>
+      <tr><td>メンズ脱毛</td><td style="color:#c62828;">高</td><td>メンズリゼ・ゴリラ（広告予算大）</td><td>教育コンテンツ型で潜在層</td></tr>
+      <tr><td>RW</td><td>低〜中</td><td>TENTIAL(D2C)、レビュアフィリ</td><td>睡眠改善ノウハウ→体質診断→LINE</td></tr>
+    </table>
+
+    <h3>参入しやすいジャンル×プラットフォーム TOP3</h3>
+    <div class="insight-box">
+      <strong>1. ドライバー転職 × note/X → LINE</strong> — 競合ゼロ。2024年問題で需要急増<br>
+      <strong>2. FAGA × note/X → LINE</strong> — 大手はSEO+広告。SNS型が完全空白<br>
+      <strong>3. 精力剤/ED × note → LINE</strong> — 正攻法プレイヤー不在
+    </div>
+
+    <h3>市場の温度感</h3>
+    <ul style="padding-left: 20px; font-size: 14px;">
+      <li><strong>「SNS×LINE誘導のメディア型」は医療・ヘルスケア全般でブルーオーシャン</strong></li>
+      <li>競合は「クリニック直営の集患」か「個人アフィリエイター」の二極化</li>
+      <li>SEO記事PV→PU診断→LINEナーチャリング→間接CVの体系的導線を組んでいるプレイヤーは<strong>どのジャンルでも存在しない</strong></li>
+      <li>AI Overviews（Google）でYMYL系SEOが難化 → SNSチャネルを持つ戦略価値が上昇中</li>
+    </ul>
+
+    <div class="source-list">
+      Sources:
+      <a href="https://note.com/pharma_manage/n/n8d780ad0a071">肥満治療"日本元年"到来</a> /
+      <a href="https://sg.wantedly.com/companies/quick/post_articles/978077">看護roo! SNS運用で大躍進</a> /
+      <a href="https://mederi.jp/magazine/pills/service01/">mederi公式LINE</a>
+    </div>
+  </div>
+
+  <!-- CEO所見 -->
+  <div class="section">
+    <h2>🧠 CEO所見</h2>
+
+    <h3>最も重要な発見</h3>
+    <div class="insight-box">
+      <strong>うちの「SEO記事→PU診断→LINE→ナーチャリング→間接CV」の仕組みは、note/Xに移植するだけで第2エンジンになる。</strong>
+      新しいことを発明する必要はない。チャネルを増やすだけ。
+    </div>
+
+    <div class="debate-box">
+      <h3>🔥 renとのディベートで使えるネタ</h3>
+      <ol>
+        <li><strong>noteのLINE連携機能（公式）は知ってた？</strong> 月額9,800円でPUと同じ導線が作れる</li>
+        <li><strong>X自動化のコストが月300-600円。</strong> 技術的にはうちの既存スキル体制でほぼ即実装</li>
+        <li><strong>ドライバー転職がSNS×LINE型で完全ブルーオーシャン。</strong> ASP議事録と合わせて検討価値大</li>
+        <li><strong>医療系は全ジャンルで「メディア型×SNS×LINE」の競合ゼロ。</strong> 先行者利益を取れる窓が開いてる</li>
+        <li><strong>AI OverviewsでSEO難化 → SNSチャネルの戦略価値が上昇中。</strong> うちの「SEO依存脱却」の文脈と完全一致</li>
+      </ol>
+    </div>
+
+    <div class="next-box">
+      <h3 style="color: #1b5e20; margin: 0 0 8px;">📌 次回深掘りすべき点</h3>
+      <ul style="padding-left: 20px; font-size: 14px;">
+        <li>note公式LINE連携の実際のCVR（使ってる人の実績データ）</li>
+        <li>X MCPの具体的なセットアップ手順と技術検証</li>
+        <li>ドライバー転職のKWボリューム・検索意図リサーチ</li>
+        <li>GLP-1 × note の具体的な記事構成案（初回テスト投稿用）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ジャンル候補スコア -->
+  <div class="section">
+    <h2>📊 ジャンル候補スコア</h2>
+    <table class="score-table">
+      <tr><th>ジャンル</th><th>note適性</th><th>X適性</th><th>LINE相性</th><th>収益性</th><th>競合少なさ</th><th>総合</th></tr>
+      <tr><td>GLP-1(ダイエット)</td><td class="score-a">A</td><td class="score-b">B</td><td class="score-a">A</td><td class="score-a">A</td><td class="score-b">B</td><td class="score-a"><strong>A</strong></td></tr>
+      <tr><td>ドライバー転職</td><td class="score-b">B</td><td class="score-b">B</td><td class="score-b">B</td><td class="score-a">A</td><td class="score-a">A</td><td class="score-a"><strong>A</strong></td></tr>
+      <tr><td>ED/精力剤</td><td class="score-b">B</td><td class="score-c">C</td><td class="score-a">A</td><td class="score-a">A</td><td class="score-a">A</td><td class="score-b"><strong>B+</strong></td></tr>
+      <tr><td>FAGA</td><td class="score-b">B</td><td class="score-c">C</td><td class="score-b">B</td><td class="score-b">B</td><td class="score-a">A</td><td class="score-b"><strong>B</strong></td></tr>
+      <tr><td>看護転職</td><td class="score-b">B</td><td class="score-b">B</td><td class="score-a">A</td><td class="score-b">B</td><td class="score-c">C</td><td class="score-b"><strong>B</strong></td></tr>
+      <tr><td>RW</td><td class="score-c">C</td><td class="score-c">C</td><td class="score-b">B</td><td class="score-c">C</td><td class="score-b">B</td><td class="score-c"><strong>C</strong></td></tr>
+      <tr><td>包茎</td><td class="score-c">C</td><td class="score-c">C</td><td class="score-a">A</td><td class="score-a">A</td><td class="score-b">B</td><td class="score-c"><strong>C+</strong></td></tr>
+      <tr><td>ピル</td><td class="score-c">C</td><td class="score-c">C</td><td class="score-b">B</td><td class="score-b">B</td><td class="score-c">D</td><td class="score-c"><strong>C</strong></td></tr>
+      <tr><td>メンズ脱毛</td><td class="score-c">C</td><td class="score-c">C</td><td class="score-b">B</td><td class="score-b">B</td><td class="score-c">C</td><td class="score-c"><strong>C</strong></td></tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  Generated by Research Hub | 2026-04-03 | <a href="../index.html" style="color:#1976d2;">← Hub に戻る</a>
+</div>
+
+</body>
+</html>

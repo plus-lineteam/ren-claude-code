@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>リテンション v8.5 デザイン依頼書 — 方法診断（GLP-1）／ren artifact base</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
+    background: #f0f2f5; color: #333; line-height: 1.6;
+  }
+  /* ===== NAV ===== */
+  .nav {
+    background: #fff; border-bottom: 1px solid #e0e0e0;
+    display: flex; align-items: center; padding: 0 24px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow-x: auto;
+  }
+  .nav-title { font-size: 14px; font-weight: 700; color: #333; padding: 16px 20px 16px 0; white-space: nowrap; }
+  .nav-tabs { display: flex; gap: 0; }
+  .nav-tab {
+    padding: 16px 14px; cursor: pointer; font-size: 12px; font-weight: 600;
+    color: #999; border-bottom: 3px solid transparent; transition: all .2s; white-space: nowrap;
+  }
+  .nav-tab:hover { color: #666; }
+  .nav-tab.active { color: var(--theme, #333); border-bottom-color: var(--theme, #333); }
+  .nav-tab .pill {
+    display: inline-block; font-size: 9px; background: #f0f0f0; color: #666;
+    padding: 2px 6px; border-radius: 10px; margin-left: 4px; font-weight: 700;
+  }
+  .nav-tab.active .pill { background: var(--theme-bg, #eee); color: var(--theme, #333); }
+  .section { display: none; padding: 24px 0 60px; }
+  .section.active { display: block; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* ===== OVERVIEW ===== */
+  .ov-header { text-align: center; padding: 24px 0 16px; }
+  .ov-header h1 { font-size: 24px; font-weight: 800; color: #222; }
+  .ov-header p { font-size: 13px; color: #999; margin-top: 6px; }
+  .ov-header .meta-pills { margin-top: 12px; display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .meta-pills span {
+    font-size: 11px; padding: 3px 10px; border-radius: 12px;
+    background: #fff; border: 1px solid #ddd; color: #666;
+  }
+
+  .ov-card {
+    background: #fff; border-radius: 16px; padding: 22px 26px; border: 1px solid #eee;
+    margin-bottom: 16px;
+  }
+  .ov-card h3 { font-size: 15px; font-weight: 800; margin-bottom: 12px; color: #222; }
+  .ov-card p { font-size: 13px; color: #555; line-height: 1.7; }
+  .ov-card dl { display: grid; grid-template-columns: 150px 1fr; gap: 8px 16px; font-size: 13px; }
+  .ov-card dt { font-weight: 700; color: #666; }
+  .ov-card dd { color: #444; }
+
+  .phase-flow {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; border-radius: 12px; overflow: hidden;
+    border: 1px solid #e0e0e0; font-size: 11px; font-weight: 600; text-align: center; background: #fff;
+    margin-bottom: 8px;
+  }
+  .phase-step { padding: 14px 4px; }
+  .phase-step .day { font-weight: 800; font-size: 14px; }
+  .phase-step .lbl { margin-top: 4px; font-weight: 700; font-size: 11px; }
+  .phase-step .sub { font-weight: 400; font-size: 9px; opacity: 0.7; margin-top: 2px; }
+  .p1 { background: #fce7f3; color: #9d174d; }
+  .p2 { background: #ede9fe; color: #5b21b6; }
+  .p3 { background: #dbeafe; color: #1e40af; }
+  .p4 { background: #fef3c7; color: #92400e; }
+  .p5 { background: #dcfce7; color: #166534; }
+  .p6 { background: #fef9c3; color: #854d0e; }
+  .p7 { background: #fee2e2; color: #991b1b; }
+  .phase-group-label {
+    display: grid; grid-template-columns: 2fr 4fr 1fr; gap: 4px; font-size: 11px;
+    margin-bottom: 16px;
+  }
+  .phase-group-label > span { padding: 6px 12px; border-radius: 6px; font-weight: 700; text-align: center; }
+  .pg-self { background: #fce7f3; color: #9d174d; }
+  .pg-drug { background: #dbeafe; color: #1e40af; }
+  .pg-cv { background: #fee2e2; color: #991b1b; }
+
+  .factcheck-box {
+    background: #fffbeb; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px 20px;
+    margin-bottom: 16px;
+  }
+  .factcheck-box h3 { font-size: 13px; color: #92400e; margin-bottom: 8px; font-weight: 800; }
+  .factcheck-box ul { list-style: none; }
+  .factcheck-box li { font-size: 12px; color: #78350f; padding: 4px 0; padding-left: 22px; position: relative; }
+  .factcheck-box li::before { content: "⚠"; position: absolute; left: 4px; font-weight: 800; }
+
+  .cmo-letter {
+    background: linear-gradient(135deg, #fef9c3 0%, #fff 80%);
+    border-left: 5px solid #ca8a04; border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .cmo-letter h3 { font-size: 14px; color: #713f12; margin-bottom: 10px; font-weight: 800; }
+  .cmo-letter p { font-size: 13px; color: #422006; line-height: 1.8; margin-bottom: 8px; }
+  .cmo-letter strong { color: #713f12; }
+
+  /* ===== FLOW HEADER ===== */
+  .flow-header { padding: 8px 0 16px; }
+  .flow-header h2 { font-size: 22px; font-weight: 800; color: var(--theme); }
+  .flow-header .flow-meta { font-size: 12px; color: #999; display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+
+  .flow-concept {
+    background: #fff; border-radius: 12px; padding: 14px 18px;
+    border-left: 4px solid var(--theme); font-size: 13px; color: #555;
+    margin-bottom: 16px;
+  }
+  .flow-concept strong { color: var(--theme); }
+
+  /* ===== MSG CARD ===== */
+  .msg-card {
+    background: #fff; border-radius: 16px; border: 2px solid #e8e8e8; overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .mc-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px; background: #fafafa; border-bottom: 1px solid #f0f0f0;
+  }
+  .mc-num { font-size: 14px; font-weight: 800; color: #333; }
+  .mc-day {
+    font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 20px;
+    background: var(--theme-bg); color: var(--theme);
+  }
+  .mc-blocker {
+    font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
+    background: #fef3c7; color: #92400e;
+  }
+  .mc-timing { font-size: 11px; color: #aaa; margin-left: auto; }
+
+  .mc-title-bar { padding: 16px 18px 4px; }
+  .mc-title { font-size: 17px; font-weight: 800; color: #222; line-height: 1.4; }
+  .mc-title .label { font-size: 10px; font-weight: 700; color: #999; display: block; margin-bottom: 2px; letter-spacing: 1px; }
+
+  /* ===== SECTION HEADER inside card ===== */
+  .mc-section { padding: 14px 18px; border-top: 1px solid #f4f4f4; }
+  .mc-section:first-of-type { border-top: 1px dashed #e8e8e8; }
+  .mc-section-head {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  }
+  .mc-section-num {
+    width: 22px; height: 22px; border-radius: 50%; background: var(--theme); color: #fff;
+    font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .mc-section-title { font-size: 13px; font-weight: 800; color: #333; }
+  .mc-section-sub { font-size: 11px; color: #999; margin-left: auto; }
+
+  /* ===== ヘッド意図 ===== */
+  .intent-box { background: #fef9c3; border-radius: 10px; padding: 12px 14px; }
+  .intent-box .ib-row { display: flex; gap: 12px; font-size: 12px; margin-bottom: 6px; line-height: 1.6; }
+  .intent-box .ib-row:last-child { margin-bottom: 0; }
+  .intent-box .ib-key { flex: 0 0 110px; font-weight: 800; color: #713f12; }
+  .intent-box .ib-val { color: #422006; }
+  .reject-list { margin-top: 10px; }
+  .reject-list h5 { font-size: 11px; font-weight: 800; color: #713f12; margin-bottom: 6px; }
+  .reject-item {
+    background: #fff; border: 1px dashed #ca8a04; border-radius: 6px;
+    padding: 8px 10px; margin-bottom: 6px; font-size: 11px; color: #555;
+  }
+  .reject-item .reject-copy {
+    font-weight: 700; color: #444; padding-bottom: 4px; border-bottom: 1px dotted #e5e7eb; margin-bottom: 4px;
+  }
+  .reject-item .reject-reason { color: #888; font-size: 10.5px; }
+
+  /* ===== バッジ意図 ===== */
+  .badge-intent {
+    background: #fce7f3; border-radius: 10px; padding: 12px 14px; display: flex; gap: 14px; align-items: center;
+  }
+  .badge-sample {
+    background: #fff; border: 1px solid #f9a8d4; border-radius: 20px;
+    padding: 6px 16px; font-size: 12px; font-weight: 800; color: #9d174d;
+    flex-shrink: 0;
+  }
+  .badge-reason { font-size: 12px; color: #500724; line-height: 1.6; }
+  .badge-reason strong { color: #831843; }
+
+  /* ===== イラスト方向性 ===== */
+  .illust-box {
+    background: #f0f9ff; border-radius: 10px; padding: 14px 16px;
+  }
+  .illust-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .illust-cell { background: #fff; border-radius: 8px; padding: 10px 12px; border: 1px solid #e0f2fe; }
+  .illust-cell h5 { font-size: 11px; font-weight: 800; color: #0369a1; margin-bottom: 6px; letter-spacing: 0.3px; }
+  .illust-cell p { font-size: 11.5px; color: #1e293b; line-height: 1.6; }
+  .illust-cell .il-color-row { display: flex; gap: 6px; margin-top: 6px; }
+  .illust-cell .il-swatch {
+    width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08);
+    display: flex; align-items: flex-end; justify-content: center; font-size: 8px; color: #fff;
+    font-weight: 700; padding-bottom: 1px;
+  }
+  .illust-ng {
+    background: #fef2f2; border-left: 3px solid #ef4444; border-radius: 4px;
+    padding: 8px 12px; font-size: 11px; color: #7f1d1d; line-height: 1.6;
+  }
+  .illust-ng strong { color: #b91c1c; }
+
+  /* ===== カード視覚構造 ===== */
+  .card-visual-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .card-visual {
+    background: #fff; border: 2px solid #e0e7ff; border-radius: 10px; overflow: hidden;
+  }
+  .card-visual-head {
+    background: #e0e7ff; padding: 8px 12px; font-size: 11px; font-weight: 800; color: #3730a3;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-visual-head .pattern-tag {
+    background: #fff; color: #4338ca; padding: 2px 8px; border-radius: 10px; font-size: 9.5px;
+  }
+  .card-visual-body { padding: 12px 14px; }
+  .card-visual-text {
+    background: #f8fafc; border-left: 3px solid #cbd5e1; padding: 8px 10px; font-size: 11px;
+    color: #475569; line-height: 1.6; white-space: pre-line; margin-bottom: 10px; border-radius: 4px;
+  }
+  .card-visual-why {
+    font-size: 11px; color: #334155; line-height: 1.6; padding: 6px 0;
+  }
+  .card-visual-why strong { color: #1e293b; }
+  .visual-mock {
+    background: #f1f5f9; border-radius: 8px; padding: 10px 12px; margin-top: 8px;
+    border: 1px dashed #cbd5e1;
+  }
+
+  /* 視覚モックの各パターン */
+  .vm-big-num { text-align: center; padding: 10px 0; }
+  .vm-big-num .num { font-size: 36px; font-weight: 900; color: var(--theme); line-height: 1; }
+  .vm-big-num .lbl { font-size: 10px; color: #64748b; margin-top: 4px; }
+  .vm-big-num .footnote { font-size: 9px; color: #94a3b8; margin-top: 6px; }
+
+  .vm-flow { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; padding: 6px 0; }
+  .vm-flow-box {
+    padding: 6px 10px; border-radius: 6px; font-size: 10px; font-weight: 700;
+    background: #e0f2fe; color: #075985;
+  }
+  .vm-flow-arrow { color: #94a3b8; font-size: 12px; }
+
+  .vm-compare-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+  .vm-compare-table th { background: #e2e8f0; padding: 5px 8px; text-align: left; font-weight: 800; color: #334155; }
+  .vm-compare-table td { padding: 5px 8px; border-bottom: 1px solid #e2e8f0; color: #475569; }
+  .vm-compare-table .ok { color: #15803d; font-weight: 700; }
+  .vm-compare-table .ng { color: #b91c1c; font-weight: 700; }
+
+  .vm-list { list-style: none; padding: 4px 0; }
+  .vm-list li {
+    padding: 4px 0 4px 18px; font-size: 11px; color: #475569; position: relative; line-height: 1.5;
+  }
+  .vm-list li::before {
+    content: '●'; color: var(--theme); position: absolute; left: 4px; font-size: 8px; top: 8px;
+  }
+
+  .vm-steps { padding: 4px 0; }
+  .vm-step { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; }
+  .vm-step-num {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--theme); color: #fff;
+    font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .vm-step-text { font-size: 11px; color: #334155; line-height: 1.5; }
+
+  .vm-qa { padding: 4px 0; }
+  .vm-q { font-size: 11px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+  .vm-a { font-size: 11px; color: #475569; line-height: 1.6; padding-left: 14px; border-left: 3px solid var(--theme); }
+
+  .vm-pricerow { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
+  .vm-pricerow:last-child { border-bottom: none; }
+  .vm-pricerow .vm-label { color: #64748b; }
+  .vm-pricerow .vm-val { font-weight: 800; color: var(--theme); }
+
+  .vm-warn-list { padding: 4px 0; }
+  .vm-warn-list li {
+    padding: 4px 0 4px 22px; font-size: 11px; color: #b91c1c; position: relative; line-height: 1.5;
+    list-style: none;
+  }
+  .vm-warn-list li::before { content: '✕'; position: absolute; left: 6px; font-weight: 800; }
+  .vm-ok-list li { color: #15803d; }
+  .vm-ok-list li::before { content: '○'; }
+
+  /* ===== LINE PREVIEW ===== */
+  .line-preview-wrap { padding: 14px 18px; }
+  .line-preview-label { font-size: 11px; font-weight: 800; color: #888; margin-bottom: 8px; letter-spacing: 0.5px; }
+  .line-chat {
+    background: #8caad0; border-radius: 12px; padding: 14px; max-width: 360px; margin: 0 auto;
+  }
+  .line-msg { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 10px; }
+  .line-msg:last-child { margin-bottom: 0; }
+  .line-avatar {
+    width: 32px; height: 32px; border-radius: 50%; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; border: 1px solid rgba(255,255,255,.5);
+  }
+  .line-bubble-wrap { max-width: 260px; }
+  .line-sender { font-size: 10px; color: rgba(255,255,255,.85); margin-bottom: 2px; font-weight: 600; }
+  .line-text {
+    background: #fff; border-radius: 0 14px 14px 14px;
+    padding: 10px 14px; font-size: 12px; color: #333; line-height: 1.65;
+    white-space: pre-line; box-shadow: 0 1px 2px rgba(0,0,0,.06);
+  }
+
+  .line-cover {
+    width: 240px; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08);
+    text-align: center; padding: 22px 16px 16px; margin-top: 6px;
+  }
+  .cv-c1 { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
+  .cv-c2 { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); }
+  .cv-c3 { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+  .cv-c4 { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+  .cv-c5 { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); }
+  .cv-c6 { background: linear-gradient(135deg, #fef9c3 0%, #fde047 100%); }
+  .cv-c7 { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); }
+  .line-cover .cv-badge {
+    display: inline-block; background: #fff; font-size: 10px; font-weight: 800;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; letter-spacing: 0.5px;
+  }
+  .line-cover .cv-illust {
+    font-size: 32px; margin: 6px 0;
+    background: rgba(255,255,255,0.4); width: 80px; height: 80px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .line-cover .cv-title { font-size: 14px; font-weight: 800; color: #222; margin: 10px 0 4px; line-height: 1.4; }
+
+  .line-carousel-wrap { margin-top: 6px; }
+  .line-carousel { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .lc-card { flex: 0 0 180px; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+  .lc-card-head { padding: 6px 10px; font-size: 9.5px; font-weight: 800; }
+  .lc-card-body { padding: 10px 12px; font-size: 11px; color: #333; white-space: pre-line; line-height: 1.55; }
+  .line-pr {
+    background: #fff; border-radius: 10px; padding: 10px 14px;
+    margin-top: 6px; font-size: 11px; color: #333; line-height: 1.55;
+  }
+  .line-pr-btn {
+    display: inline-block; margin-top: 6px; padding: 7px 14px;
+    background: var(--theme); color: #fff; border-radius: 18px;
+    font-size: 11px; font-weight: 700;
+  }
+  .line-cta-btn {
+    display: block; margin-top: 8px; padding: 12px 16px;
+    background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff;
+    border-radius: 10px; font-size: 13px; font-weight: 800;
+    text-align: center; box-shadow: 0 2px 8px rgba(220, 38, 38, .35);
+  }
+  .line-time { font-size: 9px; color: rgba(255,255,255,.7); margin-top: 4px; text-align: right; }
+
+  /* ===== カード本文（改変NGエリア） ===== */
+  .body-locked {
+    background: #f9fafb; border: 2px dashed #d4d4d4; border-radius: 8px;
+    padding: 12px 14px; font-size: 12px; color: #334155; white-space: pre-line; line-height: 1.7;
+    position: relative;
+  }
+  .body-locked::before {
+    content: '本文（改変NG）'; position: absolute; top: -10px; left: 10px;
+    background: #fff; padding: 0 8px; font-size: 9.5px; font-weight: 800; color: #94a3b8; letter-spacing: 0.5px;
+  }
+
+  /* ===== bottom psych ===== */
+  .mc-bottom { padding: 12px 18px; border-top: 1px solid #f5f5f5; background: #fafafa; }
+  .mc-psych-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
+  .mc-psych-row:last-child { margin-bottom: 0; }
+  .mc-psych-icon { font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+  .mc-psych-text { font-size: 11px; color: #555; line-height: 1.5; }
+  .mc-psych-text strong { color: #333; }
+
+  /* ===== 共通仕様 ===== */
+  .spec-card {
+    background: #fff; border-radius: 12px; padding: 20px 24px; border: 1px solid #eee; margin-bottom: 16px;
+  }
+  .spec-card h3 { font-size: 14px; font-weight: 800; color: #222; margin-bottom: 12px; }
+  .spec-card h4 { font-size: 12px; font-weight: 800; color: #555; margin-top: 14px; margin-bottom: 6px; }
+  .spec-card p, .spec-card li { font-size: 13px; color: #444; line-height: 1.7; }
+  .spec-card ul { padding-left: 22px; }
+  .spec-card table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .spec-card th { background: #f1f5f9; padding: 8px 10px; text-align: left; font-weight: 800; color: #334155; border-bottom: 2px solid #cbd5e1; }
+  .spec-card td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; color: #475569; }
+
+  .ng-list { background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 6px; padding: 12px 18px; margin-top: 8px; }
+  .ng-list li { color: #7f1d1d; font-size: 12px; padding: 3px 0; }
+
+  /* ===== ren記入 ===== */
+  .ren-form { background: #fff; border-radius: 12px; padding: 22px 26px; border: 1px solid #eee; }
+  .ren-form .form-row { display: grid; grid-template-columns: 160px 1fr; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .ren-form label { font-size: 12px; font-weight: 800; color: #444; padding-top: 8px; }
+  .ren-form input, .ren-form textarea, .ren-form select {
+    width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #d1d5db; border-radius: 6px;
+    font-family: inherit;
+  }
+  .ren-form textarea { min-height: 60px; resize: vertical; }
+  .ren-form .help { font-size: 10px; color: #999; padding-top: 8px; }
+
+  @media (max-width: 900px) {
+    .card-visual-grid { grid-template-columns: 1fr; }
+    .illust-grid { grid-template-columns: 1fr; }
+    .ren-form .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<div class="nav">
+  <div class="nav-title">リテンション v8.5 / 方法診断（GLP-1）／ren artifact 全文置換版</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-tab="overview" style="--theme:#334155;">総合</div>
+    <div class="nav-tab" data-tab="day1" style="--theme:#db2777; --theme-bg:#fce7f3;">DAY1<span class="pill">意志</span></div>
+    <div class="nav-tab" data-tab="day2" style="--theme:#7c3aed; --theme-bg:#ede9fe;">DAY2<span class="pill">リバウンド</span></div>
+    <div class="nav-tab" data-tab="day3" style="--theme:#2563eb; --theme-bg:#dbeafe;">DAY3<span class="pill">信頼</span></div>
+    <div class="nav-tab" data-tab="day4" style="--theme:#d97706; --theme-bg:#fef3c7;">DAY4<span class="pill">副作用</span></div>
+    <div class="nav-tab" data-tab="day5" style="--theme:#16a34a; --theme-bg:#dcfce7;">DAY5<span class="pill">費用</span></div>
+    <div class="nav-tab" data-tab="day6" style="--theme:#ca8a04; --theme-bg:#fef9c3;">DAY6<span class="pill">合うか</span></div>
+    <div class="nav-tab" data-tab="day7" style="--theme:#dc2626; --theme-bg:#fee2e2;">DAY7<span class="pill">CV</span></div>
+    <div class="nav-tab" data-tab="spec" style="--theme:#475569;">共通仕様</div>
+    <div class="nav-tab" data-tab="ren" style="--theme:#0891b2;">ren記入</div>
+  </div>
+</div>
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section active" id="overview">
+  <div class="wrap">
+    <div class="ov-header">
+      <h1>方法診断 リテンション配信 v8.5 — ren artifact 全文置換版</h1>
+      <p>ブロッカー潰し型・7通独立構造 / GLP-1医療ダイエット</p>
+      <div class="meta-pills">
+        <span>対象: 方法診断完走・準顕在層</span>
+        <span>本文改変NG</span>
+      </div>
+    </div>
+
+    <!-- 7通フェーズ -->
+    <div class="ov-card">
+      <h3>7通フェーズ図</h3>
+      <div class="phase-flow">
+        <div class="phase-step p1"><div class="day">DAY1</div><div class="lbl">意志力</div><div class="sub">許可</div></div>
+        <div class="phase-step p2"><div class="day">DAY2</div><div class="lbl">リバウンド</div><div class="sub">整理</div></div>
+        <div class="phase-step p3"><div class="day">DAY3</div><div class="lbl">信頼性</div><div class="sub">事実</div></div>
+        <div class="phase-step p4"><div class="day">DAY4</div><div class="lbl">副作用</div><div class="sub">数字</div></div>
+        <div class="phase-step p5"><div class="day">DAY5</div><div class="lbl">費用</div><div class="sub">相場</div></div>
+        <div class="phase-step p6"><div class="day">DAY6</div><div class="lbl">合うか</div><div class="sub">個別</div></div>
+        <div class="phase-step p7"><div class="day">DAY7</div><div class="lbl">予約</div><div class="sub">CV</div></div>
+      </div>
+      <div class="phase-group-label">
+        <span class="pg-self">フェーズ1: 過去の自分の整理</span>
+        <span class="pg-drug">フェーズ2: 薬の理解と判断</span>
+        <span class="pg-cv">フェーズ3: CV決断</span>
+      </div>
+    </div>
+
+    <!-- ファクトチェック -->
+    <div class="factcheck-box">
+      <h3>v8.5 全文置換のお知らせ（v8.4 → v8.5）</h3>
+      <ul>
+        <li><strong>本文は ren 共有の外部Claude artifact を「正解」として全文置換。</strong>CMO判断ゼロ・1文字も書き換えない</li>
+        <li>3幕構造（①シーン具体化 → ②犯人入れ替え → ③許可）を全7通で統一</li>
+        <li>DAY1: 「冷蔵庫の前」「鏡の前のため息」のシーンから入る一人称気付き型</li>
+        <li>DAY2: 「あの夏、必死で痩せた10kg」の個人の記憶ベース</li>
+        <li>DAY3-7: 否定リフレーム「〜じゃなくて、〜でした」型に統一（他人事ヘッド廃止）</li>
+        <li>DAY5: artifact原文「月5,000円〜／月15,000円〜」は<strong>CTOファクトチェックで優良誤認リスク指摘済みのためCTO確定値で上書き</strong>（飲み薬 月8,000〜10,000円／注射 月25,000〜30,000円・初回キャンペーン併記）</li>
+        <li>DAY3/4/6/7のファクト数値はartifactとCTO値が一致・そのまま採用</li>
+      </ul>
+    </div>
+
+    <!-- カード総数 -->
+    <div class="ov-card">
+      <h3>制作物サマリ</h3>
+      <dl>
+        <dt>表紙イラスト</dt><dd>7枚（各DAYのトップ画像）</dd>
+        <dt>カードイラスト</dt><dd>21枚（各DAY × カード3枚）</dd>
+        <dt>合計</dt><dd><strong>28枚</strong>（本文は全カード共通テンプレに流し込み）</dd>
+        <dt>納品形式</dt><dd>PNG（1:1正方形 1080×1080px）／表紙は16:9（1280×720）でも可</dd>
+        <dt>本文の扱い</dt><dd>確定。<strong>1文字も改変NG。</strong>各DAYタブ「カード視覚構造」のテンプレに流し込み</dd>
+      </dl>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================
+     DAY1 — 意志力ブロッカー
+     ============================================ -->
+<div class="section" id="day1" style="--theme:#db2777; --theme-bg:#fce7f3;">
+  <div class="wrap">
+    <div class="flow-header">
+      <h2>DAY1 — 意志力ブロッカー</h2>
+      <div class="flow-meta">
+        <span>フェーズ: 過去の自分の整理</span><span>配信: 診断完走+24h</span><span>表紙バッジ: 「気づき」</span>
+      </div>
+    </div>
+
+    <div class="msg-card">
+      <div class="mc-head">
+        <div class="mc-num">DAY 1</div>
+        <div class="mc-day">意志力</div>
+        <div class="mc-blocker">配置: 過去への許可</div>
+        <div class="mc-timing">診断完走+24h</div>
+      </div>
+
+      <div class="mc-title-bar">
+        <div class="mc-title">
+          <span class="label">HEAD COPY</span>
+          『どうしても食べちゃう私』を、もう責めなくていいかもしれません
+        </div>
+      </div>
+
+
+      <!-- B. 表紙バッジ -->
+      <div class="mc-section">
+        <div class="mc-section-head">
+          <div class="mc-section-num">B</div>
+          <div class="mc-section-title">表紙バッジ文言</div>
+          <div class="mc-section-sub">通の役割を1単語で</div>
+        </div>
+        <div class="badge-intent">
+          <div class="badge-sample">＼ 気づき ／</div>
+          <div class="badge-reason">「あなたへのおたより」では役割が読み取れない。<strong>DAY1は『気づきフェーズ』</strong>。読了後にユーザーが得るのは「気づき」（責めなくていいんだ）であって、解決策ではない。バッジでフェーズを示し、「今日は気づきの日です」と先回りで明示する</div>
+        </div>
+      </div>
+
+      <!-- C. イラスト方向性 -->
+      <div class="mc-section">
+        <div class="mc-section-head">
+          <div class="mc-section-num">C</div>
+          <div class="mc-section-title">イラスト具体方向性</div>
+          <div class="mc-section-sub">デザイナーが手を動かせる粒度</div>
+        </div>
+        <div class="illust-box">
+          <div class="illust-grid">
+            <div class="illust-cell">
+              <h5>表紙構図</h5>
+              <p>中央配置・縦長余白多め（上下に各20%の余白）。中央に手描き風の「鍵がほどける」モチーフ（鍵穴 + ふわっとした糸ほどき）。人物・顔は出さない。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>参考イメージ系統</h5>
+              <p>無印良品の冊子表紙系 / 雑誌LEE特集タイトル扉ページ系 / Saoirse Lou（Instagramのテキスタイル系イラストレーター）の上品さ。商業臭ゼロ。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>配色比率</h5>
+              <p>メイン70%: ペールピンク #fce7f3<br>サブ20%: オフホワイト #fff7f5<br>差し色10%: ローズグレー #be8a8a</p>
+              <div class="il-color-row">
+                <div class="il-swatch" style="background:#fce7f3; color:#9d174d;">70</div>
+                <div class="il-swatch" style="background:#fff7f5; color:#9d174d;">20</div>
+                <div class="il-swatch" style="background:#be8a8a;">10</div>
+              </div>
+            </div>
+            <div class="illust-cell">
+              <h5>感情温度の表現</h5>
+              <p>柔らかさ・脱力。線は細く・直線禁止・必ずカーブ。鋭角は使わない。彩度を抑えて「強く主張しないやさしさ」を出す。</p>
+            </div>
+          </div>
+          <div class="illust-ng">
+            <strong>NG構図：</strong> ① 体重計・メジャー・カロリー表示（ダイエット連想）／ ② 女性の横顔・全身シルエット（人物連想で読者の比較感情が出る）／ ③ Before/After的な対比構図／ ④ 「痩せる！」を連想させる矢印やビフォーアフターパネル／ ⑤ 派手なグラデ・蛍光色／ ⑥ 解放感を示すための「両手を広げる女性」イラスト（過去差し戻し済み）
+          </div>
+        </div>
+      </div>
+
+      <!-- D. カード視覚構造 -->
+      <div class="mc-section">
+        <div class="mc-section-head">
+          <div class="mc-section-num">D</div>
+          <div class="mc-section-title">カード視覚構造 — 本文をどう見せるか</div>
+          <div class="mc-section-sub">本文改変NG・骨格のみ指示</div>
+        </div>
+
+        <div class="card-visual-grid">
+
+          <!-- カード①: 事実 -->
+          <div class="card-visual">
+            <div class="card-visual-head">
+              カード①（事実）
+            </div>
+            <div class="card-visual-body">
+              <div class="body-locked">ダイエットを決めた夜にかぎって、
+冷蔵庫の前に立ってしまう。
+
+朝、また鏡の前で
+小さくため息をつく。
+
+——その繰り返しに、
+心当たりはありませんか。</div>
+              <div class="visual-mock">
+                <div class="vm-flow">
+                  <div class="vm-flow-box">食欲</div>
+                  <div class="vm-flow-arrow">←</div>
+                  <div class="vm-flow-box" style="background:#fce7f3; color:#9d174d;">ホルモン</div>
+                </div>
+                <div style="text-align:center; font-size:9px; color:#94a3b8; margin-top:6px;">グレリン / GLP-1</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- カード②: その意味 -->
+          <div class="card-visual">
+            <div class="card-visual-head">
+              カード②（その意味）
+            </div>
+            <div class="card-visual-body">
+              <div class="body-locked">あの『食べたい』が来た瞬間に
+動いていたのは、
+意志ではなく <strong>食欲ホルモン</strong> でした。
+
+睡眠不足、ストレス、
+ホルモンバランス。
+
+これだけ条件が揃えば、
+誰でも勝てません。</div>
+              <div class="visual-mock">
+                <table class="vm-compare-table">
+                  <tr><th>同じ食事量でも</th><th></th></tr>
+                  <tr><td>Aさん</td><td>空きやすい</td></tr>
+                  <tr><td>Bさん</td><td>空きにくい</td></tr>
+                </table>
+                <div style="text-align:center; font-size:9.5px; color:#9d174d; font-weight:800; margin-top:6px;">= 弱さではなく個体差</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- カード③: 着地 -->
+          <div class="card-visual">
+            <div class="card-visual-head">
+              カード③（着地）
+            </div>
+            <div class="card-visual-body">
+              <div class="body-locked">だから今日から、
+冷蔵庫の前に立ってしまっても
+
+『また私はダメだ』じゃなくて、
+<strong>『そう設計されてるんだから、当たり前』</strong>
+
+——そう言ってあげていい
+かもしれません。</div>
+              <div class="visual-mock" style="text-align:center; padding: 18px 12px;">
+                <div style="font-size:11px; color:#94a3b8;">（着地カード・図は最小）</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- E. LINE風プレビュー -->
+      <div class="mc-section">
+        <div class="mc-section-head">
+          <div class="mc-section-num">E</div>
+          <div class="mc-section-title">LINE風プレビュー（実装イメージ）</div>
+        </div>
+        <div class="line-preview-wrap">
+          <div class="line-chat">
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-sender">カロリー設計ラボ</div>
+                <div class="line-text">痩せられない理由、もしかしたら勘違いしてるかもしれません🌸</div>
+              </div>
+            </div>
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-cover cv-c1">
+                  <div class="cv-badge">＼ 気づき ／</div>
+                  <div class="cv-illust">🔑</div>
+                  <div class="cv-title">『どうしても食べちゃう私』を、<br>もう責めなくていい<br>かもしれません</div>
+                </div>
+                <div class="line-carousel-wrap">
+                  <div class="line-carousel">
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fce7f3; color:#9d174d;">① 事実</div><div class="lc-card-body">食欲は性格でなく
+ホルモンが動かす</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fce7f3; color:#9d174d;">② 個体差</div><div class="lc-card-body">同じ食事量でも
+空き方が違う</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fce7f3; color:#9d174d;">③ 着地</div><div class="lc-card-body">「自分が悪い」を
+一回、下ろしてみる</div></div>
+                  </div>
+                </div>
+                <div class="line-pr">
+                  食欲ホルモンに直接アプローチする選択肢もあります。気になったらこちら。
+                  <a class="line-pr-btn">GLP-1の話を見てみる →</a>
+                  <div style="font-size:9px; color:#94a3b8; margin-top:4px;">遷移先: LP1（GLP-1総合解説LP）#hormone</div>
+                </div>
+              </div>
+            </div>
+            <div class="line-time">12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     DAY2 — リバウンド
+     ============================================ -->
+<div class="section" id="day2" style="--theme:#7c3aed; --theme-bg:#ede9fe;">
+  <div class="wrap">
+    <div class="flow-header">
+      <h2>DAY2 — リバウンドブロッカー</h2>
+      <div class="flow-meta">
+        <span>フェーズ: 過去の自分の整理</span><span>配信: DAY1+24h</span><span>表紙バッジ: 「整理」</span>
+      </div>
+    </div>
+
+    <div class="msg-card">
+      <div class="mc-head">
+        <div class="mc-num">DAY 2</div>
+        <div class="mc-day">リバウンド</div>
+        <div class="mc-blocker">配置: 過去の失敗の解釈更新</div>
+        <div class="mc-timing">DAY1+24h</div>
+      </div>
+
+      <div class="mc-title-bar">
+        <div class="mc-title">
+          <span class="label">HEAD COPY</span>
+          あの夏、必死で痩せた10kg。気づいたら、全部戻っていた。
+        </div>
+      </div>
+
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">B</div><div class="mc-section-title">表紙バッジ文言</div><div class="mc-section-sub">通の役割を1単語で</div></div>
+        <div class="badge-intent">
+          <div class="badge-sample">＼ 整理 ／</div>
+          <div class="badge-reason"><strong>DAY2は「過去の整理」フェーズ。</strong> 新情報を渡す通ではなく、過去の出来事に違う解釈を当てる作業。「整理」という言葉が、ユーザーの「いままで散らかってた感情に名前がついた」感覚に合う</div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">C</div><div class="mc-section-title">イラスト具体方向性</div></div>
+        <div class="illust-box">
+          <div class="illust-grid">
+            <div class="illust-cell">
+              <h5>表紙構図</h5>
+              <p>中央配置・「螺旋（らせん）が解ける」モチーフ。ぐるぐる巻きの糸が中央でほどけていく。過去のループから抜け出すイメージ。線は細く・ふわっと。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>参考イメージ系統</h5>
+              <p>北欧テキスタイル系（marimekko Pieni Letto等の優しい曲線）／ 雑誌「クウネル」表紙系の余白感／ minne・Creemaの手作り作家のpastel柔らかさ。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>配色比率</h5>
+              <p>メイン70%: ラベンダー #ede9fe<br>サブ20%: ウォームアイボリー #fdf8f3<br>差し色10%: ダスティパープル #8b7ab0</p>
+              <div class="il-color-row">
+                <div class="il-swatch" style="background:#ede9fe; color:#5b21b6;">70</div>
+                <div class="il-swatch" style="background:#fdf8f3; color:#5b21b6;">20</div>
+                <div class="il-swatch" style="background:#8b7ab0;">10</div>
+              </div>
+            </div>
+            <div class="illust-cell">
+              <h5>感情温度の表現</h5>
+              <p>「ほどける」「ゆるむ」。DAY1より少しだけ温度を上げ、やわらかい温度感を出す。鋭角・直線NG。曲線のみで構成。</p>
+            </div>
+          </div>
+          <div class="illust-ng">
+            <strong>NG構図：</strong> ① 体重グラフ・折れ線グラフ（リバウンドの可視化はストレートすぎる）／ ② 「失敗」を連想させる×印・うなだれる人物／ ③ 矢印で「下がって上がる」の動きを直接描く／ ④ 派手なグラデ／ ⑤ 「諦めないで！」的な励まし系のキラキラ／ ⑥ 鏡・体重計
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">D</div><div class="mc-section-title">カード視覚構造</div></div>
+
+        <div class="card-visual-grid">
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード①（共感・事実）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">イベントのために、半年で10kg。
+あの頃の自分は、
+少し誇らしかったはずです。
+
+なのに1年経って、
+鏡の前には元通りの自分が立っていた。
+
+<strong>『またやってしまった』</strong>
+
+——その瞬間を、
+覚えていませんか。</div>
+              <div class="visual-mock">
+                <div class="vm-big-num">
+                  <div class="num">10kg → 0</div>
+                  <div class="lbl">半年で痩せて、1〜2年で戻る</div>
+                  <div class="footnote">体の側に理由がある</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード②（仕組み）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">あれは、根性が
+足りなかったんじゃありません。
+
+体重が落ちると、体は
+<strong>『元に戻せ』</strong>という指令を出して、
+食欲ホルモンを増やします。
+
+『お腹が空きやすい体』に
+体自身が作り変えていく。
+
+意志で勝てる相手ではありませんでした。</div>
+              <div class="visual-mock">
+                <div class="vm-flow">
+                  <div class="vm-flow-box" style="background:#ede9fe; color:#5b21b6;">体重低下</div>
+                  <div class="vm-flow-arrow">→</div>
+                  <div class="vm-flow-box" style="background:#ddd6fe; color:#5b21b6;">ホルモン変化</div>
+                  <div class="vm-flow-arrow">→</div>
+                  <div class="vm-flow-box" style="background:#c4b5fd; color:#fff;">空腹に戻る</div>
+                </div>
+                <div style="text-align:center; font-size:9px; color:#94a3b8; margin-top:6px;">体が元の体重に戻そうとする仕組み</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード③（着地・引き）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">戻らなかった人は、
+強かったわけではありません。
+
+『食べたい量そのもの』が
+自然に減っていた人です。
+
+我慢で量を抑えるのではなく、
+<strong>食欲のほうを下げる</strong>。
+
+——その入口に、
+医療ダイエットがあります。</div>
+              <div class="visual-mock">
+                <table class="vm-compare-table">
+                  <tr><th>戻る人</th><th>戻らない人</th></tr>
+                  <tr><td>食事量を我慢</td><td class="ok">食欲自体が変化</td></tr>
+                  <tr><td>解除で空腹復活</td><td class="ok">自然に量が減る</td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">E</div><div class="mc-section-title">LINE風プレビュー</div></div>
+        <div class="line-preview-wrap">
+          <div class="line-chat">
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-sender">カロリー設計ラボ</div>
+                <div class="line-text">『戻った』のは、本当にあなたのせいですか？</div>
+              </div>
+            </div>
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-cover cv-c2">
+                  <div class="cv-badge">＼ 整理 ／</div>
+                  <div class="cv-illust">🌀</div>
+                  <div class="cv-title">あの夏、必死で痩せた10kg。<br>気づいたら、<br>全部戻っていた。</div>
+                </div>
+                <div class="line-carousel-wrap">
+                  <div class="line-carousel">
+                    <div class="lc-card"><div class="lc-card-head" style="background:#ede9fe; color:#5b21b6;">① 事実</div><div class="lc-card-body">10kg→戻るは
+めずらしくない</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#ede9fe; color:#5b21b6;">② 仕組み</div><div class="lc-card-body">体が元の体重に
+戻そうとする</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#ede9fe; color:#5b21b6;">③ 着地</div><div class="lc-card-body">食習慣が
+切り替わるかが鍵</div></div>
+                  </div>
+                </div>
+                <div class="line-pr">
+                  『我慢で痩せる』以外の選択肢を、まず知るところから。
+                  <a class="line-pr-btn">医療ダイエットの仕組みを見てみる →</a>
+                  <div style="font-size:9px; color:#94a3b8; margin-top:4px;">遷移先: LP1（GLP-1総合解説LP）#rebound</div>
+                </div>
+              </div>
+            </div>
+            <div class="line-time">12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     DAY3 — 信頼性
+     ============================================ -->
+<div class="section" id="day3" style="--theme:#2563eb; --theme-bg:#dbeafe;">
+  <div class="wrap">
+    <div class="flow-header">
+      <h2>DAY3 — 信頼性ブロッカー</h2>
+      <div class="flow-meta"><span>フェーズ: 薬の理解と判断</span><span>配信: DAY2+24h</span><span>表紙バッジ: 「事実」</span></div>
+    </div>
+
+    <div class="msg-card">
+      <div class="mc-head">
+        <div class="mc-num">DAY 3</div>
+        <div class="mc-day">信頼性</div>
+        <div class="mc-blocker">配置: フェーズ転換</div>
+        <div class="mc-timing">DAY2+24h</div>
+      </div>
+
+      <div class="mc-title-bar">
+        <div class="mc-title">
+          <span class="label">HEAD COPY</span>
+          『新しい痩せ薬』じゃなくて、『古い糖尿病薬』でした。
+        </div>
+      </div>
+
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">B</div><div class="mc-section-title">表紙バッジ文言</div></div>
+        <div class="badge-intent">
+          <div class="badge-sample">＼ 事実 ／</div>
+          <div class="badge-reason"><strong>DAY3は「事実フェーズ」の入口。</strong> 自分の話から薬の話へ転換するこの通は、感情ワードではなく一番無味乾燥な「事実」を採用。「これからは事実だけ淡々と渡しますよ」という宣言として機能する</div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">C</div><div class="mc-section-title">イラスト具体方向性</div></div>
+        <div class="illust-box">
+          <div class="illust-grid">
+            <div class="illust-cell">
+              <h5>表紙構図</h5>
+              <p>中央配置・「資料の表紙」感。アイコンは小さく上部、タイトルが主役。書類・処方箋・カプセルの抽象シルエットを薄く配置。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>参考イメージ系統</h5>
+              <p>医療系資料の上品さ（メディカル系のホワイトペーパー表紙）／ 公的機関のパンフレット系（厚労省・国立成育医療センター系）／ The New Yorker風シンプル医療イラスト。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>配色比率</h5>
+              <p>メイン70%: ペールブルー #dbeafe<br>サブ20%: ホワイト #ffffff<br>差し色10%: ディープブルー #1e40af</p>
+              <div class="il-color-row">
+                <div class="il-swatch" style="background:#dbeafe; color:#1e40af;">70</div>
+                <div class="il-swatch" style="background:#ffffff; color:#1e40af; border-color:#dbeafe;">20</div>
+                <div class="il-swatch" style="background:#1e40af;">10</div>
+              </div>
+            </div>
+            <div class="illust-cell">
+              <h5>感情温度の表現</h5>
+              <p>冷静・信頼性・落ち着き。DAY1-2の暖色から青系に明確に切り替え、「ここから事実パート」を体感させる。装飾を減らし誌面感を上げる。</p>
+            </div>
+          </div>
+          <div class="illust-ng">
+            <strong>NG構図：</strong> ① ピル・注射器のリアルな描写（怖さが先に立つ）／ ② 医師・白衣の人物（権威臭）／ ③ 「効く！」を連想させる強い矢印／ ④ ビフォーアフター連想／ ⑤ 派手なネオン青
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">D</div><div class="mc-section-title">カード視覚構造</div></div>
+        <div class="card-visual-grid">
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード①（事実）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">GLP-1という名前を、
+ここ数年で
+何度か聞いたかもしれません。
+
+でもこれ、新しく出てきた
+『痩せ薬』ではなくて、
+
+<strong style="font-size:1.1em;">2型糖尿病の治療薬</strong>として、
+日本で15年以上使われてきた成分です。
+
+厚労省も、糖尿病治療として
+承認しています。</div>
+              <div class="visual-mock">
+                <div class="vm-big-num">
+                  <div class="num" style="color:#1e40af;">15年+</div>
+                  <div class="lbl">日本での使用実績（2型糖尿病）</div>
+                  <div class="footnote">厚労省承認済み</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード②（仕組み）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">飲むと、食事の途中で
+<strong>『あ、もういいかも』</strong>が早く来ます。
+
+我慢して箸を置くのではなく、
+気がついたら止まっている、
+という感覚に近い。
+
+体の中で起きているのは、
+ただ満腹のサインが
+いつもより早く出る、それだけです。</div>
+              <div class="visual-mock">
+                <div class="vm-flow">
+                  <div class="vm-flow-box">食事</div>
+                  <div class="vm-flow-arrow">→</div>
+                  <div class="vm-flow-box" style="background:#dbeafe; color:#1e40af;">GLP-1補充</div>
+                  <div class="vm-flow-arrow">→</div>
+                  <div class="vm-flow-box" style="background:#bfdbfe; color:#1e40af;">早く満腹</div>
+                </div>
+                <div style="text-align:center; font-size:9px; color:#94a3b8; margin-top:6px;">我慢ではなく、自然と量が減る</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード③（補足）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">糖尿病治療としては保険適用ですが、
+ダイエット目的での使用は
+<strong>『適応外処方』</strong>。
+
+だから自由診療のクリニックで
+扱われている、というだけの話です。
+
+『怪しい新薬』ではなく、
+『よく知られた薬の、別の使い方』。</div>
+              <div class="visual-mock">
+                <div class="vm-qa">
+                  <div class="vm-q">Q. なぜ保険が効かない？</div>
+                  <div class="vm-a">ダイエット用途は適応外処方のため。薬自体は15年以上前から使われている同じ成分</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">E</div><div class="mc-section-title">LINE風プレビュー</div></div>
+        <div class="line-preview-wrap">
+          <div class="line-chat">
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-sender">カロリー設計ラボ</div>
+                <div class="line-text">『新薬っぽい』印象、ちょっと一旦置いてみませんか</div>
+              </div>
+            </div>
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-cover cv-c3">
+                  <div class="cv-badge">＼ 事実 ／</div>
+                  <div class="cv-illust">📋</div>
+                  <div class="cv-title">『新しい痩せ薬』じゃなくて、<br>『古い糖尿病薬』<br>でした。</div>
+                </div>
+                <div class="line-carousel-wrap">
+                  <div class="line-carousel">
+                    <div class="lc-card"><div class="lc-card-head" style="background:#dbeafe; color:#1e40af;">① 事実</div><div class="lc-card-body">15年以上の使用実績
+厚労省承認</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#dbeafe; color:#1e40af;">② 仕組み</div><div class="lc-card-body">食欲ホルモンを補う
+早く満腹に</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#dbeafe; color:#1e40af;">③ 補足</div><div class="lc-card-body">保険外＝怪しい
+ではない</div></div>
+                  </div>
+                </div>
+                <div class="line-pr">
+                  どんな薬の選択肢があるか、まずは確認だけでも。
+                  <a class="line-pr-btn">薬の種類を見てみる →</a>
+                  <div style="font-size:9px; color:#94a3b8; margin-top:4px;">遷移先: LP1（GLP-1総合解説LP）#mechanism</div>
+                </div>
+              </div>
+            </div>
+            <div class="line-time">12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     DAY4 — 副作用
+     ============================================ -->
+<div class="section" id="day4" style="--theme:#d97706; --theme-bg:#fef3c7;">
+  <div class="wrap">
+    <div class="flow-header">
+      <h2>DAY4 — 副作用ブロッカー</h2>
+      <div class="flow-meta"><span>フェーズ: 薬の理解と判断</span><span>配信: DAY3+24h</span><span>表紙バッジ: 「実態の数字」</span></div>
+    </div>
+
+    <div class="msg-card">
+      <div class="mc-head">
+        <div class="mc-num">DAY 4</div>
+        <div class="mc-day">副作用</div>
+        <div class="mc-blocker">配置: 最大ブロッカー</div>
+        <div class="mc-timing">DAY3+24h</div>
+      </div>
+
+      <div class="mc-title-bar">
+        <div class="mc-title">
+          <span class="label">HEAD COPY</span>
+          『吐き気が一生続く』って、本当にそうですか？
+        </div>
+      </div>
+
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">B</div><div class="mc-section-title">表紙バッジ文言</div></div>
+        <div class="badge-intent">
+          <div class="badge-sample">＼ 実態の数字 ／</div>
+          <div class="badge-reason"><strong>DAY4は「数字で答える」通。</strong> 「データ」「事実」だと無味乾燥すぎ、「副作用について」だと内容バレ。「実態の数字」は<strong>「噂や煽りじゃない、データの話ですよ」という宣言</strong>。10-20%という具体数字に向かって読者の意識を整列させる</div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">C</div><div class="mc-section-title">イラスト具体方向性</div></div>
+        <div class="illust-box">
+          <div class="illust-grid">
+            <div class="illust-cell">
+              <h5>表紙構図</h5>
+              <p>中央配置・グラフ要素を抽象化（円グラフのシルエットだけ・数値は表紙には入れない）。アンバー系で「ちょっと注意ですよ」のトーンを出すが、警告ではない。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>参考イメージ系統</h5>
+              <p>InfoGraphic系誌面の落ち着いた版（NIKKEI Style系）／ 雑誌Bake「分かりやすく説明する」コラム系／ シンプル医療系ホワイトペーパー。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>配色比率</h5>
+              <p>メイン70%: ペールアンバー #fef3c7<br>サブ20%: クリーム #fffbeb<br>差し色10%: アンバー #b45309</p>
+              <div class="il-color-row">
+                <div class="il-swatch" style="background:#fef3c7; color:#92400e;">70</div>
+                <div class="il-swatch" style="background:#fffbeb; color:#92400e;">20</div>
+                <div class="il-swatch" style="background:#b45309;">10</div>
+              </div>
+            </div>
+            <div class="illust-cell">
+              <h5>感情温度の表現</h5>
+              <p>「注意して見るけど怖がらない」温度。黄色は警告色だがアンバーまで落とせば「親しみのある注意」になる。彩度を上げすぎないこと。</p>
+            </div>
+          </div>
+          <div class="illust-ng">
+            <strong>NG構図：</strong> ① 苦しそうな表情・うずくまる人物（恐怖を煽る）／ ② 真っ赤・警告色／ ③ 注射針・薬の山／ ④ ドクロ・✕マークなどネガ強要素／ ⑤ 「副作用ゼロ！」感のグリーン安全マーク（嘘になる）
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">D</div><div class="mc-section-title">カード視覚構造</div></div>
+        <div class="card-visual-grid">
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード①（数字）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">添付文書ベースで、
+主な副作用は
+吐き気・便秘・下痢。
+
+出る人は<strong>10-20%程度</strong>
+（薬剤や用量によって差があります）。
+
+『全員に出る』わけでも、
+『ずっと続く』わけでもありません。</div>
+              <div class="visual-mock">
+                <div class="vm-big-num">
+                  <div class="num" style="color:#b45309;">10〜20%</div>
+                  <div class="lbl">主な副作用の発生率</div>
+                  <div class="footnote">吐き気・便秘・下痢 / 添付文書ベース</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード②（期間）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">出るとしても、多くは
+飲み始めの<strong>数週間</strong>で
+軽くなっていきます。
+
+体が慣れていく過程で
+出やすいので、
+
+クリニックでは少しずつ
+量を増やしていく方法を取ります。</div>
+              <div class="visual-mock">
+                <div class="vm-steps">
+                  <div class="vm-step"><div class="vm-step-num" style="background:#fed7aa; color:#b45309;">1</div><div class="vm-step-text">開始直後: 体が慣れる段階で出やすい</div></div>
+                  <div class="vm-step"><div class="vm-step-num" style="background:#fdba74; color:#fff;">2</div><div class="vm-step-text">数週間: 多くの体験談で軽減</div></div>
+                  <div class="vm-step"><div class="vm-step-num" style="background:#fb923c; color:#fff;">3</div><div class="vm-step-text">用量は段階的に増やす（医師管理）</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード③（対処）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">強く出たら、
+量を減らすことも、
+やめることも、いつでもできます。
+
+<strong>『始めたら最後』の薬ではなく、
+合わなければ降りていい薬</strong>です。</div>
+              <div class="visual-mock">
+                <div class="vm-qa">
+                  <div class="vm-q">Q. 副作用が強く出たら？</div>
+                  <div class="vm-a">用量調整 or 中止が可能。我慢して続ける必要はない（医師が判断）</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">E</div><div class="mc-section-title">LINE風プレビュー</div></div>
+        <div class="line-preview-wrap">
+          <div class="line-chat">
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-sender">カロリー設計ラボ</div>
+                <div class="line-text">『副作用が怖い』を、数字で確かめてみませんか</div>
+              </div>
+            </div>
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-cover cv-c4">
+                  <div class="cv-badge">＼ 実態の数字 ／</div>
+                  <div class="cv-illust">📊</div>
+                  <div class="cv-title">『吐き気が一生続く』って、<br>本当にそうですか？</div>
+                </div>
+                <div class="line-carousel-wrap">
+                  <div class="line-carousel">
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fef3c7; color:#92400e;">① 数字</div><div class="lc-card-body">主な副作用は
+10-20%程度</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fef3c7; color:#92400e;">② 期間</div><div class="lc-card-body">数週間で軽減
+することが多い</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fef3c7; color:#92400e;">③ 対処</div><div class="lc-card-body">強く出たら
+用量調整 or 中止</div></div>
+                  </div>
+                </div>
+                <div class="line-pr">
+                  副作用も含めて医師に確認できます。
+                  <a class="line-pr-btn">相談できるクリニックを見る →</a>
+                  <div style="font-size:9px; color:#94a3b8; margin-top:4px;">遷移先: LP1（GLP-1総合解説LP）#sideeffect</div>
+                </div>
+              </div>
+            </div>
+            <div class="line-time">12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     DAY5 — 費用
+     ============================================ -->
+<div class="section" id="day5" style="--theme:#16a34a; --theme-bg:#dcfce7;">
+  <div class="wrap">
+    <div class="flow-header">
+      <h2>DAY5 — 費用ブロッカー</h2>
+      <div class="flow-meta"><span>フェーズ: 薬の理解と判断</span><span>配信: DAY4+24h</span><span>表紙バッジ: 「相場」</span></div>
+    </div>
+
+    <div class="msg-card">
+      <div class="mc-head">
+        <div class="mc-num">DAY 5</div>
+        <div class="mc-day">費用</div>
+        <div class="mc-blocker">配置: 経済合理性</div>
+        <div class="mc-timing">DAY4+24h</div>
+      </div>
+
+      <div class="mc-title-bar">
+        <div class="mc-title">
+          <span class="label">HEAD COPY</span>
+          『医療ダイエット＝月数万』、そのイメージ、もう古いです。
+        </div>
+      </div>
+
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">B</div><div class="mc-section-title">表紙バッジ文言</div></div>
+        <div class="badge-intent">
+          <div class="badge-sample">＼ 相場 ／</div>
+          <div class="badge-reason"><strong>DAY5は「相場を共有する」通。</strong> 「費用」「料金」だと販売資料臭。「相場」は<strong>「業界全体のレンジを公平に見せます」</strong>という第三者目線の宣言。読者と一緒に市場を観察する立ち位置を作る</div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">C</div><div class="mc-section-title">イラスト具体方向性</div></div>
+        <div class="illust-box">
+          <div class="illust-grid">
+            <div class="illust-cell">
+              <h5>表紙構図</h5>
+              <p>中央配置・コインや財布のシルエットを抽象的に1点。具体的な金額は表紙に書かない。落ち着いた財布・小銭・お会計の象徴。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>参考イメージ系統</h5>
+              <p>みんなのフォトギャラリーの落ち着いた経済記事サムネ／ NHKまる得マガジン系のフラットイラスト／ 雑誌「サンキュ」家計特集の上品な版。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>配色比率</h5>
+              <p>メイン70%: セージグリーン #dcfce7<br>サブ20%: ペールクリーム #f7fee7<br>差し色10%: ディープグリーン #15803d</p>
+              <div class="il-color-row">
+                <div class="il-swatch" style="background:#dcfce7; color:#15803d;">70</div>
+                <div class="il-swatch" style="background:#f7fee7; color:#15803d;">20</div>
+                <div class="il-swatch" style="background:#15803d;">10</div>
+              </div>
+            </div>
+            <div class="illust-cell">
+              <h5>感情温度の表現</h5>
+              <p>健全さ・透明性。財布の安心感。商業臭NG。「お得！」感を出さないよう、グリーンも蛍光寄りではなくセージに寄せる。</p>
+            </div>
+          </div>
+          <div class="illust-ng">
+            <strong>NG構図：</strong> ① 札束・現金イラスト（露骨）／ ② 「Sale」「OFF」「割引」表記／ ③ 派手な蛍光グリーン／ ④ 矢印で「安い→高い」を強調／ ⑤ クリニック名・実在ブランドの暗示
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">D</div><div class="mc-section-title">カード視覚構造</div></div>
+        <div class="card-visual-grid">
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード①（実勢レンジ）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">飲み薬（リベルサス等）：
+<strong>月8,000〜10,000円が目安</strong>
+（初回キャンペーン適用で5,000円台〜）
+
+注射タイプ（マンジャロ等）：
+<strong>月25,000〜30,000円が目安</strong>
+（初回20,000円台〜）
+
+『敷居の高い高額治療』のイメージは、
+ここ数年で大きく変わりました。
+
+※診察料・送料込みの実勢値。
+クリニック・用量で前後します。</div>
+              <div class="visual-mock">
+                <div class="vm-pricerow">
+                  <div class="vm-label">飲み薬（リベルサス等）</div>
+                  <div class="vm-val">月 8,000〜10,000円</div>
+                </div>
+                <div class="vm-pricerow">
+                  <div class="vm-label">注射（マンジャロ等）</div>
+                  <div class="vm-val">月 25,000〜30,000円</div>
+                </div>
+                <div style="font-size:9px; color:#94a3b8; margin-top:4px;">※診察料・送料込みの実勢値</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード②（過去の自分との比較）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">これまでに、
+パーソナルジムやエステに
+通ったことはありませんか？
+
+ジムは月3-5万、
+エステは月2-3万。
+
+<strong>家から出ずに、
+それより低いコスト</strong>で
+試せる選択肢が、今はあります。</div>
+              <div class="visual-mock">
+                <table class="vm-compare-table">
+                  <tr><th>日常の習慣</th><th>月額換算</th></tr>
+                  <tr><td>コンビニデザート 1日1個</td><td>約 9,000円</td></tr>
+                  <tr><td>毎日のカフェラテ習慣</td><td>約 15,000円</td></tr>
+                  <tr><td>飲み薬（リベルサス等）</td><td class="ok">8,000〜10,000円</td></tr>
+                </table>
+                <div style="font-size:9px; color:#94a3b8; margin-top:4px;">過去の自分の習慣と並べる</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード③（過去の挫折要因への代替案）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">『まず1ヶ月だけ』で
+試せるクリニックもあります。
+
+<strong>長期契約が前提ではなく</strong>、
+合わなければ次の月にやめていい。
+
+『ジムに通おう』と思って
+結局行けなかった経験のある方にも、
+通う必要のない選択肢です。</div>
+              <div class="visual-mock">
+                <ul class="vm-list">
+                  <li>通う必要がない（自宅完結）</li>
+                  <li>1ヶ月だけ試せるクリニック増加中</li>
+                  <li>合わなければやめられる</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">E</div><div class="mc-section-title">LINE風プレビュー</div></div>
+        <div class="line-preview-wrap">
+          <div class="line-chat">
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-sender">カロリー設計ラボ</div>
+                <div class="line-text">『医療ダイエット＝高い』のイメージ、本当でしょうか？</div>
+              </div>
+            </div>
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-cover cv-c5">
+                  <div class="cv-badge">＼ 相場 ／</div>
+                  <div class="cv-illust">💰</div>
+                  <div class="cv-title">『医療ダイエット＝月数万』、<br>そのイメージ、<br>もう古いです。</div>
+                </div>
+                <div class="line-carousel-wrap">
+                  <div class="line-carousel">
+                    <div class="lc-card"><div class="lc-card-head" style="background:#dcfce7; color:#15803d;">① 価格</div><div class="lc-card-body">飲み薬 8,000〜10,000円
+注射 25,000〜30,000円</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#dcfce7; color:#15803d;">② 日常翻訳</div><div class="lc-card-body">コンビニデザート
+我慢で浮く金額</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#dcfce7; color:#15803d;">③ 過去対比</div><div class="lc-card-body">通えなかった人にも
+通う必要なし</div></div>
+                  </div>
+                </div>
+                <div class="line-pr">
+                  価格を出してるクリニックを比較できます。
+                  <a class="line-pr-btn">価格を見比べる →</a>
+                  <div style="font-size:9px; color:#94a3b8; margin-top:4px;">遷移先: LP1（GLP-1総合解説LP）#cost</div>
+                </div>
+              </div>
+            </div>
+            <div class="line-time">12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     DAY6 — 自分に合うか
+     ============================================ -->
+<div class="section" id="day6" style="--theme:#ca8a04; --theme-bg:#fef9c3;">
+  <div class="wrap">
+    <div class="flow-header">
+      <h2>DAY6 — 自分に合うかブロッカー</h2>
+      <div class="flow-meta"><span>フェーズ: 薬の理解と判断</span><span>配信: DAY5+24h</span><span>表紙バッジ: 「確認」</span></div>
+    </div>
+
+    <div class="msg-card">
+      <div class="mc-head">
+        <div class="mc-num">DAY 6</div>
+        <div class="mc-day">合うか</div>
+        <div class="mc-blocker">配置: 個別性の問い</div>
+        <div class="mc-timing">DAY5+24h</div>
+      </div>
+
+      <div class="mc-title-bar">
+        <div class="mc-title">
+          <span class="label">HEAD COPY</span>
+          『私の体質で処方されるの？』——その疑問、ここで整理します。
+        </div>
+      </div>
+
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">B</div><div class="mc-section-title">表紙バッジ文言</div></div>
+        <div class="badge-intent">
+          <div class="badge-sample">＼ 確認 ／</div>
+          <div class="badge-reason"><strong>DAY6は「自分の状況を確認する」通。</strong> 「個別性」だと硬すぎる。「確認」は<strong>「決断ではなく、まず確認」</strong>というハードルを下げる言葉。読者の「自己判断で諦める」を防ぐ姿勢を示す</div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">C</div><div class="mc-section-title">イラスト具体方向性</div></div>
+        <div class="illust-box">
+          <div class="illust-grid">
+            <div class="illust-cell">
+              <h5>表紙構図</h5>
+              <p>中央配置・チェックリストやクリップボードの抽象シルエット。「自分の状況を確認する」感。リストの項目は具体化せず、抽象的なライン3-4本だけ。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>参考イメージ系統</h5>
+              <p>雑誌LEE/オレンジページの「自分チェック」コーナー系／ 病院パンフの問診票表紙系／ 無印良品の冊子の「あなたに合うサイズ」コーナー風。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>配色比率</h5>
+              <p>メイン70%: ペールイエロー #fef9c3<br>サブ20%: クリーム #fffbeb<br>差し色10%: マスタード #a16207</p>
+              <div class="il-color-row">
+                <div class="il-swatch" style="background:#fef9c3; color:#854d0e;">70</div>
+                <div class="il-swatch" style="background:#fffbeb; color:#854d0e;">20</div>
+                <div class="il-swatch" style="background:#a16207;">10</div>
+              </div>
+            </div>
+            <div class="illust-cell">
+              <h5>感情温度の表現</h5>
+              <p>「自分の番が来た」感。ふんわりした問診の柔らかさ。彩度落とした黄色で「条件確認の安心」を出す。</p>
+            </div>
+          </div>
+          <div class="illust-ng">
+            <strong>NG構図：</strong> ① 体重計・BMI算出機・メジャー（具体化しすぎ）／ ② 「あなたは対象です！」感の緑チェック印（断定NG）／ ③ 「対象外」感の赤×／ ④ 医師の顔・聴診器
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">D</div><div class="mc-section-title">カード視覚構造</div></div>
+        <div class="card-visual-grid">
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード①（条件）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">自由診療の一般的な目安として、
+<strong>18歳以上・BMI23以上</strong>が
+対象になることが多いです。
+
+該当する方は、かなり広い範囲。
+
+<strong>ほとんどの方は、
+相談の入口に立てます。</strong></div>
+              <div class="visual-mock">
+                <div class="vm-big-num">
+                  <div class="num" style="color:#a16207;">BMI 23+</div>
+                  <div class="lbl">18歳以上 / 一般的な目安</div>
+                  <div class="footnote">クリニックにより基準差あり</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード②（医師判断で処方されるケース）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">ただ、次の場合は処方できません。
+
+・妊娠中、授乳中
+・1型糖尿病
+・甲状腺がんの既往や家族歴
+
+該当する方は、
+別のアプローチを
+医師と相談する形になります。</div>
+              <div class="visual-mock">
+                <div class="vm-qa">
+                  <div class="vm-q">Q. 持病・服薬中だけど対象になる？</div>
+                  <div class="vm-a">医師判断で処方されるケースあり。自己判断で諦めず、カウンセリングで聞ける</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード③（不可ケース）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">持病があっても、
+他に飲んでいる薬があっても、
+
+医師の判断で
+処方されるケースは多くあります。
+
+<strong>『私はたぶん無理』を、
+自分で結論にしないでください。</strong>
+
+聞いてみれば、答えは出ます。</div>
+              <div class="visual-mock">
+                <div style="background:#fef9c3; border-radius:6px; padding:8px 10px; margin-bottom:8px; font-size:10.5px; color:#854d0e; font-weight:700; text-align:center;">
+                  ほとんどの方は対象。<br>ただし以下のケースは処方できません
+                </div>
+                <ul class="vm-list vm-warn-list">
+                  <li>妊娠中・授乳中</li>
+                  <li>1型糖尿病</li>
+                  <li>甲状腺がんの既往・家族歴</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">E</div><div class="mc-section-title">LINE風プレビュー</div></div>
+        <div class="line-preview-wrap">
+          <div class="line-chat">
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-sender">カロリー設計ラボ</div>
+                <div class="line-text">『私でも処方される？』を聞いてみる前にできる確認</div>
+              </div>
+            </div>
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-cover cv-c6">
+                  <div class="cv-badge">＼ 確認 ／</div>
+                  <div class="cv-illust">📝</div>
+                  <div class="cv-title">『私の体質で処方されるの？』<br>——その疑問、<br>ここで整理します。</div>
+                </div>
+                <div class="line-carousel-wrap">
+                  <div class="line-carousel">
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fef9c3; color:#854d0e;">① 条件</div><div class="lc-card-body">18歳以上
+BMI23以上</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fef9c3; color:#854d0e;">② 医師判断</div><div class="lc-card-body">持病あっても
+処方されるケース</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fef9c3; color:#854d0e;">③ 不可ケース</div><div class="lc-card-body">妊娠中・1型糖尿
+甲状腺がん家族歴</div></div>
+                  </div>
+                </div>
+                <div class="line-pr">
+                  オンラインで医師に確認できるクリニックもあります。
+                  <a class="line-pr-btn">自分が対象か聞いてみる →</a>
+                  <div style="font-size:9px; color:#94a3b8; margin-top:4px;">遷移先: LP1（GLP-1総合解説LP）#eligibility</div>
+                </div>
+              </div>
+            </div>
+            <div class="line-time">12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     DAY7 — 予約ハードル（CV）
+     ============================================ -->
+<div class="section" id="day7" style="--theme:#dc2626; --theme-bg:#fee2e2;">
+  <div class="wrap">
+    <div class="flow-header">
+      <h2>DAY7 — 予約ハードル（強CTA・CV通）</h2>
+      <div class="flow-meta"><span>フェーズ: CV決断</span><span>配信: DAY6+24h</span><span>表紙バッジ: 「決断のハードルだけ」</span></div>
+    </div>
+
+    <div class="msg-card">
+      <div class="mc-head">
+        <div class="mc-num">DAY 7</div>
+        <div class="mc-day">予約</div>
+        <div class="mc-blocker">配置: 最終ハードル / 強CTA</div>
+        <div class="mc-timing">DAY6+24h</div>
+      </div>
+
+      <div class="mc-title-bar">
+        <div class="mc-title">
+          <span class="label">HEAD COPY</span>
+          『行ったら契約させられる』は、もう古い話です。
+        </div>
+      </div>
+
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">B</div><div class="mc-section-title">表紙バッジ文言</div></div>
+        <div class="badge-intent">
+          <div class="badge-sample">＼ 決断のハードルだけ ／</div>
+          <div class="badge-reason"><strong>DAY7は「全部わかった。あとは決断だけ」フェーズ。</strong>「最後の整理」「決断」だけだと売り込み感。<strong>「決断のハードルだけ」</strong>は「もう情報の問題じゃなく、踏み出す心理の問題ですよ」と明示することで、読者に「自分はもう判断材料を全て持っている」を意識させる</div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">C</div><div class="mc-section-title">イラスト具体方向性</div></div>
+        <div class="illust-box">
+          <div class="illust-grid">
+            <div class="illust-cell">
+              <h5>表紙構図</h5>
+              <p>中央配置・「ドアが少し開いている」モチーフ。完全に開いてもいない、完全に閉じてもいない。「自分のペースで開ければいい」を視覚化。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>参考イメージ系統</h5>
+              <p>無印良品の「お試し体験」キャンペーン上品系／ THE NORTH FACEのアウトドアCMの「踏み出す静けさ」／ 雑誌Casa BRUTUSの扉ページ。営業臭ゼロのアート寄り。</p>
+            </div>
+            <div class="illust-cell">
+              <h5>配色比率</h5>
+              <p>メイン70%: ペールローズ #fee2e2<br>サブ20%: クリーム #fff7ed<br>差し色10%: ディープレッド #b91c1c<br><em>CTAボタンのみ強い赤を使用</em></p>
+              <div class="il-color-row">
+                <div class="il-swatch" style="background:#fee2e2; color:#991b1b;">70</div>
+                <div class="il-swatch" style="background:#fff7ed; color:#991b1b;">20</div>
+                <div class="il-swatch" style="background:#b91c1c;">10</div>
+              </div>
+            </div>
+            <div class="illust-cell">
+              <h5>感情温度の表現</h5>
+              <p>「決断」だが「煽らない」。赤を使うが、彩度を落として「血」「警告」感を消す。CTAボタンだけ熱を上げ、本体は静かに。</p>
+            </div>
+          </div>
+          <div class="illust-ng">
+            <strong>NG構図：</strong> ① 「今すぐ！」「あと○名！」感の煽り（特商法・薬機法の観点でもNG）／ ② カウントダウンタイマー／ ③ 「成功した人」のビフォーアフター連想／ ④ クリニックロゴ・実在ブランド／ ⑤ 蛍光赤・派手なグラデ
+          </div>
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">D</div><div class="mc-section-title">カード視覚構造</div></div>
+        <div class="card-visual-grid">
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード①（事実）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">無料カウンセリングは
+<strong>『話を聞くだけ』</strong>が前提。
+
+その場で契約を強要する勧誘は、
+特定商取引法・消費者契約法で
+禁止されています。
+
+『断れない雰囲気』に怯える時代では、
+もうありません。</div>
+              <div class="visual-mock">
+                <div class="vm-qa">
+                  <div class="vm-q">Q. 予約したら契約させられる？</div>
+                  <div class="vm-a">「話を聞くだけ」が前提。強要勧誘は<strong>法律で禁止</strong>（特定商取引法・消費者契約法）</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード②（マイクロコミットメント）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">所要時間は15-30分。
+オンライン対応も増えていて、
+<strong>顔出しなし・自宅から</strong>、で済みます。
+
+通勤の電車内くらいの時間で、
+プロに直接、聞ける。</div>
+              <div class="visual-mock">
+                <div class="vm-steps">
+                  <div class="vm-step"><div class="vm-step-num" style="background:#fee2e2; color:#991b1b;">1</div><div class="vm-step-text"><strong>LINEで質問だけ</strong>（1問だけでOK）</div></div>
+                  <div class="vm-step"><div class="vm-step-num" style="background:#fecaca; color:#991b1b;">2</div><div class="vm-step-text"><strong>3分の無料相談</strong>（顔出しなし）</div></div>
+                  <div class="vm-step"><div class="vm-step-num" style="background:#fca5a5; color:#fff;">3</div><div class="vm-step-text">合えば15-30分の本カウンセリングへ</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-visual">
+            <div class="card-visual-head">カード③（最後の整理）</div>
+            <div class="card-visual-body">
+              <div class="body-locked">副作用も、費用も、自分の体質も、
+結局プロに聞かないと
+判断できません。
+
+聞くだけ聞いて、
+合わなければ断る。
+
+<strong>それだけで、ずっと止まっていた選択が、
+やっと動き出します。</strong></div>
+              <div class="visual-mock" style="text-align:center; padding: 18px 12px;">
+                <div style="font-size:12px; color:#991b1b; font-style:italic;">— 聞くだけ聞いて、合わなければ断る —</div>
+                <div style="font-size:10px; color:#7f1d1d; margin-top:6px;">それで大丈夫です</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mc-section">
+        <div class="mc-section-head"><div class="mc-section-num">E</div><div class="mc-section-title">LINE風プレビュー</div></div>
+        <div class="line-preview-wrap">
+          <div class="line-chat">
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-sender">カロリー設計ラボ</div>
+                <div class="line-text">最後に、予約のハードルだけ整理しておきますね</div>
+              </div>
+            </div>
+            <div class="line-msg">
+              <div class="line-avatar">💌</div>
+              <div class="line-bubble-wrap">
+                <div class="line-cover cv-c7">
+                  <div class="cv-badge">＼ 決断のハードルだけ ／</div>
+                  <div class="cv-illust">🚪</div>
+                  <div class="cv-title">『行ったら契約させられる』は、<br>もう古い話です。</div>
+                </div>
+                <div class="line-carousel-wrap">
+                  <div class="line-carousel">
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fee2e2; color:#991b1b;">① 事実</div><div class="lc-card-body">勧誘は法律で禁止
+（特商法・消費者契約法）</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fee2e2; color:#991b1b;">② 入り口</div><div class="lc-card-body">LINE質問だけ
+3分相談もOK</div></div>
+                    <div class="lc-card"><div class="lc-card-head" style="background:#fee2e2; color:#991b1b;">③ 整理</div><div class="lc-card-body">合わなければ
+断っていい</div></div>
+                  </div>
+                </div>
+                <a class="line-cta-btn">📞 話を聞ける無料カウンセリングを予約する</a>
+                <div style="font-size:9px; color:rgba(255,255,255,.85); margin-top:4px; text-align:center;">遷移先: LP2（予約フォーム）</div>
+              </div>
+            </div>
+            <div class="line-time">12:00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================
+     共通仕様
+     ============================================ -->
+<div class="section" id="spec" style="--theme:#475569; --theme-bg:#e2e8f0;">
+  <div class="wrap">
+
+    <div class="spec-card">
+      <h3>制作物一覧</h3>
+      <table>
+        <tr><th>カテゴリ</th><th>枚数</th><th>サイズ</th><th>形式</th><th>命名規則</th></tr>
+        <tr><td>表紙イラスト</td><td>7枚</td><td>1080×1080px（16:9も可 1280×720）</td><td>PNG</td><td>retention_v83_day{1-7}_cover.png</td></tr>
+        <tr><td>カードイラスト</td><td>21枚</td><td>1080×1080px</td><td>PNG</td><td>retention_v83_day{1-7}_card{1-3}.png</td></tr>
+        <tr><td><strong>合計</strong></td><td><strong>28枚</strong></td><td colspan="3"></td></tr>
+      </table>
+    </div>
+
+    <div class="spec-card">
+      <h3>全通共通トンマナ</h3>
+      <ul>
+        <li><strong>女性向けやさしいトーン</strong>（30〜40代向け）。直線・鋭角・蛍光色NG。曲線とパステル基調</li>
+        <li><strong>顔写真・人物イラスト・体型シルエットは全面NG</strong>。ピクトグラム＋幾何形＋テキスタイル系のみ</li>
+        <li><strong>商業臭の徹底排除</strong>。Sale/OFF/今すぐ/限定など販促ワードのビジュアル化禁止</li>
+        <li><strong>感情温度の段階設計</strong>: DAY1-2は柔らかい暖色、DAY3-6は冷静な青〜緑〜黄、DAY7のみCTAだけ強い赤</li>
+        <li><strong>1枚に情報を詰めすぎない</strong>。余白を恐れない。「説明資料の上品さ」を優先</li>
+      </ul>
+    </div>
+
+    <div class="spec-card">
+      <h3>表紙バッジ一覧（通ごと別文言・必ず確認）</h3>
+      <table>
+        <tr><th>DAY</th><th>バッジ文言</th><th>役割</th></tr>
+        <tr><td>DAY1</td><td>＼ 気づき ／</td><td>過去の自責への許可（出発点）</td></tr>
+        <tr><td>DAY2</td><td>＼ 整理 ／</td><td>過去の失敗の解釈更新</td></tr>
+        <tr><td>DAY3</td><td>＼ 事実 ／</td><td>薬の話への転換シグナル</td></tr>
+        <tr><td>DAY4</td><td>＼ 実態の数字 ／</td><td>副作用への数字で正面回答</td></tr>
+        <tr><td>DAY5</td><td>＼ 相場 ／</td><td>費用の業界レンジ共有</td></tr>
+        <tr><td>DAY6</td><td>＼ 確認 ／</td><td>個別性の自己チェック</td></tr>
+        <tr><td>DAY7</td><td>＼ 決断のハードルだけ ／</td><td>情報→決断フェーズの明示</td></tr>
+      </table>
+      <p style="margin-top:10px;"><strong>注意：</strong> 「あなたへのおたより」での統一はNG。各バッジ文言は通の役割を表現するため通ごとに別。バッジを同じテンプレに別文字流すだけにせず、表紙レイアウトもバッジ文言の意味に合わせて微調整してほしい（DAY1はやさしく、DAY7は背筋伸ばす、等）。</p>
+    </div>
+
+    <div class="spec-card">
+      <h3>NG行動（絶対遵守）</h3>
+      <div class="ng-list">
+        <ul>
+          <li><strong>本文の改変NG</strong>。確定本文を1文字でも変えると差し戻し</li>
+          <li><strong>架空人物・体験談的なイラスト全面NG</strong>（v4.1ポエム化事件の再発防止）</li>
+          <li><strong>顔写真・実在人物の写真NG</strong></li>
+          <li><strong>「次回予告」「明日は」等の予告表現NG</strong>（v8原則：全通独立）</li>
+          <li><strong>ビフォーアフター連想NG</strong>（薬機法配慮）</li>
+          <li><strong>「○kg痩せた」「効果絶大」等の効能表現NG</strong>（薬機法）</li>
+          <li><strong>クリニック実在名・実在ブランド名NG</strong>（PR導線は文末の中立的なボタン1つだけ）</li>
+          <li><strong>DAY3カード①「2型糖尿病の治療薬として」は太字・サイズアップで強調</strong></li>
+          <li><strong>DAY6カード順は ①条件→②医師判断→③不可ケース で固定</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <h3>薬機法配慮</h3>
+      <ul>
+        <li>効能効果の断定表現NG（「絶対痩せる」「100%効く」等）</li>
+        <li>具体的体重減少数値NG（「○kg痩せた」「-10kg達成」等）</li>
+        <li>ビフォーアフター画像・連想NG</li>
+        <li>「医療用医薬品」の広告表現に該当しないよう「成分」「仕組み」「相場」レベルの記述に留める</li>
+        <li>副作用は隠さず、添付文書ベースの数値（10-20%）と「個人差あり」を併記</li>
+      </ul>
+    </div>
+
+        <div class="spec-card" style="border:2px solid #fb923c; background:#fff7ed;">
+      <h3 style="color:#9a3412;">PR遷移先</h3>
+      <p style="margin-bottom:10px;"><strong>方針:</strong> LPを2本に集約。LP最適化リソース・CV計測解像度・認知負荷すべて改善。</p>
+      <table>
+        <tr><th>DAY</th><th>遷移先</th><th>anchor</th></tr>
+        <tr><td>DAY1（意志力）</td><td><strong>LP1（GLP-1総合解説LP）</strong></td><td>#hormone</td></tr>
+        <tr><td>DAY2（リバウンド）</td><td>LP1（同上）</td><td>#rebound</td></tr>
+        <tr><td>DAY3（信頼性）</td><td>LP1（同上）</td><td>#mechanism</td></tr>
+        <tr><td>DAY4（副作用）</td><td>LP1（同上）</td><td>#sideeffect</td></tr>
+        <tr><td>DAY5（費用）</td><td>LP1（同上）</td><td>#cost</td></tr>
+        <tr><td>DAY6（自分に合うか）</td><td>LP1（同上）</td><td>#eligibility</td></tr>
+        <tr><td>DAY7（強CTA）</td><td><strong>LP2（予約フォーム）</strong></td><td>—</td></tr>
+      </table>
+      <p style="margin-top:10px; font-size:12px; color:#7c2d12;"><strong>メリット:</strong> LPメンテナンスを7本→2本に削減 / CV計測解像度UP（どの通から予約まで届いたか追跡可能） / 一貫体験（6通すべて同じLPに来るので「あ、同じ場所だ」と安心）</p>
+      <p style="margin-top:6px; font-size:12px; color:#7c2d12;"><strong>ren記入欄で確定:</strong> 「LP1 URL（DAY1-6共通・anchor着地）」「LP2 URL（DAY7予約フォーム）」の2つを記入</p>
+    </div>
+
+    <div class="spec-card">
+      <h3>配信タイミング</h3>
+      <ul>
+        <li><strong>DAY1：</strong> 方法診断完走から24時間後</li>
+        <li><strong>DAY2-7：</strong> 前通から24時間後</li>
+        <li><strong>配信時間帯：</strong> <strong>3案A/B検討中</strong>（ren記入欄で決定）
+          <ul style="margin-top:6px;">
+            <li>案1: <strong>20:00</strong>（家事ひと段落・寝る前スマホ・じっくり読める） ← CMO第1推奨</li>
+            <li>案2: <strong>21:00</strong>（就寝前・感情が動く時間） ← CMO第2推奨</li>
+            <li>案3: 12:00（昼休み・短時間・在宅勤務者にも届く）</li>
+          </ul>
+        </li>
+        <li><strong>A/Bテスト推奨：</strong> DAY1のみ時刻違いで配信して開封率・PRボタンクリック率を比較</li>
+        <li><strong>配信間隔：</strong> 24時間。空けすぎ・詰めすぎ両方NG（連続感が信頼を作る）</li>
+      </ul>
+    </div>
+
+    <div class="spec-card" style="border:2px solid #be185d; background:#fff5fa;">
+      <h3 style="color:#9d174d;">フォント / 文字組み（v8.5 artifact採用要素）</h3>
+      <h4>表紙コピー＆カード本文 — 明朝</h4>
+      <ul>
+        <li><strong>第1候補:</strong> Shippori Mincho B1（Google Fonts） — weight 700推奨</li>
+        <li><strong>第2候補:</strong> Noto Serif JP — weight 600-700</li>
+        <li>線が細すぎないこと。表紙の主役は文字。装飾モチーフは脇役</li>
+      </ul>
+      <h4>テキスト吹き出し・メタ情報 — ゴシック（丸ゴシック寄り）</h4>
+      <ul>
+        <li><strong>第1候補:</strong> Zen Kaku Gothic New（Google Fonts） — weight 400-500</li>
+        <li>本文より小さく・柔らかく。導入と本文の温度差を作る</li>
+      </ul>
+      <h4>文字組み</h4>
+      <ul>
+        <li>表紙: 縦余白を多めに（上下20%以上）／改行を多用／1行は短めに</li>
+        <li>カード本文: 1ブロック3〜5行ごとに空行を入れる（artifact準拠の呼吸）</li>
+        <li>表紙の強調語: マーカー風アンダーライン（line-height: 60%透明 + 60%以上不透明）でやさしく強調。蛍光NG</li>
+      </ul>
+      <h4>表紙ナンバリング表記</h4>
+      <ul>
+        <li>各表紙の下部に「医療ダイエットラボ ／ おたより #01」のようにナンバリング</li>
+        <li>サイズは小さく（11px相当）・letter-spacing 0.2em / opacity 0.7</li>
+        <li>DAY7のみ「医療ダイエットラボ ／ おたより #07・最終」と表記</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================
+     ren記入
+     ============================================ -->
+<div class="section" id="ren" style="--theme:#0891b2; --theme-bg:#cffafe;">
+  <div class="wrap">
+    <div class="ov-header">
+      <h1>ren記入欄 — 発注前7項目</h1>
+      <p>このタブ完成後、デザイナーへ発注 / </p>
+    </div>
+
+    <div class="ren-form">
+      <div class="form-row">
+        <label>1. 納期</label>
+        <div>
+          <input type="text" placeholder="例: 2026/05/20 まで">
+        </div>
+        <span class="help">表紙7枚＋カード21枚=28枚の納期</span>
+      </div>
+      <div class="form-row">
+        <label>2. 単価</label>
+        <div>
+          <input type="text" placeholder="例: 表紙 ¥3,000 / カード ¥1,500">
+        </div>
+        <span class="help">表紙とカードで分けるか統一かも記入</span>
+      </div>
+      <div class="form-row">
+        <label>3. デザイナー</label>
+        <div>
+          <select>
+            <option>選択してください</option>
+            <option>Noah</option>
+            <option>Kate</option>
+            <option>Rinon</option>
+            <option>外部発注</option>
+          </select>
+        </div>
+        <span class="help">担当者の名前</span>
+      </div>
+      <div class="form-row">
+        <label>4-A. LP1 URL（DAY1-6共通）</label>
+        <div>
+          <textarea placeholder="GLP-1総合解説LPのURL&#10;同じURLにanchor付与（#hormone, #rebound, #mechanism, #sideeffect, #cost, #eligibility）で各通テーマに着地"></textarea>
+        </div>
+        <span class="help">DAY1-6は全て同じLPに集約推奨</span>
+      </div>
+      <div class="form-row">
+        <label>4-B. LP2 URL（DAY7専用）</label>
+        <div>
+          <textarea placeholder="予約フォームのURL"></textarea>
+        </div>
+        <span class="help">DAY7のみ予約フォームへ直接遷移</span>
+      </div>
+      <div class="form-row">
+        <label>5. 配信開始日</label>
+        <div>
+          <input type="date">
+        </div>
+        <span class="help">DAY1の初回配信日</span>
+      </div>
+      <div class="form-row" style="border-top:2px dashed #fb923c; padding-top:16px; margin-top:6px;">
+        <label>6. 配信時刻</label>
+        <div>
+          <select>
+            <option>選択してください</option>
+            <option>20:00（CMO第1推奨：家事ひと段落・寝る前スマホ）</option>
+            <option>21:00（CMO第2推奨：就寝前・感情が動く時間）</option>
+            <option>12:00（昼休み・短時間）</option>
+            <option>A/Bテスト：DAY1のみ時刻違いで配信して開封率比較</option>
+          </select>
+        </div>
+        <span class="help">配信時刻は12:00 / 20:00 / 21:00 の3案でA/B検討推奨。女性ペルソナ・在宅比率を踏まえると20:00-21:00（家事ひと段落/寝る前スマホ）の方が開封率高い可能性あり</span>
+      </div>
+      <div class="form-row">
+        <label>7. マイクロコミットメント確認</label>
+        <div>
+          <select>
+            <option>選択してください</option>
+            <option>クリニック側で「LINE質問のみ」「3分相談」を実際に提供している（→DAY7カード②本文そのままGO）</option>
+            <option>クリニック側で未提供（→「お問い合わせフォームから質問のみ」等に文言調整必要）</option>
+          </select>
+        </div>
+        <span class="help">DAY7カード②のマイクロコミットメント（LINE質問・3分相談）はクリニック側の提供有無を確認。未提供なら文言調整必要</span>
+      </div>
+    </div>
+
+    <div style="margin-top:24px; padding: 16px 24px; background:#ecfeff; border-left:4px solid #0891b2; border-radius:8px; font-size:13px; color:#164e63;">
+      <strong>発注前チェックリスト：</strong>
+      <ul style="margin-top:8px; padding-left:22px;">
+        <li>上記7項目すべて記入済み</li>
+        <li>各DAYタブの内容をデザイナーと共有済み</li>
+        <li>共通仕様タブのNG行動・薬機法配慮を読み合わせ済み</li>
+        <li>本文改変NGの徹底確認済み（確定本文）</li>
+        <li>表紙バッジ文言が通ごとに別になっていることを確認</li>
+        <li><strong></strong> </li>
+        <li><strong></strong> DAY3カード①「2型糖尿病の治療薬として」の太字・サイズアップ強調指示を確認</li>
+        <li><strong></strong> DAY6カード順は ①条件→②医師判断→③不可ケース で固定</li>
+        <li>DAY5月額は飲み薬「月8,000〜10,000円が目安（初回キャンペーン適用で5,000円台〜）」／注射「月25,000〜30,000円が目安（初回20,000円台〜）」で確定</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:16px; padding: 16px 24px; background:#fff7ed; border-left:4px solid #fb923c; border-radius:8px; font-size:13px; color:#7c2d12;">
+      <ol style="margin-top:8px; padding-left:22px;">
+        <li><s>CTOから費用実勢値の確定値受領 → DAY5カード①の月額確定</s> → <strong>✅ 完了（2026-05-13反映済み）</strong>。飲み薬「月8,000〜10,000円が目安」／注射「月25,000〜30,000円が目安」</li>
+        <li><strong>マイクロコミットメント（LINE質問・3分相談）のクリニック側提供有無確認</strong> → DAY7カード②文言確定</li>
+        <li><strong>配信時刻3案A/Bテスト判断</strong> → 20:00 / 21:00 / 12:00 のどれでGOするか or DAY1のみ時刻違い配信でA/B</li>
+        <li><strong>LP1・LP2のURL確定</strong> → ren記入欄4-A・4-B</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>

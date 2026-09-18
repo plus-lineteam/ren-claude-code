@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ロール活用ガイド — リアル業務フロー</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+    background: #fafafa; color: #222; line-height: 2; max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.6rem; font-weight: 800; margin: 0 0 0.3rem; color: #111; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.3rem; font-weight: 700; margin: 3rem 0 0.8rem; color: #111; padding-bottom: 0.3rem; border-bottom: 2px solid #e0e0e0; }
+  h3 { font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem; color: #333; }
+  h4 { font-size: 0.95rem; font-weight: 700; margin: 1.2rem 0 0.4rem; color: #444; }
+  p { margin-bottom: 1rem; color: #444; font-size: 0.95rem; }
+  strong { color: #111; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  ul { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.3rem; font-size: 0.95rem; color: #444; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th { text-align: left; padding: 0.6rem; font-size: 0.85rem; background: #f5f5f5; border-bottom: 2px solid #ddd; }
+  td { padding: 0.6rem; font-size: 0.88rem; border-bottom: 1px solid #eee; color: #444; }
+
+  .callout { background: #fff8e1; border-left: 4px solid #f9a825; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0; }
+  .callout.blue { background: #e3f2fd; border-color: #1976d2; }
+  .callout.green { background: #e8f5e9; border-color: #388e3c; }
+  .callout p { margin-bottom: 0.3rem; }
+
+  .diagram { background: #f5f5f5; border: 1px solid #ddd; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; text-align: center; }
+  .diagram-title { font-size: 0.8rem; color: #888; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 1rem; }
+  .diagram-col { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+  .diagram-row { display: flex; align-items: flex-start; justify-content: center; gap: 1rem; flex-wrap: wrap; margin: 0.5rem 0; }
+  .diagram-box { background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.85rem; font-weight: 600; color: #333; min-width: 140px; text-align: center; }
+  .diagram-box.ceo { border-color: #c62828; background: #fce4ec; color: #b71c1c; }
+  .diagram-box.cio { border-color: #1976d2; background: #e3f2fd; color: #1565c0; }
+  .diagram-box.cmo { border-color: #f57f17; background: #fff8e1; color: #e65100; }
+  .diagram-box small { display: block; font-weight: 400; font-size: 0.75rem; color: #888; margin-top: 2px; }
+  .diagram-arrow-down { color: #999; font-size: 1.2rem; text-align: center; padding: 0.2rem 0; }
+
+  .chat { background: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.2rem; margin: 0.5rem 0; }
+  .chat-msg { margin-bottom: 0.8rem; }
+  .chat-msg:last-child { margin-bottom: 0; }
+  .chat-user { font-weight: 700; font-size: 0.8rem; color: #1976d2; margin-bottom: 0.1rem; }
+  .chat-body { font-size: 0.88rem; color: #333; margin-left: 0.8rem; line-height: 1.8; }
+  .chat-memo { background: #e8f5e9; border-left: 3px solid #388e3c; padding: 0.4rem 0.8rem; margin: 0.3rem 0 0.5rem 0.8rem; font-size: 0.82rem; color: #2e7d32; border-radius: 0 4px 4px 0; }
+
+  .result-box { background: #fff; border: 2px solid #1976d2; border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; text-align: center; }
+  .result-box h3 { color: #1565c0; margin: 0 0 0.5rem; }
+  .result-box p { margin: 0; }
+
+  .role-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+  .role-card h4 { font-size: 0.95rem; margin: 0 0 0.5rem; }
+  .role-card .tag { display: inline-block; padding: 0.1rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-right: 0.3rem; }
+  .role-card .tag.red { background: #fce4ec; color: #c62828; }
+  .role-card .tag.blue { background: #e3f2fd; color: #1976d2; }
+  .role-card .tag.orange { background: #fff8e1; color: #e65100; }
+  .role-card ul { margin: 0.5rem 0 0 1.2rem; }
+  .role-card li { font-size: 0.88rem; margin-bottom: 0.2rem; }
+
+  /* フローUI */
+  .flow { margin: 1rem 0; padding: 0; }
+  .flow-trigger {
+    background: #333; color: #fff; padding: 0.6rem 1rem; border-radius: 8px;
+    font-size: 0.9rem; font-weight: 600; margin-bottom: 0;
+  }
+  .flow-step {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    padding: 0.5rem 0; margin-left: 1.5rem;
+    border-left: 2px solid #ddd; padding-left: 1rem;
+  }
+  .flow-step:last-child { border-left-color: transparent; }
+  .flow-label {
+    flex-shrink: 0; padding: 0.2rem 0.6rem; border-radius: 4px;
+    font-size: 0.75rem; font-weight: 700; min-width: 40px; text-align: center;
+  }
+  .flow-label.ren { background: #333; color: #fff; }
+  .flow-label.ceo { background: #fce4ec; color: #c62828; }
+  .flow-label.cio { background: #e3f2fd; color: #1976d2; }
+  .flow-label.cmo { background: #fff8e1; color: #e65100; }
+  .flow-label.cto { background: #e8f5e9; color: #2e7d32; }
+  .flow-content { font-size: 0.88rem; color: #444; line-height: 1.6; }
+  .flow-content strong { color: #222; }
+  .flow-note { font-size: 0.8rem; color: #888; margin-top: 0.2rem; }
+  .flow-box {
+    background: #f9f9f9; border: 1px solid #e0e0e0; border-radius: 8px;
+    padding: 1rem 1.2rem; margin: 1rem 0 1.5rem;
+  }
+  .flow-box h4 { font-size: 0.95rem; margin: 0 0 0.8rem; color: #333; }
+</style>
+</head>
+<body>
+
+<h1>ロール活用ガイド</h1>
+<p class="subtitle">リアル業務でどう使い分けてるか。コピーできるレベルで。</p>
+
+<div class="callout blue">
+  <p><strong>もくじ</strong></p>
+  <p>1. <a href="#origin" style="color:#1976d2;">そもそもどうやって組織ができたか</a>（実際の会話ログ）</p>
+  <p>2. <a href="#ren" style="color:#1976d2;">renのリアル業務フロー</a>（LINEマーケティング）</p>
+  <p>3. <a href="#seo" style="color:#1976d2;">SEOマーケターに置き換えると？</a></p>
+</div>
+
+<!-- ===== 組織誕生の実際のログ ===== -->
+<h2 id="origin">1. そもそもどうやって組織ができたか</h2>
+
+<p><strong>以下はrenの実際のチャットログ。</strong>加工なし。雑な相談から組織が生まれた瞬間。</p>
+
+<h3>きっかけ — 「FBしすぎてる」問題</h3>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">（X記事のURLを貼って）<br>こうしたい　今俺FBしすぎてる　ほぼ自分でやってるのと時間変わんない結局</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">全部読んだ。これ、めちゃくちゃ刺さる記事だな。あなたの問題ドンピシャ。<br><br>
+    あなたが今ハマってるのはこのループ:<br><br>
+    あなた「朝レポ作って」→ AI実行 → 結果見る<br>
+    →「ここ違う」→ FB<br>
+    →「この角度でも見て」→ FB<br>
+    → 結局、判断・方針決め・品質チェック全部自分<br><br>
+    記事の言葉で言うと<strong>「社長が課長・部長の仕事を全部やってる状態」</strong>。</div>
+  </div>
+</div>
+
+<h3>renの提案 — 「社長とCMO分けない？」</h3>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">pmをCMOにするのは？<br>判断系はpm を特化させた syatyo みたいなやつを作るとか</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">なぜ PM → CMO + 社長 に分けるべきか:<br><br>
+    今の /pm の中身を見ると、2つの役割が混在してる。<br>
+    判断系（= 社長の仕事）とマーケ専門知識系（= CMOの仕事）がごちゃ混ぜ。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">社長<br>
+    ├─ CMO（マーケ）<br>
+    ├─ CTO（開発）<br>
+    ├─ CFO（数字）<br>
+    └─ COO（運用）<br><br>
+    これ理想です<br>
+    今はCMOとCIOだけいるって感じかな<br>
+    そこの部間の連携が必須ってことだね　その2人で壁打ちしたMTG内容とか聞きたいおもそろう</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai">AI</div>
+    <div class="chat-body">めちゃくちゃいい。<strong>部門間MTG</strong>、これが今まで無かったピースだ。<br><br>
+    組織図（確定版）:<br>
+    社長 → 判断 / ルーティング / 品質ゲート<br>
+    ├─ CMO → マーケ施策設計<br>
+    └─ CIO → データ分析<br>
+    CMOとCIOの壁打ちが社長の最大の武器。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">あーーーーー最高。絶対やろう</div>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>ポイント：renがやったのは「FBしすぎてる」という愚痴と、「こういう構成がいい」という雑な図だけ。</strong></p>
+  <p>具体的な設計（mind.md、部門間MTG、品質ゲート）は全部AIが提案して、renが「最高」「やろう」と言っただけ。</p>
+</div>
+
+<h3>育てていく過程 — ダメ出しの嵐（実際のログ）</h3>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">中身ないし数字もないし判断しようがない　根拠がない<br>どんなGOALでやってんの？これは</div>
+  </div>
+  <div class="chat-memo">→ CEOの報告が浅かった。GOALの明文化が必要だと判明</div>
+</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">なんか小さい改善しかなくね？</div>
+  </div>
+  <div class="chat-memo">→ 既存PUの微調整ばかりで大きな打ち手が抜けてた</div>
+</div>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">未設置とか目星くらいは教えてよ　何も言ってないに等しいよ<br><br>全体的に浅い</div>
+  </div>
+  <div class="chat-memo">→ mind.md: 「データなしで戦略を書くな。具体がないなら出すな」</div>
+</div>
+
+<div class="result-box">
+  <h3>この会話から生まれたもの</h3>
+  <p>1回の雑な相談「FBしすぎてる」から：<br><br>
+  ・CEO/CIO/CMOの3ロール体制<br>
+  ・部門間MTG（CIOとCMOの壁打ち）<br>
+  ・品質ゲート（レポート品質チェック）<br>
+  ・GOALの明文化（goals.md）<br>
+  ・行動原則10個<br><br>
+  <strong>全部、renの「雑な一言」と「ダメ出し」から生まれた。</strong></p>
+</div>
+
+<hr>
+
+<!-- ===== リアル業務フロー ===== -->
+
+<h2 id="ren">2. なぜ分けてるか・何をやらせてるか・どう回してるか</h2>
+
+<h3>なぜロールを分けてるのか</h3>
+
+<p>最初は1ロール（PM）で全部やってた。でも問題が出た：</p>
+
+<ul>
+  <li><strong>データ分析とマーケ施策の知識が混ざる</strong> — 分析の学びとマーケの学びが同じmemory.mdに入って、どっちの文脈かわからなくなる</li>
+  <li><strong>判断と作業が混ざる</strong> — 「この施策やるべき？」の判断と「じゃあ具体的にどう設計する？」の作業を同じロールがやると、判断が雑になる</li>
+  <li><strong>専門性が育たない</strong> — 何でも屋は何にも詳しくならない</li>
+</ul>
+
+<p>分けた結果：<strong>各ロールの記憶が専門分野に集中して、精度が上がった。</strong></p>
+
+<h3>各ロールが実際にやってる業務</h3>
+
+<div class="role-card">
+  <h4><span class="tag red">CEO</span> 判断・振り分け</h4>
+  <p style="font-size:0.88rem; color:#666;"><strong>自分では手を動かさない。</strong>「何を」「誰に」「なぜ」やらせるかを決めるだけ。</p>
+  <p style="font-size:0.85rem; color:#333;"><strong>実際の業務：</strong></p>
+  <ul>
+    <li>朝の状況把握 → tasks.json見て今日やるべきことを判断</li>
+    <li>CIOにデータ取得を指示（「BMI診断の効果データ出せ」）</li>
+    <li>CIOの分析結果を受けて、CMOに施策を振る（「MCV率が低い。改善案出して」）</li>
+    <li>CMOのアウトプットを品質チェック（検索意図と合ってるか？データの裏付けあるか？）</li>
+    <li>renに報告（結論 + 推奨アクション + GOでいい？）</li>
+  </ul>
+  <p style="font-size:0.82rem; color:#c62828;"><strong>やっちゃダメなこと：</strong>コード書く、データ集計する、マーケの中身を語る。全部専門家に振る。</p>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag blue">CIO</span> データ分析</h4>
+  <p style="font-size:0.88rem; color:#666;">数字を出して「何が起きてるか」「なぜか」を明らかにする。</p>
+  <p style="font-size:0.85rem; color:#333;"><strong>実際の業務：</strong></p>
+  <ul>
+    <li>GOAL進捗スキャン（友だち数・売上の達成率、残り日数からペース計算）</li>
+    <li>異常検知（3日連続で下がってるKPIを自動検出）</li>
+    <li>施策の効果判定（PU設置後3-5日のデータで効果あり/なし判定）</li>
+    <li>ジャンル別・記事別の深堀り分析（CEOに「なぜ落ちてるか」を報告）</li>
+    <li>CMOにデータを渡す（施策設計の根拠として）</li>
+  </ul>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag orange">CMO</span> マーケティング施策</h4>
+  <p style="font-size:0.88rem; color:#666;">「ユーザーの頭の中」から施策を設計する。</p>
+  <p style="font-size:0.85rem; color:#333;"><strong>実際の業務：</strong></p>
+  <ul>
+    <li>LINE診断の設計（設問・結果タイプ・LP導線）</li>
+    <li>PU（ポップアップ）の訴求文言設計</li>
+    <li>記事トリアージ（どの記事を優先的に改善するか、理由つきで）</li>
+    <li>デザイナー向けブリーフ（設計書）を自動生成</li>
+    <li>CIOのデータを受けて「だからこう改善すべき」を提案</li>
+  </ul>
+</div>
+
+<div class="role-card">
+  <h4><span class="tag green">CTO</span> システム・開発</h4>
+  <p style="font-size:0.88rem; color:#666;">コードを書く唯一のロール。</p>
+  <p style="font-size:0.85rem; color:#333;"><strong>実際の業務：</strong></p>
+  <ul>
+    <li>ダッシュボード（line-dashboard）の開発・修正</li>
+    <li>データパイプラインの管理（CSVダウンロード→集計→可視化）</li>
+    <li>スキルファイルの修正・新規作成</li>
+    <li>システム障害対応（「数字がおかしい」→ バグ特定→修正）</li>
+  </ul>
+</div>
+
+<h3>どうコミュニケーション取ってるか</h3>
+
+<p><strong>renは基本的にCEOとしか話さない。</strong>CIO・CMO・CTOには直接指示しない。</p>
+
+<div class="diagram">
+  <div class="diagram-title">コミュニケーションの流れ</div>
+  <div class="diagram-col">
+    <div class="diagram-box" style="border-color:#333;">ren<small>「おはよう」「GO」「違う」だけ</small></div>
+    <div class="diagram-arrow-down">↕ 話す相手はCEOだけ</div>
+    <div class="diagram-box ceo">CEO<small>判断して、適切なロールに振る</small></div>
+    <div class="diagram-arrow-down">↓ 指示</div>
+    <div class="diagram-row">
+      <div class="diagram-box cio">CIO<small>データ出す</small></div>
+      <div class="diagram-box cmo">CMO<small>施策作る</small></div>
+    </div>
+  </div>
+</div>
+
+<h3 style="font-size:1.15rem; color:#1976d2; border-left: 4px solid #1976d2; padding-left: 0.8rem; margin-top: 2rem;">具体的な振り方 — renの一言からどう動くか</h3>
+
+<p>一番聞かれるのがここ。<strong>renの雑な一言を、CEOがどう分解して、誰にどんな指示を出すか。</strong></p>
+
+<div class="callout blue">
+  <p><strong>原則：renは「何がしたいか」だけ言う。「誰にやらせるか」「どんなデータが必要か」はCEOが判断する。</strong></p>
+</div>
+
+<div class="flow-box">
+<h4>パターン1：状況確認 — CIOだけで完結</h4>
+<div class="flow-trigger">ren：「今月の調子は？」</div>
+<div class="flow">
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">「renが知りたいのはGOALペース。数字が要る」<br>→ CIOにデータ取得を指示</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cio">CIO</span>
+    <div class="flow-content">GOAL vs 現状のGAP算出。ジャンル別・ペース計算つき<br><strong>「友だち573人/月間ペース1,110人。GOAL 1,000人の111%」</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">CIOのデータから結論を出す<br><strong>→ renに「到達圏内です。ただし医療ダイエットだけ危ない」と報告</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ren">ren</span>
+    <div class="flow-content">「GO」or 追加指示</div>
+  </div>
+</div>
+<div class="flow-note">CIOにはデータだけ出させる。結論・判断はCEOの仕事。</div>
+</div>
+
+<div class="flow-box">
+<h4>パターン2：改善 — CIO→CMOの直列</h4>
+<div class="flow-trigger">ren：「この記事どうにかしたい」</div>
+<div class="flow">
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">「まず何がボトルネックか特定が先」<br>→ CIOにファネル分析を指示</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cio">CIO</span>
+    <div class="flow-content">記事のファネルデータ分析<br><strong>「診断開始率82%、完了率76%は問題なし。MCV率1.8%が他ジャンルの半分 → ここがボトルネック」</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">CIOの結果を見て次の振り先を判断<br>→ CMOに改善案を指示（CIOのデータを渡す）</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cmo">CMO</span>
+    <div class="flow-content">CIOデータを元に施策設計<br><strong>「結果ページのLP導線を改善。ブリーフも生成しました」</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">品質チェック → renに報告</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ren">ren</span>
+    <div class="flow-content">「GO」or 修正指示</div>
+  </div>
+</div>
+<div class="flow-note">CIOが先、CMOが後（直列）。データなしで施策を作らせない。</div>
+</div>
+
+<div class="flow-box">
+<h4>パターン3：効果検証 — CIOだけ</h4>
+<div class="flow-trigger">ren：「PU設置した後の効果は？」</div>
+<div class="flow">
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">「前後比較データがあれば判定できる。CMO不要」<br>→ CIOに比較データを指示</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cio">CIO</span>
+    <div class="flow-content">設置前5日 vs 設置後5日のデータ比較<br><strong>「転換率 1.2%→2.6%（+117%）」</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">CEOが判定：効果あり → 継続<br><strong>→ renに「効果あり。このまま継続」と報告</strong></div>
+  </div>
+</div>
+<div class="flow-note">データだけで完結する判断はCIOだけ。CMOを巻き込まない。</div>
+</div>
+
+<div class="flow-box">
+<h4>パターン4：新規作成 — CIO+CMO並列</h4>
+<div class="flow-trigger">ren：「新しい診断作りたい。美容整形」</div>
+<div class="flow">
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">「KW分析と設計を同時に走らせられる」<br>→ CIOとCMOに<strong>同時に</strong>指示</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cio">CIO</span>
+    <div class="flow-content">流入KW上位10個の意図分類 + ボリューム調査<strong>（並列）</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cmo">CMO</span>
+    <div class="flow-content">診断設計ブリーフの準備<strong>（並列）</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">両方揃ったら部門間MTG設定<br>→ CIOデータ × CMO設計を突き合わせて合意形成</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ren">ren</span>
+    <div class="flow-content">合意内容を見て「GO」</div>
+  </div>
+</div>
+<div class="flow-note">独立した作業は並列。待ち時間を減らす。</div>
+</div>
+
+<div class="flow-box">
+<h4>パターン5：障害 — CTOだけ</h4>
+<div class="flow-trigger">ren：「ダッシュボードの数字おかしい」</div>
+<div class="flow">
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">「システム障害。CEOが触ると壊す」<br>→ CTOに原因特定を指示</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cto">CTO</span>
+    <div class="flow-content">原因特定 → 修正<br><strong>「data_loader.pyのnormalize処理が原因。修正完了」</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">確認 → renに「直った」と報告</div>
+  </div>
+</div>
+<div class="flow-note">CEOはコードを触らない。過去に触って壊した経験がある。</div>
+</div>
+
+<div class="flow-box">
+<h4>パターン6：週次資料 — 全ロール連携</h4>
+<div class="flow-trigger">ren：「週次資料入力して欲しい今週分」</div>
+<div class="flow">
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">「報告フォーマットに今週のデータを埋める仕事」<br>→ まずCIOに今週のデータ全量を出させる</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cio">CIO</span>
+    <div class="flow-content">今週分のデータ収集・集計<br><strong>友だち数・売上・CVR・ジャンル別内訳・施策効果を全量出す</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">CIOのデータを受け取り、報告フォーマットに整形<br>→ 前週比・GOAL進捗率を計算<br>→ 「好調/悪化」の判定をつける</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">来週のアクションプランが必要 → CMOに施策提案を依頼<br>「悪化してるジャンルの改善案出して」</div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label cmo">CMO</span>
+    <div class="flow-content">悪化ジャンルの改善施策を提案<br><strong>「医療ダイエットのMCV改善案 + 来週の優先アクション」</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ceo">CEO</span>
+    <div class="flow-content">データ + 分析 + 来週アクションをまとめてスプシに入力<br><strong>→ renに「入力完了。確認お願いします」</strong></div>
+  </div>
+  <div class="flow-step">
+    <span class="flow-label ren">ren</span>
+    <div class="flow-content">スプシ確認 → 「OK」or 修正指示</div>
+  </div>
+</div>
+<div class="flow-note">週次は全ロール使う。データ収集（CIO）→ 整形・判定（CEO）→ 来週アクション（CMO）→ 入力（CEO）。renは確認だけ。</div>
+</div>
+
+<!-- 裏側セクション -->
+<style>
+  .behind-grid {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 0;
+    margin: 1.5rem 0; border: 1px solid #e0e0e0; border-radius: 10px; overflow: hidden;
+  }
+  .behind-row {
+    display: contents;
+  }
+  .behind-row:not(:last-child) .behind-need,
+  .behind-row:not(:last-child) .behind-said,
+  .behind-row:not(:last-child) .behind-who {
+    border-bottom: 1px solid #eee;
+  }
+  .behind-need {
+    background: #f5f5f5; padding: 0.8rem 1rem; font-size: 0.85rem; color: #666;
+    display: flex; align-items: center;
+  }
+  .behind-said {
+    background: #fff; padding: 0.8rem 1.2rem; font-size: 0.9rem; color: #333;
+    display: flex; align-items: center;
+  }
+  .behind-said strong { color: #1976d2; }
+  .behind-who {
+    padding: 0.8rem 1rem; font-size: 0.8rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .behind-who.cto { background: #e8f5e9; color: #2e7d32; }
+  .behind-who.auto { background: #f3e5f5; color: #7b1fa2; }
+  .behind-arrow { text-align: center; color: #1976d2; font-size: 1.5rem; margin: 0.3rem 0; }
+</style>
+
+<h4 style="margin-top: 2rem;">裏側：これを実現するのに何が必要だった？</h4>
+
+<p>難しそうに見えるけど、<strong>renが技術的なことをやったことは一度もない。</strong><br>
+全部「〇〇して」と言っただけ。</p>
+
+<div class="behind-grid">
+  <div class="behind-row">
+    <div class="behind-need">📊 スプシの読み書き</div>
+    <div class="behind-said"><strong>「このスプシ読み書きできるようにして」</strong></div>
+    <div class="behind-who cto">→ CTO</div>
+  </div>
+  <div class="behind-row">
+    <div class="behind-need">🗄️ BQデータ取得</div>
+    <div class="behind-said"><strong>「BQのデータ使えるようにして」</strong></div>
+    <div class="behind-who cto">→ CTO</div>
+  </div>
+  <div class="behind-row">
+    <div class="behind-need">📋 レポートフォーマット</div>
+    <div class="behind-said"><strong>「前回と同じ形式で」</strong>（2回目から自動）</div>
+    <div class="behind-who auto">→ 自動記憶</div>
+  </div>
+  <div class="behind-row">
+    <div class="behind-need">🔄 毎週の定型作業</div>
+    <div class="behind-said"><strong>「これ毎週やるからスキルにして」</strong></div>
+    <div class="behind-who cto">→ CTO</div>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>renがやったことは「〇〇して」と言っただけ。</strong></p>
+  <p>API連携もデータパイプラインもスキル化も、全部CTOが勝手にやった。<br>
+  技術的な知識はゼロでいい。「こうなったら嬉しい」を言えればいい。</p>
+</div>
+
+<div class="callout green">
+  <p><strong>まとめ：振り方の判断基準</strong></p>
+  <p>・データが必要 → <span class="tag blue">CIO</span><br>
+  ・施策/設計が必要 → <span class="tag orange">CMO</span>（ただしCIOのデータが先）<br>
+  ・コード/システムの問題 → <span class="tag green">CTO</span><br>
+  ・データだけで完結する判断 → CIOだけ。CMO不要<br>
+  ・独立した作業 → 並列で動かす<br>
+  ・データが施策の前提 → 直列（CIO先→CMO後）<br>
+  ・週次等の大きいタスク → 全ロール連携（CIO→CEO→CMO→CEO）</p>
+</div>
+
+<h3>品質をどう上げてるか</h3>
+
+<p>2つの仕組みで品質を担保してる。</p>
+
+<h4>① CEOの品質ゲート</h4>
+<p>CIO・CMOのアウトプットをrenに出す前に、CEOがチェックする。</p>
+<ul>
+  <li>計算の根拠はあるか？（CIOの数字が正しいか）</li>
+  <li>ユーザーの頭の中から始まってるか？（CMOの施策が的外れじゃないか）</li>
+  <li>GOALへの貢献度は示されてるか？</li>
+  <li>「どうする？」で終わってないか？（判断投げになってないか）</li>
+</ul>
+<p>→ NGならrenに出さずにCIO・CMOに差し戻す。renが見るのは品質チェック済みのものだけ。</p>
+
+<h4>② CIOとCMOの壁打ち（部門間MTG）</h4>
+<p>CIOのデータとCMOの施策を突き合わせて、お互いに検証する。</p>
+<ul>
+  <li>CIO：「この施策、データ的に根拠ある？他に見るべき数字は？」</li>
+  <li>CMO：「この数字の裏に、ユーザー体験の問題があるんじゃない？」</li>
+  <li>2-3ラウンドで合意 → 合意した内容をCEOに上げる</li>
+</ul>
+
+<div class="callout">
+  <p><strong>結果：renが「違う」と言う回数が減る。</strong></p>
+  <p>品質ゲート + 部門間MTGで、renに上がる前にほとんどの問題が潰される。<br>
+  renの仕事は「GO」を出すことに集中できる。</p>
+</div>
+
+<hr>
+
+<h3>日常の流れまとめ</h3>
+
+<div class="diagram">
+  <div class="diagram-title">ren の朝の流れ</div>
+  <div class="diagram-col">
+    <div class="diagram-box" style="border-color:#333;">ren：「おはよう」</div>
+    <div class="diagram-arrow-down">↓</div>
+    <div class="diagram-box ceo">CEO が自動起動<small>mind.md + memory.md + tasks.json 読み込み</small></div>
+    <div class="diagram-arrow-down">↓</div>
+    <div class="diagram-box cio">CEO → CIO にスキャン指示<small>「GOAL vs 現状のGAP出せ」「異常値チェック」「効果判定期限チェック」</small></div>
+    <div class="diagram-arrow-down">↓</div>
+    <div class="diagram-box ceo">CEO がCIOの結果を見て判断<small>「医療ダイエットが危ない。CMOに施策出させよう」</small></div>
+    <div class="diagram-arrow-down">↓</div>
+    <div class="diagram-box cmo">CEO → CMO に施策依頼<small>「CIOのデータ渡すから、改善案出して」</small></div>
+    <div class="diagram-arrow-down">↓</div>
+    <div class="diagram-box ceo">CEO が品質チェック → renに報告<small>「結論 + 推奨アクション + GOALへの影響」</small></div>
+    <div class="diagram-arrow-down">↓</div>
+    <div class="diagram-box" style="border-color:#333;">ren：「GO」or 修正指示</div>
+  </div>
+</div>
+
+<p><strong>renがやってること：「おはよう」と「GO」だけ。</strong><br>
+間のCEO→CIO→CEO→CMO→品質チェックは全部自動で回る。</p>
+
+<h4>具体的な指示の出し方（renの実際のやりとり）</h4>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">おはよう</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（CEO）</div>
+    <div class="chat-body">
+    ━━ 本日の状況 ━━<br><br>
+    ⚠ 医療ダイエット: 今月CV3件（目標10件、残り16日）<br>
+    → CIOに分析済み。原因: SEO記事の順位低下<br>
+    → CMOにリライト案を依頼中<br><br>
+    ⚠ 包茎PU: 3/15に設置した新PU、効果観測期間終了<br>
+    → CIOに初動データの確認を振ります<br><br>
+    ✅ AGA: 先週のPU差し替え効果あり（転換率 1.2%→2.6%）<br><br>
+    ■ 本日やること（提案）<br>
+    1. 医療ダイエットのリライト案レビュー（CMOから上がり次第）<br>
+    2. 包茎PUの初動データ確認 → 効果判定<br><br>
+    GOで進めます。追加指示あれば。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">2の結果出たら見せて。あと新しい記事の診断設計も今週やりたい</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（CEO）</div>
+    <div class="chat-body">了解。<br>
+    ・包茎PU初動データ → CIOに振りました。結果出次第報告します<br>
+    ・新記事の診断設計 → CMOに設計ブリーフの準備を指示します。ジャンルは？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">美容整形</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（CEO）</div>
+    <div class="chat-body">CMOに美容整形の診断設計ブリーフ作成を依頼しました。<br>
+    CIOに美容整形ジャンルの既存データ（流入数・検索意図）の収集も並行で振ります。<br><br>
+    本日のタスク:<br>
+    1. 包茎PU初動データ確認 → CIO作業中<br>
+    2. 医療ダイエットリライト案 → CMO作業中<br>
+    3. 美容整形 診断設計 → CIO+CMO並行作業中</div>
+  </div>
+</div>
+
+<div class="callout">
+  <p><strong>ポイント：renは「何を」しか言ってない。</strong></p>
+  <p>「誰に振るか」「どんなデータが必要か」「並行で動かすか直列か」は全部CEOが判断してる。<br>
+  これがロール分けの最大のメリット。<strong>判断をAIに任せられる。</strong></p>
+</div>
+
+<h4>途中で差し戻すパターン</h4>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（CEO）</div>
+    <div class="chat-body">CMOから美容整形の診断設計ブリーフが上がりました：<br><br>
+    ━━ 設計ブリーフ ━━<br>
+    テーマ: 美容整形の適性診断<br>
+    設問数: 5問<br>
+    結果タイプ: 3タイプ<br>
+    （中略）</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">ren</div>
+    <div class="chat-body">検索意図見てる？「美容整形 おすすめ」で来る人と「二重整形 失敗」で来る人じゃ全然違うじゃん</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（CEO）</div>
+    <div class="chat-body">確かに。CMOに差し戻します。<br>
+    「検索意図別に診断の入り口を分けろ。CIOに流入キーワード上位10個の意図分類を出させてからやり直せ」</div>
+  </div>
+  <div class="chat-memo">→ mind.md: 「診断設計は検索意図の分類が先。いきなり設問から作るな」<br>
+  → この学びが次回以降ずっと適用される</div>
+</div>
+
+<hr>
+
+<h2 id="seo">SEOマーケターに置き換えると？</h2>
+
+<p>renのCEO/CIO/CMO構成を、SEOの現場に置き換えた例。<br>
+<strong>3ロール: manager（判断）/ analyst（分析）/ writer（執筆）</strong></p>
+
+<h4>日常業務①：毎朝の順位チェック</h4>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">おはよう</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（manager）</div>
+    <div class="chat-body">analystに順位チェックを振りました。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#1976d2;">AI（analyst）</div>
+    <div class="chat-body">━━ 本日の順位変動 ━━<br><br>
+    ⚠ 急落<br>
+    ・「医療脱毛 おすすめ」5位 → 12位（-7）<br>
+    &nbsp;&nbsp;原因推定: 競合Aが3/20に大幅リライト（文字数倍増）<br><br>
+    ⚠ 要注意<br>
+    ・「AGA 費用」8位 → 11位（-3）3日連続低下中<br><br>
+    ✅ 好調<br>
+    ・「二重整形 ダウンタイム」圏外 → 14位（新記事、初ランクイン）</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（manager）</div>
+    <div class="chat-body">「医療脱毛」が緊急。writerにリライト構成案を依頼します。<br>
+    「AGA」は3日連続だから原因特定が先。analystに深堀り分析を追加で振ります。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">👍</div>
+  </div>
+</div>
+
+<h4>日常業務②：リライト依頼</h4>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（manager）</div>
+    <div class="chat-body">writerから「医療脱毛 おすすめ」のリライト構成案が上がりました。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#e65100;">AI（writer）</div>
+    <div class="chat-body">■ 追加セクション<br>
+    ・H2: 医療脱毛の副作用・リスク（競合にあって自記事にない）<br>
+    ・H2: 料金比較表【2026年最新】（検索意図に直結）<br><br>
+    ■ 内部リンク追加（3本）<br>
+    ・「医療脱毛 痛み」→ 副作用セクションに設置<br>
+    ・「医療脱毛 VIO」→ 料金比較に設置<br>
+    ・「医療脱毛 口コミ」→ まとめに設置<br><br>
+    ■ 共起語補完<br>
+    「施術回数」「照射範囲」「アフターケア」を本文に追加<br><br>
+    analystの分析: この構成で共起語カバー率 62%→86%（競合89%にほぼ並ぶ）</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">料金表は最新データ使ってね。あと「おすすめクリニック」の順番は料金安い順じゃなくて口コミ評価順にして</div>
+  </div>
+  <div class="chat-memo">→ mind.md: 「クリニック比較は口コミ評価順。料金順にするな」</div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（manager）</div>
+    <div class="chat-body">writerに修正指示出しました。修正版は30分後に上がります。</div>
+  </div>
+</div>
+
+<h4>日常業務③：新記事の企画</h4>
+
+<div class="chat">
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">来月の記事ネタ考えたい</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（manager）</div>
+    <div class="chat-body">analystにキーワード調査を振ります。</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#1976d2;">AI（analyst）</div>
+    <div class="chat-body">■ 未カバーで検索ボリュームが大きいKW<br>
+    ・「医療脱毛 学生」月間 2,400（競合少ない、難易度低い）<br>
+    ・「ヒゲ脱毛 何回」月間 1,900（既存記事で部分カバー可能）<br>
+    ・「VIO脱毛 恥ずかしい」月間 3,100（検索意図が明確）<br><br>
+    ■ 既存記事のリライトで狙えるKW<br>
+    ・「医療脱毛 安い」→ 既存記事に料金比較追加で狙える<br><br>
+    ■ おすすめ優先度<br>
+    1. VIO脱毛 恥ずかしい（ボリューム大 × 競合弱い）<br>
+    2. 医療脱毛 学生（新規記事 × 難易度低い）<br>
+    3. 医療脱毛 安い（リライトで対応可能）</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user ai" style="color:#c62828;">AI（manager）</div>
+    <div class="chat-body">analyst推奨の優先度で妥当だと思います。<br>
+    1と2の構成案をwriterに作らせますか？</div>
+  </div>
+  <div class="chat-msg">
+    <div class="chat-user">あなた</div>
+    <div class="chat-body">1だけ先にやって</div>
+  </div>
+</div>
+
+<div class="result-box">
+  <h3>SEO 3ロールの使い分けまとめ</h3>
+  <table>
+    <tr><th>場面</th><th>manager</th><th>analyst</th><th>writer</th></tr>
+    <tr><td><strong>朝の順位チェック</strong></td><td>優先度判断<br>「どれが緊急？」</td><td>順位変動+原因分析</td><td>—</td></tr>
+    <tr><td><strong>リライト</strong></td><td>品質チェック+GO判断</td><td>競合分析+共起語調査</td><td>構成案+本文執筆</td></tr>
+    <tr><td><strong>新記事企画</strong></td><td>優先度判断</td><td>KW調査+ボリューム分析</td><td>構成案作成</td></tr>
+    <tr><td><strong>効果検証</strong></td><td>次のアクション判断</td><td>データ収集+比較分析</td><td>—</td></tr>
+  </table>
+  <p style="margin-top: 0.8rem;"><strong>あなたがやること：最初の一言 + GO/修正 だけ。</strong></p>
+</div>
+
+<hr>
+
+
+<hr>
+
+<p style="text-align: center;">
+  <a href="qa.html" style="color: #1976d2; text-decoration: none; font-weight: 600;">← Q&Aに戻る</a>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  <a href="case-studies.html" style="color: #1976d2; text-decoration: none; font-weight: 600;">ケーススタディを見る →</a>
+</p>
+
+<p style="text-align: center; color: #888; font-size: 0.85rem; margin-top: 2rem;">
+  Claude Code Starter Kit — by ren
+</p>
+
+</body>
+</html>

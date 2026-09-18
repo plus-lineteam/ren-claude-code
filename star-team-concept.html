@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Team 構成の概念図</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Hiragino Sans', sans-serif; background: #fafafa; padding: 2rem; color: #222; }
+h1 { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
+.subtitle { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+
+.diagram { max-width: 700px; margin: 0 auto; }
+
+/* GitHub（クラウド） */
+.cloud {
+  background: #f0f7ff; border: 2px solid #1976d2; border-radius: 16px;
+  padding: 1.5rem; margin-bottom: 2rem; text-align: center; position: relative;
+}
+.cloud-label {
+  position: absolute; top: -12px; left: 20px; background: #1976d2; color: #fff;
+  font-size: 0.75rem; font-weight: 700; padding: 2px 12px; border-radius: 8px;
+}
+.folder-box {
+  background: #fff; border: 1px solid #ddd; border-radius: 10px;
+  padding: 1rem; text-align: left; display: inline-block; width: 90%; margin-top: 0.5rem;
+}
+.folder-box .title { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.folder-tree { font-family: 'SF Mono', monospace; font-size: 0.78rem; color: #555; line-height: 1.8; }
+.folder-tree .new { color: #1976d2; font-weight: 600; }
+.folder-tree .existing { color: #888; }
+
+/* 矢印 */
+.arrows { display: flex; justify-content: space-around; margin: 1rem 0; position: relative; }
+.arrow-down {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+}
+.arrow-line { width: 2px; height: 30px; background: #999; }
+.arrow-head { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid #999; }
+.arrow-label { font-size: 0.72rem; color: #999; font-weight: 600; }
+.arrow-up-line { width: 2px; height: 30px; background: #d97706; }
+.arrow-up-head { width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 8px solid #d97706; }
+
+/* メンバーカード */
+.members { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.member-card {
+  background: #fff; border: 2px solid #e0e0e0; border-radius: 12px;
+  padding: 1rem; width: 200px; text-align: center;
+}
+.member-card.ren { border-color: #d97706; }
+.member-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
+.member-desc { font-size: 0.75rem; color: #888; line-height: 1.5; }
+.member-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+
+/* 吹き出し */
+.bubble {
+  background: #fff8e1; border: 1px solid #f9a825; border-radius: 8px;
+  padding: 0.8rem 1rem; margin: 1.5rem auto; max-width: 600px; font-size: 0.85rem; color: #555;
+}
+.bubble strong { color: #111; }
+
+/* 比較 */
+.compare { display: flex; gap: 1rem; margin: 2rem 0; }
+.compare-box { flex: 1; background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 1rem; }
+.compare-box.bad { border-color: #ef5350; }
+.compare-box.good { border-color: #4caf50; }
+.compare-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
+.compare-title.bad { color: #ef5350; }
+.compare-title.good { color: #4caf50; }
+.compare-list { font-size: 0.78rem; color: #666; line-height: 1.8; list-style: none; }
+.compare-list li::before { content: "• "; }
+</style>
+</head>
+<body>
+
+<div class="diagram">
+
+<h1>Star Team のしくみ</h1>
+<p class="subtitle">1つのフォルダをGitHubで共有する = 全員が同じ環境を持てる</p>
+
+<!-- GitHub クラウド -->
+<div class="cloud">
+  <span class="cloud-label">GitHub（クラウド）</span>
+  <div class="folder-box">
+    <div class="title">star-team/</div>
+    <div class="folder-tree">
+      <span class="existing">├── manage.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← タスク管理CLI</span><br>
+      <span class="existing">├── data/tasks.json &nbsp;← みんなで共有するタスクDB</span><br>
+      <span class="new">├── roles/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← AI人格（CEO/CIO/CMO）</span><br>
+      <span class="new">├── knowledge/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← 判断基準・ノウハウ集</span><br>
+      <span class="new">├── .claude/skills/ &nbsp;&nbsp;← 自動スキル</span><br>
+      <span class="existing">└── CLAUDE.md &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;← AIへの業務マニュアル</span>
+    </div>
+  </div>
+</div>
+
+<!-- 矢印 -->
+<div class="arrows">
+  <div class="arrow-down">
+    <div class="arrow-label">git clone（初回DL）</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-head"></div>
+  </div>
+  <div class="arrow-down">
+    <div class="arrow-label">git pull（最新を取得）</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-head"></div>
+  </div>
+  <div class="arrow-down">
+    <div class="arrow-up-head"></div>
+    <div class="arrow-up-line"></div>
+    <div class="arrow-label" style="color:#d97706">git push（変更を共有）</div>
+  </div>
+</div>
+
+<!-- メンバー -->
+<div class="members">
+  <div class="member-card ren">
+    <div class="member-icon">👑</div>
+    <div class="member-name">Ren</div>
+    <div class="member-desc">
+      star-team/<br>
+      └ 全く同じフォルダ<br><br>
+      知識の更新・タスク作成<br>
+      → git pushで全員に反映
+    </div>
+  </div>
+  <div class="member-card">
+    <div class="member-icon">👤</div>
+    <div class="member-name">Noah</div>
+    <div class="member-desc">
+      star-team/<br>
+      └ 全く同じフォルダ<br><br>
+      「診断作って」→ CMOの知識で動く<br>
+      「数字取って」→ CIOの知識で動く
+    </div>
+  </div>
+  <div class="member-card">
+    <div class="member-icon">👤</div>
+    <div class="member-name">Kate / Rinon</div>
+    <div class="member-desc">
+      star-team/<br>
+      └ 全く同じフォルダ<br><br>
+      同じ知識ベースで<br>
+      Claude Codeが動く
+    </div>
+  </div>
+</div>
+
+<!-- 吹き出し -->
+<div class="bubble">
+  <strong>つまり：</strong> Renが knowledge/ や roles/ を更新して push すると、メンバーが git pull した瞬間、全員のClaude Codeが同じ最新知識で動くようになる。<br><br>
+  <strong>新人が入っても：</strong> git clone するだけで、Renと同じAI環境が手に入る。
+</div>
+
+<!-- 比較 -->
+<div class="compare">
+  <div class="compare-box bad">
+    <div class="compare-title bad">❌ GitHubなし（今まで）</div>
+    <ul class="compare-list">
+      <li>各自のPCに別々のファイル</li>
+      <li>知識の共有 = チャットで口頭伝達</li>
+      <li>新人は1からセットアップ</li>
+      <li>Renが更新しても届かない</li>
+    </ul>
+  </div>
+  <div class="compare-box good">
+    <div class="compare-title good">✅ GitHubあり（これから）</div>
+    <ul class="compare-list">
+      <li>全員が同じフォルダを持つ</li>
+      <li>知識の共有 = git push / pull</li>
+      <li>新人は git clone で即戦力</li>
+      <li>Renの更新が全員に届く</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

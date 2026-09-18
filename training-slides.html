@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINEマーケ研修 — スライド草案</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#FAF8F5;color:#292524;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;line-height:1.6}
+
+/* ナビ */
+.nav{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1px solid #E7E5E4;padding:12px 28px;display:flex;align-items:center;gap:16px}
+.nav h1{font-size:1rem;font-weight:700}
+.nav .part-tabs{display:flex;gap:0;margin-left:auto}
+.nav .pt{padding:8px 18px;font-size:.82rem;cursor:pointer;border-bottom:3px solid transparent;color:#A8A29E;transition:color .2s}
+.nav .pt:hover{color:#292524}
+.nav .pt.active{color:#D97706;border-bottom-color:#D97706;font-weight:600}
+
+/* スライドコンテナ */
+.slides-wrap{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+
+/* パートヘッダー */
+.part-header{margin:48px 0 24px;padding:20px 0;border-bottom:2px solid #E7E5E4}
+.part-header:first-child{margin-top:0}
+.part-header .part-label{font-size:.75rem;font-weight:700;color:#D97706;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+.part-header h2{font-size:1.4rem;font-weight:800}
+.part-header .part-sub{font-size:.85rem;color:#A8A29E;margin-top:4px}
+
+/* スライドカード */
+.slide{background:#fff;border-radius:14px;padding:0;margin-bottom:20px;box-shadow:0 2px 10px rgba(120,100,80,.06);border:1px solid #E7E5E4;overflow:hidden;transition:box-shadow .2s}
+.slide:hover{box-shadow:0 4px 20px rgba(120,100,80,.12)}
+
+.slide-head{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid #F5F3F0;background:#FDFCFB}
+.slide-num{width:32px;height:32px;border-radius:50%;background:#FEF3C7;color:#D97706;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.slide-title{font-size:.92rem;font-weight:700}
+.slide-tag{margin-left:auto;font-size:.68rem;padding:3px 10px;border-radius:20px;font-weight:600;flex-shrink:0}
+.slide-tag.talk{background:#FEF3C7;color:#D97706}
+.slide-tag.work{background:#DCFCE7;color:#16A34A}
+.slide-tag.demo{background:#DBEAFE;color:#2563EB}
+
+.slide-body{padding:20px}
+
+/* スライド内のコンテンツ要素 */
+.msg{font-size:.95rem;font-weight:700;margin-bottom:14px;color:#292524}
+
+.flow-box{background:#FAF8F5;border-radius:10px;padding:16px 18px;margin-bottom:14px;font-size:.83rem;line-height:1.8;border-left:4px solid #D97706}
+
+.tip-box{background:#F0FDF4;border-radius:10px;padding:12px 16px;font-size:.82rem;color:#166534;line-height:1.6;border-left:4px solid #16A34A;margin-top:12px}
+
+.compare-box{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.compare-box .col-a,.compare-box .col-b{border-radius:10px;padding:12px 14px;font-size:.82rem;line-height:1.5}
+.compare-box .col-a{background:#F5F3F0;border:1px solid #E7E5E4;color:#78716C}
+.compare-box .col-b{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
+
+.kpi-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.82rem;margin-bottom:14px;border-radius:10px;overflow:hidden;border:1px solid #E7E5E4}
+.kpi-table th{background:#FAF8F5;padding:10px 12px;text-align:left;font-weight:600;border-bottom:1px solid #E7E5E4;color:#A8A29E;font-size:.75rem}
+.kpi-table td{padding:10px 12px;border-bottom:1px solid #F5F3F0}
+.kpi-table tr:last-child td{border-bottom:none}
+.kpi-table .val{font-weight:700;color:#D97706}
+
+.step-flow{display:flex;gap:0;margin-bottom:14px;flex-wrap:wrap}
+.step-item{flex:1;min-width:140px;text-align:center;padding:12px 8px;position:relative}
+.step-item::after{content:"\2192";position:absolute;right:-6px;top:50%;transform:translateY(-50%);color:#D4D0CC;font-size:1.1rem;font-weight:700}
+.step-item:last-child::after{display:none}
+.step-icon{width:40px;height:40px;border-radius:50%;background:#FEF3C7;color:#D97706;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:1rem}
+.step-label{font-size:.78rem;font-weight:600}
+.step-time{font-size:.7rem;color:#A8A29E}
+
+.funnel{margin-bottom:14px}
+.funnel-step{display:flex;align-items:center;gap:10px;padding:8px 0}
+.funnel-arrow{color:#D97706;font-size:.9rem;padding-left:20px}
+.funnel-label{font-size:.85rem;font-weight:600}
+.funnel-desc{font-size:.78rem;color:#A8A29E}
+
+.circle-diagram{display:flex;align-items:center;justify-content:center;gap:0;margin:16px 0}
+.circle{border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.75rem;font-weight:600;line-height:1.3}
+.circle.outer{width:240px;height:240px;background:#FEF3C7;border:2px dashed #D97706;flex-direction:column;gap:4px}
+.circle.mid{width:160px;height:160px;background:#FFF7ED;border:2px solid #FB923C;flex-direction:column;gap:2px}
+.circle.inner{width:80px;height:80px;background:#D97706;color:#fff}
+
+.checklist{list-style:none;margin-bottom:14px}
+.checklist li{padding:8px 12px;font-size:.85rem;border-bottom:1px solid #F5F3F0;display:flex;align-items:center;gap:8px}
+.checklist li:last-child{border-bottom:none}
+.checklist .check{color:#16A34A;font-weight:700}
+
+.gate-box{border:1px solid #E7E5E4;border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.gate-num{font-size:.72rem;font-weight:700;color:#D97706;margin-bottom:4px}
+.gate-title{font-size:.88rem;font-weight:700;margin-bottom:6px}
+.gate-desc{font-size:.82rem;color:#78716C}
+
+.tag-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.tag-card{border-radius:10px;padding:12px 14px;font-size:.82rem}
+.tag-card.t1{background:#FEF3C7;border-left:4px solid #D97706}
+.tag-card.t2{background:#DBEAFE;border-left:4px solid #2563EB}
+.tag-card.t3{background:#DCFCE7;border-left:4px solid #16A34A}
+.tag-card.t4{background:#F3E8FF;border-left:4px solid #9333EA}
+.tag-label{font-weight:700;margin-bottom:2px}
+.tag-desc{font-size:.78rem;color:#78716C}
+
+.judge-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.judge-card{border-radius:10px;padding:12px 14px;text-align:center}
+.judge-card.pass{background:#DCFCE7;border:1px solid #BBF7D0}
+.judge-card.fail{background:#FEF2F2;border:1px solid #FECACA}
+.judge-card.extend{background:#FEF3C7;border:1px solid #FDE68A}
+.judge-card.hold{background:#F5F3F0;border:1px solid #E7E5E4}
+.judge-symbol{font-size:1.3rem;font-weight:800;margin-bottom:2px}
+.judge-card.pass .judge-symbol{color:#16A34A}
+.judge-card.fail .judge-symbol{color:#DC2626}
+.judge-card.extend .judge-symbol{color:#D97706}
+.judge-card.hold .judge-symbol{color:#A8A29E}
+.judge-cond{font-size:.78rem;color:#78716C;margin-top:4px}
+
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.summary-card{background:#FAF8F5;border-radius:10px;padding:14px;text-align:center}
+.summary-card .s-label{font-size:.7rem;color:#A8A29E;font-weight:600;margin-bottom:4px}
+.summary-card .s-val{font-size:.9rem;font-weight:700}
+
+.example-box{background:#FAF8F5;border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:.82rem;border:1px dashed #D4D0CC}
+.example-label{font-size:.7rem;font-weight:700;color:#A8A29E;margin-bottom:6px;letter-spacing:.03em}
+
+.calc-row{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.calc-cell{background:#FAF8F5;border:1px solid #E7E5E4;border-radius:8px;padding:8px 14px;text-align:center;font-size:.82rem}
+.calc-cell .c-label{font-size:.68rem;color:#A8A29E;display:block}
+.calc-cell .c-val{font-weight:700;font-size:1rem}
+.calc-op{font-size:1.1rem;font-weight:700;color:#D97706}
+.calc-cell.highlight{background:#FEF3C7;border-color:#D97706}
+
+.db-link{display:inline-block;background:#D97706;color:#fff;padding:8px 18px;border-radius:8px;font-size:.82rem;font-weight:600;text-decoration:none;transition:background .2s}
+.db-link:hover{background:#B45309}
+
+/* レスポンシブ */
+@media(max-width:640px){
+  .compare-box,.tag-grid,.judge-grid{grid-template-columns:1fr}
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .step-flow{flex-direction:column}
+  .step-item::after{display:none}
+  .circle.outer{width:200px;height:200px}
+  .circle.mid{width:130px;height:130px}
+  .circle.inner{width:65px;height:65px}
+  .calc-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ナビ -->
+<div class="nav">
+  <h1>LINEマーケ研修</h1>
+  <div class="part-tabs">
+    <div class="pt active" onclick="scrollToPart('part1')">Part 1: 考え方</div>
+    <div class="pt" onclick="scrollToPart('part2')">Part 2: 新規シナリオ</div>
+    <div class="pt" onclick="scrollToPart('part3')">Part 3: 改修</div>
+  </div>
+</div>
+
+<div class="slides-wrap">
+
+<!-- ======================== PART 1 ======================== -->
+<div class="part-header" id="part1">
+  <div class="part-label">Part 1</div>
+  <h2>考え方</h2>
+  <div class="part-sub">LINEマーケの全体像・仕組み・判断基準（2-3h）</div>
+</div>
+
+<!-- Slide 1 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">1</div>
+    <div class="slide-title">表紙</div>
+  </div>
+  <div class="slide-body" style="text-align:center;padding:40px 20px">
+    <div style="font-size:.78rem;color:#D97706;font-weight:700;letter-spacing:.08em;margin-bottom:8px">LINE MARKETING TRAINING</div>
+    <div style="font-size:1.6rem;font-weight:800;margin-bottom:8px">LINEマーケ研修</div>
+    <div style="font-size:.92rem;color:#A8A29E">— 考え方から実践まで —</div>
+  </div>
+</div>
+
+<!-- Slide 2: マインドセット（萎縮させない表現に） -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">2</div>
+    <div class="slide-title">LINEマーケは新規事業</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">まだ正解がない領域。だからこそ一緒に作っていける。</div>
+    <div class="flow-box">
+      LINEマーケ（間接CVチーム）はまだ未開拓のカオス真っ只中チームです。<br>
+      決まったやり方がない分、自分のアイデアがそのまま成果に直結します。<br><br>
+      <strong>大事にしてほしいこと：</strong><br>
+      ・「こうしたらどうかな？」を自分から出してみる<br>
+      ・迷ったらいつでも相談OK。壁打ちはいくらでもします<br>
+      ・GOALにつながりそうなことは、何でも試してみましょう
+    </div>
+    <div class="tip-box">
+      💡 リスティングの経験で培った「数字で考える力」は、LINEマーケでもそのまま活きます。新しい知識はこれから一緒にインプットしていきましょう。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: 事業構造（直接CV vs 間接CV + PDF参照） -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">3</div>
+    <div class="slide-title">MSチームの事業構造</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">私たちは「コンバージョン・エンジン」を設計するチームです。</div>
+    <div class="flow-box">
+      MSチームには3つの柱があります。
+    </div>
+    <div class="summary-grid">
+      <div class="summary-card" style="border-left:4px solid #2563EB">
+        <div class="s-label">Pillar 1</div>
+        <div class="s-val">バーティカル</div>
+        <div style="font-size:.75rem;color:#A8A29E;margin-top:4px">医療・美容特化。高単価ジャンルで深掘り</div>
+      </div>
+      <div class="summary-card" style="border-left:4px solid #16A34A">
+        <div class="s-label">Pillar 2</div>
+        <div class="s-val">アグリゲーション</div>
+        <div style="font-size:.75rem;color:#A8A29E;margin-top:4px">ライフスタイル系。幅広いジャンルを集約</div>
+      </div>
+      <div class="summary-card" style="border-left:4px solid #D97706">
+        <div class="s-label">Pillar 3</div>
+        <div class="s-val">LINEナーチャリング</div>
+        <div style="font-size:.75rem;color:#A8A29E;margin-top:4px">SEO流入をCVに変換する装置 ← ここが私たち</div>
+      </div>
+    </div>
+    <div class="compare-box">
+      <div class="col-a">
+        <strong style="color:#292524">直接CV（SEO記事から直接）</strong><br>
+        CV記事から直接アフィリエイトリンクへ。<br>
+        「今すぐ客」に届く。
+      </div>
+      <div class="col-b">
+        <strong>間接CV（LINE経由）</strong><br>
+        ノウハウ記事で離脱する人をLINEに誘導。<br>
+        診断で教育してからCVにつなげる。← <strong>私たちの領域</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">4</div>
+    <div class="slide-title">なぜLINEに入れるのか</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">「今すぐ買わない人」にも価値があります。</div>
+    <div class="compare-box">
+      <div class="col-a">
+        <strong style="color:#292524">直接CVだけだと</strong><br>
+        記事を読んで「今すぐ買う」人にしか届かない。<br>
+        全体のほんの数%。
+      </div>
+      <div class="col-b">
+        <strong>LINEに入れると</strong><br>
+        「なんとなく気になってる人」もキャッチできる。<br>
+        後からアプローチできる。
+      </div>
+    </div>
+    <div class="flow-box">
+      友だちリスト = <strong>将来の売上の種</strong><br><br>
+      SEO記事に訪れるユーザーは「悩みはあるけど、今すぐ買うか迷っている」状態。<br>
+      ここで無理に売らず、一度LINEへ誘導して教育（ナーチャリング）を行います。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 5 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">5</div>
+    <div class="slide-title">LINEマーケの仕組み（ファネル全体図）</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">全体の流れを見てみましょう。</div>
+    <div class="funnel">
+      <div class="funnel-step"><div class="funnel-label">📄 SEO記事を読んでいるユーザー</div></div>
+      <div class="funnel-arrow">↓ そのまま離脱しそう</div>
+      <div class="funnel-step"><div class="funnel-label">🔔 PU（ポップアップ）表示</div><div class="funnel-desc">「あなたの○○タイプがわかる」</div></div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step"><div class="funnel-label">💚 LINE友だち追加</div></div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step"><div class="funnel-label">🔍 診断（4-6問の質問に回答）</div></div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step"><div class="funnel-label">📊 診断結果 + PR</div><div class="funnel-desc">あなたに合うクリニック・サービスをご紹介</div></div>
+      <div class="funnel-arrow">↓</div>
+      <div class="funnel-step"><div class="funnel-label">🎯 MCV → CV（予約・来院）</div></div>
+    </div>
+    <div class="tip-box">
+      PUがファネルの入口です。記事を読んでいる人をLINEに引き込んで、診断で教育して、PRでCVにつなげる。これが私たちの仕組みです。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">6</div>
+    <div class="slide-title">ものさしづくりとは</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">ユーザーは「買えない」のではなく「決められない」。</div>
+    <div class="flow-box">
+      ユーザーの頭の中：<br>
+      ・どの方法がいいかわからない<br>
+      ・本当に必要かわからない<br>
+      ・今じゃなくてもいいんじゃないか<br>
+      ・比較してない<br><br>
+      → <strong>ものさし（判断の範囲）が広すぎて決められない状態</strong>
+    </div>
+    <div class="tip-box">
+      ニーズ自体はあるんです。でも判断基準が広すぎて、行動に移れない。その「広すぎるものさし」を狭めてあげるのが私たちの仕事です。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">7</div>
+    <div class="slide-title">ものさしを狭めてあげる</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">情報を入れて、判断軸を作ってあげる設計をします。</div>
+    <div class="circle-diagram">
+      <div class="circle outer">
+        広すぎる判断基準<br>
+        <span style="font-size:.68rem;color:#9A3412">新常識🔨 / 不安喚起 / リソミラ / 後押し</span>
+        <div class="circle mid">
+          判断軸が狭まる<br>
+          <span style="font-size:.65rem;color:#9A3412">フリクションレスに</span>
+          <div class="circle inner">CV</div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-box">
+      大事なのは<strong>フリクションレスな設計</strong>。<br>
+      ゴリ押ししても決まりません。診断を工夫して「いつの間にかそういう状態になっている」体験を作ることがポイントです。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">8</div>
+    <div class="slide-title">ファネルとKPI</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">メインとなるのはこの5つの数字で判断していきます。</div>
+    <table class="kpi-table">
+      <tr><th>KPI</th><th>計算式</th><th>基準値</th><th>何を測っているか</th></tr>
+      <tr><td><strong>PVFR</strong></td><td>友だち ÷ PV</td><td class="val">0.80〜1.00%</td><td>ファネル全体の効率</td></tr>
+      <tr><td><strong>IMPFR</strong></td><td>友だち ÷ imp</td><td class="val">1.40〜1.50%</td><td>PU表示からの効率</td></tr>
+      <tr><td><strong>PU CTR</strong></td><td>Click ÷ imp</td><td class="val">13%以上</td><td>PUの魅力度</td></tr>
+      <tr><td><strong>友だち追加率</strong></td><td>追加 ÷ Click</td><td class="val">11%以上</td><td>LINE追加の転換力</td></tr>
+      <tr><td><strong>FCVR</strong></td><td>CV ÷ 友だち</td><td class="val">3%以上</td><td>友だち→成約の効率</td></tr>
+    </table>
+    <div class="tip-box">
+      まずこの5つを覚えるところからスタートです。毎日この数字を確認しながら、改善ポイントを見つけていきます。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">9</div>
+    <div class="slide-title">変数と定数</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">自分たちがコントロールできるものと、できないものがあります。</div>
+    <div class="compare-box">
+      <div class="col-b">
+        <strong>変数（コントロールできる）</strong><br>
+        ・PU文言<br>
+        ・診断設計（設問・結果）<br>
+        ・PR内容<br>
+        ・シナリオ構成
+      </div>
+      <div class="col-a">
+        <strong style="color:#292524">定数（コントロールするのが難しい）</strong><br>
+        ・PV数（SEOチームの領域）<br>
+        ・検索意図（ユーザーが決める）<br>
+        ・クリニック側のCVR
+      </div>
+    </div>
+    <div class="flow-box">
+      PVは自分たちでは増やせません。でも同じPVでも友だちを2倍にすることはできます。<br>
+      <strong>変数と定数の見極めが大事</strong>。時には定数も変数にできないのか？とブレイクスルーを考えることも必要です。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: レバーの効き方（もっと丁寧に数字を出す） -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">10</div>
+    <div class="slide-title">レバーの効き方 — どの記事を攻めるかで結果が全く変わる</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">同じ改善をしても、PVの大きさで成果が全然違います。ここはとても大事なポイントです。</div>
+
+    <div style="font-size:.82rem;font-weight:700;color:#D97706;margin-bottom:10px">▼ ケース1: 月間PV 10,000 の記事</div>
+    <div class="calc-row">
+      <div class="calc-cell"><div class="c-label">月間PV</div><div class="c-val">10,000</div></div>
+      <div class="calc-op">×</div>
+      <div class="calc-cell"><div class="c-label">現在PVFR</div><div class="c-val">0.5%</div></div>
+      <div class="calc-op">=</div>
+      <div class="calc-cell"><div class="c-label">現在の友だち</div><div class="c-val">50人/月</div></div>
+    </div>
+    <div class="calc-row">
+      <div class="calc-cell"><div class="c-label">月間PV</div><div class="c-val">10,000</div></div>
+      <div class="calc-op">×</div>
+      <div class="calc-cell highlight"><div class="c-label">改善後PVFR</div><div class="c-val">1.0%</div></div>
+      <div class="calc-op">=</div>
+      <div class="calc-cell highlight"><div class="c-label">改善後の友だち</div><div class="c-val">100人/月</div></div>
+    </div>
+    <div class="flow-box" style="border-left-color:#16A34A;background:#F0FDF4">
+      <strong style="color:#16A34A">+50人/月の改善</strong>　PU文言の変更だけでこの差が出ます。
+    </div>
+
+    <div style="font-size:.82rem;font-weight:700;color:#A8A29E;margin:16px 0 10px">▼ ケース2: 月間PV 500 の記事（同じ改善幅）</div>
+    <div class="calc-row">
+      <div class="calc-cell"><div class="c-label">月間PV</div><div class="c-val">500</div></div>
+      <div class="calc-op">×</div>
+      <div class="calc-cell"><div class="c-label">現在PVFR</div><div class="c-val">0.5%</div></div>
+      <div class="calc-op">=</div>
+      <div class="calc-cell"><div class="c-label">現在の友だち</div><div class="c-val">2.5人/月</div></div>
+    </div>
+    <div class="calc-row">
+      <div class="calc-cell"><div class="c-label">月間PV</div><div class="c-val">500</div></div>
+      <div class="calc-op">×</div>
+      <div class="calc-cell"><div class="c-label">改善後PVFR</div><div class="c-val">1.0%</div></div>
+      <div class="calc-op">=</div>
+      <div class="calc-cell"><div class="c-label">改善後の友だち</div><div class="c-val">5人/月</div></div>
+    </div>
+    <div class="flow-box" style="border-left-color:#A8A29E;background:#F5F3F0">
+      +2.5人/月の改善。同じ労力をかけても、天井（PV）が低いと成果も小さくなります。
+    </div>
+
+    <div style="font-size:.82rem;font-weight:700;margin:16px 0 10px">▼ さらに分解すると</div>
+    <table class="kpi-table">
+      <tr><th></th><th>PV 10,000の記事</th><th>PV 500の記事</th></tr>
+      <tr><td><strong>PU CTR +3pt改善</strong></td><td class="val">+33人/月</td><td>+1.7人/月</td></tr>
+      <tr><td><strong>友だち追加率 +3pt改善</strong></td><td class="val">+30人/月</td><td>+1.5人/月</td></tr>
+      <tr><td><strong>両方改善</strong></td><td class="val" style="color:#16A34A">+63人/月 🔥</td><td>+3.2人/月</td></tr>
+    </table>
+
+    <div class="flow-box">
+      <strong>天井（PV）× 改善幅（率の差分）= インパクト。</strong><br>
+      だから「どの記事を攻めるか」の判断がとても大事になります。<br>
+      PVの大きい記事から優先的に改善していくのが基本です。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: ダッシュボード（スクショ/リンク付き） -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">11</div>
+    <div class="slide-title">ダッシュボード</div>
+    <span class="slide-tag demo">デモ</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">普段使っているダッシュボードを紹介します。</div>
+    <div style="background:#FAF8F5;border-radius:10px;padding:16px;margin-bottom:14px;border:1px solid #E7E5E4;text-align:center">
+      <div style="font-size:.78rem;color:#A8A29E;margin-bottom:8px">📊 LINE Dashboard（Streamlit）</div>
+      <div style="color:#292524;font-size:.85rem;margin-bottom:12px">ここで毎日の友だち数、ジャンル別内訳、KPIを確認しています</div>
+      <a class="db-link" href="https://line-dashboard-1.streamlit.app/" target="_blank">ダッシュボードを開く →</a>
+    </div>
+    <div class="flow-box">
+      ダッシュボードで確認するポイント：
+    </div>
+    <ul class="checklist">
+      <li><span class="check">□</span> 今月の友だち数（GOAL対比）</li>
+      <li><span class="check">□</span> ジャンル別の内訳</li>
+      <li><span class="check">□</span> KPI 5つの現在地</li>
+      <li><span class="check">□</span> 基準割れしている指標はどれか</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 12: 診断体験（共有用に言い方変更） -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">12</div>
+    <div class="slide-title">実際の診断を体験してみよう</div>
+    <span class="slide-tag work">体験</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">ユーザーと同じ体験をしてみましょう。</div>
+    <div class="flow-box">
+      1. <a href="https://koizumi-seikei.jp/obesity/diet-calorieintake/" target="_blank" style="color:#D97706;font-weight:600">この記事を開く →</a><br>
+      2. 記事を読み進めると、PU（ポップアップ）が表示されます<br>
+      3. PUをタップ → LINE友だち追加<br>
+      4. 診断に最後まで回答<br>
+      5. 診断結果とクリニック紹介（PR）を確認
+    </div>
+    <div style="background:#FEF3C7;border-radius:10px;padding:14px 16px;font-size:.82rem;margin-top:10px">
+      <strong>体験しながらメモしてみてください：</strong><br>
+      ・PUを見た時、どんな印象を持ちましたか？<br>
+      ・診断のどの部分で「なるほど」と思いましたか？<br>
+      ・「ものさしが狭まった」感覚はありましたか？
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">13</div>
+    <div class="slide-title">Part 1 まとめ</div>
+  </div>
+  <div class="slide-body">
+    <ul class="checklist">
+      <li><span class="check">✅</span> LINEマーケ = SEO流入をCVに変換する「間接CV」の仕組み</li>
+      <li><span class="check">✅</span> ものさしを狭める → フリクションレスな設計で自然にCVへ</li>
+      <li><span class="check">✅</span> KPI 5つ → 毎日チェックする指標</li>
+      <li><span class="check">✅</span> 変数をいじる → PU文言・診断設計・PR</li>
+      <li><span class="check">✅</span> 天井（PV）×改善幅 = インパクト。攻める記事の選び方が大事</li>
+    </ul>
+    <div class="flow-box">次はClaude Codeを使って、実際にICLの診断を設計していきます。</div>
+  </div>
+</div>
+
+<!-- ======================== PART 2 ======================== -->
+<div class="part-header" id="part2">
+  <div class="part-label">Part 2</div>
+  <h2>新規シナリオを作ってみよう</h2>
+  <div class="part-sub">Claude Codeでリサーチ→診断設計→PU→入稿まで一貫（8h）</div>
+</div>
+
+<!-- Slide 14 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">14</div>
+    <div class="slide-title">パート2の流れ</div>
+  </div>
+  <div class="slide-body">
+    <div class="msg">ICL（眼内コンタクトレンズ）の診断を1本作ります。</div>
+    <div class="step-flow">
+      <div class="step-item">
+        <div class="step-icon">🔍</div>
+        <div class="step-label">リサーチ</div>
+        <div class="step-time">2h</div>
+      </div>
+      <div class="step-item">
+        <div class="step-icon">🎯</div>
+        <div class="step-label">コンセプト設計</div>
+        <div class="step-time">1-2h</div>
+      </div>
+      <div class="step-item">
+        <div class="step-icon">📝</div>
+        <div class="step-label">設問+PU文言</div>
+        <div class="step-time">2-3h</div>
+      </div>
+      <div class="step-item">
+        <div class="step-icon">🚀</div>
+        <div class="step-label">Winut入稿</div>
+        <div class="step-time">2h</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">15</div>
+    <div class="slide-title">STEP1 リサーチ — まずユーザーの声を集める</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">自分の想像ではなく、実際のユーザーの声からスタートします。</div>
+    <div class="compare-box">
+      <div class="col-a">
+        <strong style="color:#292524">マーケ脳</strong><br>
+        <span style="font-size:.78rem">「ICLって高いから費用が気になるはず」<br>← 自分の想像</span>
+      </div>
+      <div class="col-b">
+        <strong>ユーザー脳</strong><br>
+        <span style="font-size:.78rem">SNS・知恵袋・YouTubeコメントの<br>生の声を集める</span>
+      </div>
+    </div>
+    <div class="flow-box">
+      <strong>リサーチ先：</strong><br>
+      ・X（Twitter）/ Instagram<br>
+      ・知恵袋、教えてgoo<br>
+      ・YouTubeのコメント欄<br>
+      ・競合の比較サイト・口コミサイト
+    </div>
+    <div class="example-box">
+      <div class="example-label">先輩が最初に迷ったこと</div>
+      「完全な予想でシナリオを作る？ それともクライアントに聞いてから？」<br><br>
+      → 答えは<strong>「まず声を集める。そこから仮説を立てる」</strong>です。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">16</div>
+    <div class="slide-title">STEP1 リサーチ — Claude Codeの活用</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">Claude Codeはリサーチの相棒です。</div>
+    <div class="flow-box" style="background:#FDFCFB;border-left-color:#292524">
+      <strong>Claude Codeへの聞き方の例：</strong><br><br>
+      「ICLを検討してる人って、SNSや知恵袋でどんなことを言ってる？<br>
+      不安、期待、比較してること、決め手になったこと、やめた理由を教えて」
+    </div>
+    <div class="tip-box">
+      Claude Codeの出力 + 自分の目で見た情報 = リサーチ。<br>
+      AIの出力だけで完結させず、必ず自分でもSNSや掲示板を見に行きましょう。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 17 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">17</div>
+    <div class="slide-title">STEP1 リサーチ — 完了条件</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">以下が言語化できたらSTEP1完了です。</div>
+    <ul class="checklist">
+      <li><span class="check">①</span> <strong>ICLを検討してる人は「こういう人」</strong><br><span style="font-size:.78rem;color:#A8A29E;margin-left:28px;display:block">年代、状況、今の困りごと</span></li>
+      <li><span class="check">②</span> <strong>この人が「こういうことを満たしたいから」来ている</strong><br><span style="font-size:.78rem;color:#A8A29E;margin-left:28px;display:block">本当のニーズ（表面ではなく本音）</span></li>
+      <li><span class="check">③</span> <strong>でも「こういう理由で」まだ行動していない</strong><br><span style="font-size:.78rem;color:#A8A29E;margin-left:28px;display:block">不安、比較、時期、知識不足</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Slide 18 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">18</div>
+    <div class="slide-title">STEP2 コンセプト設計 — ものさしを作る</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">リサーチから見えた「広すぎるものさし」を狭める設計をします。</div>
+    <div class="flow-box">
+      <strong>ICLを検討してる人のものさし（広い状態）：</strong><br><br>
+      ・レーシックとICL、どっちがいいかわからない<br>
+      ・費用が高い。本当にその価値がある？<br>
+      ・手術が怖い。失敗したらどうしよう？<br>
+      ・コンタクトで十分じゃない？<br>
+      ・今じゃなくてもいいんじゃない？
+    </div>
+    <div style="text-align:center;font-size:.85rem;font-weight:700;color:#D97706;padding:8px 0">↓ この中から「何を狭めたら行動に近づくか？」を一緒に考えます</div>
+  </div>
+</div>
+
+<!-- Slide 19 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">19</div>
+    <div class="slide-title">STEP2 コンセプト設計 — 不安喚起とリソミラ</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">ものさしの中身を設計します。</div>
+    <div class="summary-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="summary-card" style="background:#FEF2F2;border:1px solid #FECACA">
+        <div class="s-label" style="color:#991B1B">不安喚起</div>
+        <div class="s-val" style="font-size:.78rem;font-weight:400;color:#991B1B">このままだとどうなる？<br>「コンタクト○年で角膜に…」</div>
+      </div>
+      <div class="summary-card" style="background:#F0FDF4;border:1px solid #BBF7D0">
+        <div class="s-label" style="color:#166534">リソミラ</div>
+        <div class="s-val" style="font-size:.78rem;font-weight:400;color:#166534">理想の未来<br>「朝起きてそのまま見える」</div>
+      </div>
+      <div class="summary-card" style="background:#DBEAFE;border:1px solid #BFDBFE">
+        <div class="s-label" style="color:#1E40AF">後押し</div>
+        <div class="s-val" style="font-size:.78rem;font-weight:400;color:#1E40AF">不安の払拭<br>「術後1週間で日常復帰」</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 20 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">20</div>
+    <div class="slide-title">STEP3 設問設計 — 判断基準</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">設問を増やすか減らすかの判断基準はシンプルです。</div>
+    <div class="flow-box">
+      「この回答が<strong>パーソナライズの材料になるか？</strong>」<br><br>
+      なるなら → 聞く<br>
+      ならないなら → カット（フリクションレスに）
+    </div>
+    <table class="kpi-table">
+      <tr><th>設問</th><th>パーソナライズの材料になる？</th><th>判定</th></tr>
+      <tr><td>視力の状態</td><td>結果の分岐に使える</td><td class="val">✅ 聞く</td></tr>
+      <tr><td>年齢</td><td>リスク説明に使える</td><td class="val">✅ 聞く</td></tr>
+      <tr><td>コンタクト使用歴</td><td>不安喚起の材料になる</td><td class="val">✅ 聞く</td></tr>
+      <tr><td>好きな食べ物</td><td>使えない</td><td style="color:#DC2626;font-weight:700">❌ カット</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Slide 21 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">21</div>
+    <div class="slide-title">STEP3 設問設計 — 各設問の役割</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">1問1問に役割があります。</div>
+    <div class="gate-box">
+      <div class="gate-num">Q1-Q3</div>
+      <div class="gate-title">フリクションレスに進めてもらう</div>
+      <div class="gate-desc">答えやすい質問（年齢、視力、困りごと）。「診断してる感」を作りながら、属性データを取得します。</div>
+    </div>
+    <div class="gate-box">
+      <div class="gate-num">Q4以降</div>
+      <div class="gate-title">ものさしを狭める</div>
+      <div class="gate-desc">不安喚起の材料を回答から引き出します。分岐設問でタイプ分けも行います。</div>
+    </div>
+    <div class="tip-box">
+      全体を通して大切なこと：押し売り感ゼロ。回答していくうちに「自分のことを分かってくれてる」と感じてもらえる導線を作ります。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 22 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">22</div>
+    <div class="slide-title">STEP3 PU文言設計 — 3つのゲート</div>
+    <span class="slide-tag work">実践</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">PU文言は3つのゲートを通して考えます。</div>
+    <div class="gate-box" style="border-color:#D97706">
+      <div class="gate-num">Gate 1</div>
+      <div class="gate-title">検索者の「今の気持ち」を具体化しているか？</div>
+      <div class="compare-box" style="margin-bottom:0">
+        <div class="col-a"><strong style="color:#292524">「診断しませんか？」</strong><br><span style="font-size:.75rem">提供者目線</span></div>
+        <div class="col-b"><strong>「あなたに合うのはレーシック？ICL？」</strong><br><span style="font-size:.75rem">ユーザー目線</span></div>
+      </div>
+    </div>
+    <div class="gate-box" style="border-color:#D97706">
+      <div class="gate-num">Gate 2</div>
+      <div class="gate-title">ユーザーシミュレーション</div>
+      <div class="gate-desc">この文言を見て → タップして → 何を期待する？ をイメージしてみます。</div>
+    </div>
+    <div class="gate-box" style="border-color:#D97706">
+      <div class="gate-num">Gate 3</div>
+      <div class="gate-title">ユーザーが知りたい情報か？</div>
+      <div class="gate-desc">記事を読んだ「後の」ユーザーに向けた文言になっているか確認します。記事で解決済みの情報を繰り返さないことがポイントです。</div>
+    </div>
+    <div class="example-box">
+      <div class="example-label">失敗例から学ぶ</div>
+      BMI記事で「あなたのBMIの本当の意味は？」→ 友だち追加率2.6%<br>
+      理由：記事で既にBMIが分かっている状態なので、「もう知ってる」となった。
+    </div>
+  </div>
+</div>
+
+<!-- Slide 23 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">23</div>
+    <div class="slide-title">STEP4 Winut入稿 — 3層構造</div>
+    <span class="slide-tag demo">デモ</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">Winutの構造はシンプルです。</div>
+    <div style="text-align:center;margin:16px 0">
+      <div style="display:inline-block;background:#FEF3C7;border:2px solid #D97706;border-radius:12px;padding:14px 24px;font-weight:700">シナリオ（全体の箱）</div>
+      <div style="color:#D97706;font-size:1.2rem;padding:4px 0">↓</div>
+      <div style="display:inline-block;background:#DBEAFE;border:2px solid #2563EB;border-radius:12px;padding:12px 20px;font-weight:700">パック（カードの束）</div>
+      <div style="color:#2563EB;font-size:1.2rem;padding:4px 0">↓</div>
+      <div style="display:inline-block;background:#DCFCE7;border:2px solid #16A34A;border-radius:12px;padding:10px 18px;font-weight:700">テンプレート（1枚のカード）</div>
+    </div>
+    <div class="flow-box">
+      作る順番：テンプレート → パック → シナリオ → タグ設定 → PU設定
+    </div>
+  </div>
+</div>
+
+<!-- Slide 24 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">24</div>
+    <div class="slide-title">STEP4 タグの4分類</div>
+    <span class="slide-tag demo">デモ</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">タグを設定することでデータが取得できるようになります。</div>
+    <div class="tag-grid">
+      <div class="tag-card t1">
+        <div class="tag-label">流入経路</div>
+        <div class="tag-desc">どのPUから来たか<br>例: 【SEO】ICL_費用気になる？</div>
+      </div>
+      <div class="tag-card t2">
+        <div class="tag-label">シナリオ</div>
+        <div class="tag-desc">診断のどこを通ったか<br>例: step01_回答_30代</div>
+      </div>
+      <div class="tag-card t3">
+        <div class="tag-label">CV</div>
+        <div class="tag-desc">どこで成約したか<br>例: 品川近視</div>
+      </div>
+      <div class="tag-card t4">
+        <div class="tag-label">クリック</div>
+        <div class="tag-desc">どのPRリンクを押したか<br>例: C_品川_PR_1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== PART 3 ======================== -->
+<div class="part-header" id="part3">
+  <div class="part-label">Part 3</div>
+  <h2>改修</h2>
+  <div class="part-sub">数字を見て→原因を見つけて→改善する</div>
+</div>
+
+<!-- Slide 25 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">25</div>
+    <div class="slide-title">改修の考え方</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">改修 = 数字を見て → 原因を見つけて → 改善する。</div>
+    <div class="step-flow">
+      <div class="step-item">
+        <div class="step-icon">📊</div>
+        <div class="step-label">DBを確認</div>
+        <div class="step-time">どこが基準割れ？</div>
+      </div>
+      <div class="step-item">
+        <div class="step-icon">🔍</div>
+        <div class="step-label">原因を特定</div>
+        <div class="step-time">CTR？追加率？FCVR？</div>
+      </div>
+      <div class="step-item">
+        <div class="step-icon">💡</div>
+        <div class="step-label">改善案を考える</div>
+        <div class="step-time">CC × ユーザーダイブ</div>
+      </div>
+      <div class="step-item">
+        <div class="step-icon">🚀</div>
+        <div class="step-label">入稿 → 検証</div>
+        <div class="step-time">効果判定</div>
+      </div>
+    </div>
+    <table class="kpi-table">
+      <tr><th>基準割れ箇所</th><th>考えられる原因</th><th>対処方法</th></tr>
+      <tr><td>PU CTRが低い</td><td>PU文言の問題</td><td>文言を変更してみる</td></tr>
+      <tr><td>友だち追加率が低い</td><td>記事とPUのミスマッチ</td><td>検索意図を再確認</td></tr>
+      <tr><td>FCVRが低い</td><td>診断〜PRの設計</td><td>シナリオを見直す</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Slide 26 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">26</div>
+    <div class="slide-title">改修プロセスのデモ</div>
+    <span class="slide-tag demo">デモ</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">実際の改修プロセスを見てみましょう。</div>
+    <div class="flow-box">
+      1. ダッシュボードを開く → 数字を確認<br>
+      2. 「この記事のPU CTRが低い」→ なぜだろう？<br>
+      3. Claude Codeで検索意図を再確認<br>
+      4. 新しいPU文言を考える（3ゲートで確認）<br>
+      5. Winutで差し替え<br>
+      6. 翌日以降データを確認 → 効果判定
+    </div>
+  </div>
+</div>
+
+<!-- Slide 27 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">27</div>
+    <div class="slide-title">効果検証の判定基準</div>
+    <span class="slide-tag talk">座学</span>
+  </div>
+  <div class="slide-body">
+    <div class="msg">施策の結果はこの基準で判定します。</div>
+    <div class="judge-grid">
+      <div class="judge-card pass">
+        <div class="judge-symbol">◎</div>
+        <div style="font-weight:700">PASS</div>
+        <div class="judge-cond">PU CTR ≥ 13%<br>かつ 追加率 ≥ 11%</div>
+      </div>
+      <div class="judge-card fail">
+        <div class="judge-symbol">×</div>
+        <div style="font-weight:700">FAIL</div>
+        <div class="judge-cond">両方基準割れ<br>→ 改善をやり直す</div>
+      </div>
+      <div class="judge-card extend">
+        <div class="judge-symbol">△</div>
+        <div style="font-weight:700">EXTEND</div>
+        <div class="judge-cond">片方が惜しい（基準-2pt以内）<br>→ もう少し観測を続ける</div>
+      </div>
+      <div class="judge-card hold">
+        <div class="judge-symbol">○</div>
+        <div style="font-weight:700">保留</div>
+        <div class="judge-cond">imp 200以下<br>→ まだ判断できない</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 28 -->
+<div class="slide">
+  <div class="slide-head">
+    <div class="slide-num">28</div>
+    <div class="slide-title">まとめ</div>
+  </div>
+  <div class="slide-body">
+    <div class="summary-grid" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="summary-card" style="border-left:4px solid #D97706">
+        <div class="s-label">Part 1</div>
+        <div style="font-size:.78rem;text-align:left;line-height:1.7;margin-top:6px">
+          ✅ 間接CVの仕組み<br>
+          ✅ ものさしづくり<br>
+          ✅ KPI 5つ<br>
+          ✅ レバーの効き方
+        </div>
+      </div>
+      <div class="summary-card" style="border-left:4px solid #2563EB">
+        <div class="s-label">Part 2</div>
+        <div style="font-size:.78rem;text-align:left;line-height:1.7;margin-top:6px">
+          ✅ リサーチが先<br>
+          ✅ パーソナライズの判断<br>
+          ✅ PU文言3ゲート
+        </div>
+      </div>
+      <div class="summary-card" style="border-left:4px solid #16A34A">
+        <div class="s-label">Part 3</div>
+        <div style="font-size:.78rem;text-align:left;line-height:1.7;margin-top:6px">
+          ✅ 数字から原因を見つける<br>
+          ✅ ◎○×△で判定
+        </div>
+      </div>
+    </div>
+    <div class="flow-box" style="text-align:center;font-weight:700">
+      この流れを自分で回せるようになることがゴールです。<br>
+      一つずつ一緒にやっていきましょう！
+    </div>
+  </div>
+</div>
+
+</div><!-- /slides-wrap -->
+
+<script>
+function scrollToPart(id){
+  document.querySelectorAll('.pt').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+}
+window.addEventListener('scroll',()=>{
+  const parts=['part1','part2','part3'];
+  const tabs=document.querySelectorAll('.pt');
+  let current=0;
+  parts.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el&&el.getBoundingClientRect().top<200) current=i;
+  });
+  tabs.forEach((t,i)=>{t.classList.toggle('active',i===current)});
+});
+</script>
+</body>
+</html>

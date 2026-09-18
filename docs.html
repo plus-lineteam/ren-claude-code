@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ren's Docs</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  background: #fafafa; color: #222; line-height: 1.8; max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem;
+}
+h1 { font-size: 1.5rem; font-weight: 800; color: #111; margin-bottom: 0.2rem; }
+.subtitle { color: #888; font-size: 0.85rem; margin-bottom: 2.5rem; }
+h2 {
+  font-size: 0.82rem; font-weight: 700; color: #1976d2; text-transform: uppercase;
+  letter-spacing: 0.08em; margin: 2rem 0 0.8rem; padding-bottom: 0.3rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+a { color: #1976d2; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.doc-list { list-style: none; margin: 0; }
+.doc-item {
+  background: #fff; border: 1px solid #e8e8e8; border-radius: 8px;
+  padding: 0.8rem 1.2rem; margin-bottom: 0.5rem;
+  display: flex; align-items: baseline; gap: 0.8rem;
+  transition: box-shadow 0.15s;
+}
+.doc-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.doc-icon { font-size: 1rem; flex-shrink: 0; }
+.doc-info { flex: 1; }
+.doc-title { font-weight: 700; font-size: 0.92rem; }
+.doc-desc { font-size: 0.78rem; color: #888; margin-top: 0.1rem; }
+.doc-date { font-size: 0.7rem; color: #bbb; white-space: nowrap; flex-shrink: 0; }
+.footer { text-align: center; color: #ccc; font-size: 0.72rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #e8e8e8; }
+</style>
+</head>
+<body>
+
+<h1>Ren's Docs</h1>
+<p class="subtitle">資料・ガイド・設計メモの一覧</p>
+
+<h2>Team Setup</h2>
+<ul class="doc-list">
+  <li class="doc-item">
+    <span class="doc-icon">🚀</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="line-team-setup.html">LINEチーム 初期セットアップガイド</a></div>
+      <div class="doc-desc">メンバー向け。Claude Code + GitHub + Git の環境構築手順（Windows/Mac対応）</div>
+    </div>
+    <span class="doc-date">2026/4/2</span>
+  </li>
+  <li class="doc-item">
+    <span class="doc-icon">👥</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="team-setup-guide.html">チームセットアップガイド</a></div>
+      <div class="doc-desc">チーム全体のClaude Code導入・ロール設定の手順</div>
+    </div>
+    <span class="doc-date">2026/3</span>
+  </li>
+</ul>
+
+<h2>Design & Architecture</h2>
+<ul class="doc-list">
+  <li class="doc-item">
+    <span class="doc-icon">🗺️</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="system-overview.html">LINEチーム システム全体像</a></div>
+      <div class="doc-desc">個人フォルダ + タスクボード + Streamlit化のタイムライン</div>
+    </div>
+    <span class="doc-date">2026/4/2</span>
+  </li>
+  <li class="doc-item">
+    <span class="doc-icon">🔗</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="star-team-concept.html">Star Team 構成の概念図</a></div>
+      <div class="doc-desc">GitHubでフォルダを共有する仕組みの図解</div>
+    </div>
+    <span class="doc-date">2026/4/2</span>
+  </li>
+  <li class="doc-item">
+    <span class="doc-icon">📂</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="folder-status.html">フォルダ構造ビジュアライザー</a></div>
+      <div class="doc-desc">renの環境のファイル構成を視覚化</div>
+    </div>
+    <span class="doc-date">2026/3</span>
+  </li>
+  <li class="doc-item">
+    <span class="doc-icon">🔄</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="role-workflow.html">ロールワークフロー</a></div>
+      <div class="doc-desc">CEO/CIO/CMOのロール定義と連携フロー</div>
+    </div>
+    <span class="doc-date">2026/3</span>
+  </li>
+</ul>
+
+<h2>Workshop</h2>
+<ul class="doc-list">
+  <li class="doc-item">
+    <span class="doc-icon">📋</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="setup-guide.html">事前セットアップガイド</a></div>
+      <div class="doc-desc">勉強会参加者向け。Claude Codeインストール〜AI傾向分析（15分）</div>
+    </div>
+    <span class="doc-date">2026/3</span>
+  </li>
+  <li class="doc-item">
+    <span class="doc-icon">📖</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="guide.html">Claude Code 使い方ガイド</a></div>
+      <div class="doc-desc">基本操作・スキル・メモリの使い方</div>
+    </div>
+    <span class="doc-date">2026/3</span>
+  </li>
+  <li class="doc-item">
+    <span class="doc-icon">💡</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="case-studies.html">活用事例</a></div>
+      <div class="doc-desc">Claude Codeの実務活用ケーススタディ</div>
+    </div>
+    <span class="doc-date">2026/3</span>
+  </li>
+  <li class="doc-item">
+    <span class="doc-icon">❓</span>
+    <div class="doc-info">
+      <div class="doc-title"><a href="qa.html">Q&A</a></div>
+      <div class="doc-desc">よくある質問と回答</div>
+    </div>
+    <span class="doc-date">2026/3</span>
+  </li>
+</ul>
+
+<div class="footer">Ren's Docs — GitHub Pages</div>
+
+</body>
+</html>
